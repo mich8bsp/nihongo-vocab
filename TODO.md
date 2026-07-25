@@ -9,13 +9,22 @@ See DESIGN.md for the decisions behind these.
       environment). Repo: https://github.com/mich8bsp/nihongo-vocab
 - [x] Dependencies wired in `app/build.gradle.kts`: Room 2.8.4 (+ KSP),
       WorkManager 2.11.2, Navigation Compose 2.8.5.
-- [ ] **Open in Android Studio and let it generate the Gradle wrapper** —
-      this environment has no local JDK/Gradle, so `gradlew`/wrapper jar
-      were never generated and the project has not been build-verified.
-      First sync in Android Studio is the real correctness check; expect
-      possible minor version bumps it suggests (AGP 9.1.1, Kotlin 2.2.20,
-      Compose BOM 2026.04.01 were picked from web search, not compiled
-      locally).
+- [x] Fixed first sync error: AGP 9.0+ has built-in Kotlin support and no
+      longer accepts the separate `org.jetbrains.kotlin.android` plugin —
+      removed it from both `build.gradle.kts` (root) and
+      `app/build.gradle.kts`. Also dropped the top-level
+      `kotlin { jvmToolchain(17) }` block — jvmTarget now defaults from
+      `android.compileOptions.targetCompatibility` automatically. Kept
+      `org.jetbrains.kotlin.plugin.compose` and `com.google.devtools.ksp`,
+      per https://developer.android.com/build/migrate-to-built-in-kotlin.
+- [ ] **Re-sync in Android Studio to confirm the fix.** Note: AGP 9.1.1
+      requires Gradle 9.3.1 minimum — if the generated wrapper picks
+      something older, that's the next likely failure. Also unverified:
+      whether `org.jetbrains.kotlin.plugin.compose:2.2.20` and
+      `ksp:2.2.20-2.0.3` are compatible with whatever Kotlin version AGP's
+      built-in support uses internally — if sync complains about a
+      Compose-compiler/Kotlin version mismatch, that's expected and the
+      error message will name the exact required version to switch to.
 
 ## 2. Data layer
 - [ ] Room entities: `Entry`, `PoolState` (fields per DESIGN.md).
