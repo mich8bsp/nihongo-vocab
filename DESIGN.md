@@ -67,7 +67,11 @@ Default: KANA and N5 `enabled = true`, N4–N1 `enabled = false`.
   deterministic (see "Vocabulary data source" for why: offline-first, no
   backend, reproducible feedback).
 - Match against any string in the entry's `meanings` list, after
-  normalizing both sides (lowercase, trim whitespace).
+  normalizing both sides (lowercase, trim whitespace). Also accepts the
+  same meaning with any `(...)` context clarification dropped, e.g.
+  `mother (formal)` → `mother`, `(my) older brother (humble)` → `older
+  brother` - the source glosses use parentheses for nuance/grammar hints
+  the user shouldn't be required to type.
 - If a plain match feels too strict in practice, add a small edit-distance
   tolerance (typo forgiveness) — stdlib-level, no new dependency. Not
   needed up front; the `meanings` list (split from multi-gloss source data)

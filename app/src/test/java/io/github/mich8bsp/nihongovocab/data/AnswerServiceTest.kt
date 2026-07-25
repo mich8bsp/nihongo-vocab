@@ -163,6 +163,21 @@ class AnswerServiceTest {
     }
 
     @Test
+    fun answerWithoutParentheticalClarificationIsAccepted() {
+        val e = entry(1, Level.N5, meanings = listOf("mother (formal)"))
+        assertTrue(isCorrectAnswer(e, "mother"))
+        assertTrue(isCorrectAnswer(e, "  Mother (formal) "))
+        assertFalse(isCorrectAnswer(e, "formal"))
+    }
+
+    @Test
+    fun answerWithoutLeadingParentheticalIsAccepted() {
+        val e = entry(1, Level.N5, meanings = listOf("(my) older brother (humble)"))
+        assertTrue(isCorrectAnswer(e, "older brother"))
+        assertFalse(isCorrectAnswer(e, "my"))
+    }
+
+    @Test
     fun romajiAnswerIsDetectedCaseInsensitiveAndTrimmed() {
         val e = entry(1, Level.N5, meanings = listOf("to eat"), romaji = "taberu")
         assertTrue(isRomajiAnswer(e, "  TABERU  "))

@@ -4,8 +4,19 @@ data class AnswerResult(val correct: Boolean, val meanings: List<String>)
 
 fun isCorrectAnswer(entry: Entry, answer: String): Boolean {
     val normalized = answer.trim().lowercase()
-    return entry.meanings.any { it.trim().lowercase() == normalized }
+    return entry.meanings.any { meaning ->
+        val normalizedMeaning = meaning.trim().lowercase()
+        normalizedMeaning == normalized || stripParenthetical(normalizedMeaning) == normalized
+    }
 }
+
+/**
+ * Drops "(...)" context clarifications, e.g. "mother (formal)" -> "mother",
+ * "(my) older brother (humble)" -> "older brother" - source glosses use
+ * these for nuance/grammar hints, not as part of the required answer.
+ */
+private fun stripParenthetical(meaning: String): String =
+    meaning.replace(Regex("\\(.*?\\)"), "").replace(Regex("\\s+"), " ").trim()
 
 /**
  * True if [answer] is this entry's romaji reading rather than its English

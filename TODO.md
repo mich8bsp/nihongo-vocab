@@ -328,3 +328,11 @@ thousands of real quiz answers, then drove the app for real:
       for 大変 ("taihen") → got the hint, no score change; then submitted
       "hard" → scored Correct, and the DB showed `totalWrong` still 0 -
       the romaji attempt truly wasn't recorded.
+- [x] **Answers without a "(...)" context clarification are now accepted**,
+      e.g. "mother" for a meaning of "mother (formal)". `isCorrectAnswer`
+      also compares against the meaning with any parenthetical stripped.
+      Added two unit tests (trailing clarification, leading + trailing on
+      the same meaning). `./gradlew test assembleDebug` pass; verified
+      live on the `Medium_Phone` emulator by launching the Quiz screen
+      directly for a known entry id ("秋" / "fall (season)", via `am
+      start --el entry_id <id>`) and submitting "fall" → scored Correct.
