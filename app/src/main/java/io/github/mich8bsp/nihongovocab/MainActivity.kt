@@ -1,8 +1,12 @@
 package io.github.mich8bsp.nihongovocab
 
+import android.Manifest
+import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
@@ -15,19 +19,33 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.core.content.ContextCompat
+import io.github.mich8bsp.nihongovocab.data.AnswerService
 import io.github.mich8bsp.nihongovocab.data.AppDatabase
 import io.github.mich8bsp.nihongovocab.data.AssetSeeder
+import io.github.mich8bsp.nihongovocab.notification.QuizNotificationWorker
 import io.github.mich8bsp.nihongovocab.ui.HomeScreen
+import io.github.mich8bsp.nihongovocab.ui.QuizScreen
 
-// TODO(part 7): wire the real Navigation graph (Home <-> Quiz via
-// notification tap). Home is the only real entry point until then -
-// per DESIGN.md, Quiz is only ever reached via a notification tap, so
-// there's nothing else for MainActivity to show yet.
 class MainActivity : ComponentActivity() {
+    private var quizEntryId by mutableStateOf<Long?>(null)
+
+    private val requestNotificationPermission =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { /* no-op either way */ }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        quizEntryId = extractEntryId(intent)
+
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) !=
+            PackageManager.PERMISSION_GRANTED
+        ) {
+            requestNotificationPermission.launch(Manifest.permission.POST_NOTIFICATIONS)
+        }
+        QuizNotificationWorker.ensureScheduled(applicationContext)
 
         val db = AppDatabase.getInstance(applicationContext)
+        val answerService = AnswerService(db.entryDao(), db.poolStateDao())
 
         setContent {
             var seeded by remember { mutableStateOf(false) }
@@ -39,13 +57,31 @@ class MainActivity : ComponentActivity() {
 
             MaterialTheme {
                 Surface(modifier = Modifier.fillMaxSize()) {
-                    if (seeded) {
-                        HomeScreen(entryDao = db.entryDao(), poolStateDao = db.poolStateDao())
-                    } else {
-                        Box(Modifier.fillMaxSize(), Alignment.Center) { Text("Seeding...") }
+                    val entryId = quizEntryId
+                    when {
+                        !seeded -> Box(Modifier.fillMaxSize(), Alignment.Center) { Text("Seeding...") }
+                        entryId != null -> QuizScreen(
+                            entryId = entryId,
+                            answerService = answerService,
+                            onBack = { quizEntryId = null },
+                        )
+                        else -> HomeScreen(entryDao = db.entryDao(), poolStateDao = db.poolStateDao())
                     }
                 }
             }
         }
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        setIntent(intent)
+        quizEntryId = extractEntryId(intent)
+    }
+
+    companion object {
+        const val EXTRA_ENTRY_ID = "entry_id"
+
+        private fun extractEntryId(intent: Intent): Long? =
+            intent.getLongExtra(EXTRA_ENTRY_ID, -1L).takeIf { it >= 0 }
     }
 }

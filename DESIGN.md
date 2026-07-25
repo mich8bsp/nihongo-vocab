@@ -108,20 +108,44 @@ Default: KANA and N5 `enabled = true`, N4–N1 `enabled = false`.
 - Word/kana/kanji display, free-text field, submit button.
 - Submit → feedback (correct/incorrect + correct answer) → "Back to Home".
 - Implemented in `ui/QuizScreen.kt`: a self-contained composable taking
-  `entryId` + `AnswerService` + an `onBack` callback — no dependency on
-  the navigation graph (Part 7 wires the callback to real navigation;
-  until then `MainActivity` calls it directly with a hardcoded entry id
-  as a temporary stand-in, see TODO.md Part 4).
+  `entryId` + `AnswerService` + an `onBack` callback. No formal navigation
+  graph — see "Navigation" below, this turned out not to need one.
+  `MainActivity` shows it whenever it has a real entry id (from a
+  notification tap), `onBack` clears that back to `HomeScreen`.
+
+## Navigation
+
+Home ⇄ Quiz is just a `quizEntryId: Long?` bit of state in `MainActivity`:
+null shows `HomeScreen`, non-null shows `QuizScreen` for that id. Set from
+`EXTRA_ENTRY_ID` on the launch intent (cold start from a notification tap)
+or `onNewIntent` (already-running instance, `launchMode="singleTop"` so
+repeat taps don't stack activities); cleared by Quiz's `onBack`. No
+Compose Navigation / `NavHost` — with exactly 2 screens, one trivial
+transition, and no back-stack requirements, a route graph would be pure
+ceremony. Reconsider only if a real need for more screens or back-stack
+behavior shows up.
 
 ## Notifications
 
-- Random interval within active hours (default window TBD, e.g. 8am–10pm;
-  exposing this as a setting is a later nice-to-have, not required for v1).
-- Requires `POST_NOTIFICATIONS` runtime permission (Android 13+) and either
-  `WorkManager` periodic-ish scheduling or `AlarmManager` with
-  `SCHEDULE_EXACT_ALARM` if tighter timing is wanted. WorkManager is the
-  lazier/more robust default; exact alarms only if timing feels too loose in
-  practice.
+- Random interval within active hours: 20–90 minutes, clamped into an
+  8am–10pm window (rolls to next day's 8am if a pick would otherwise land
+  after 10pm). Exposing this as a user setting is a later nice-to-have,
+  not required for v1. Implemented in `notification/NotificationScheduling.kt`
+  (`computeNextDelayMillis`) — pure function, randomness is an injectable
+  parameter so it's fully unit-testable.
+- `POST_NOTIFICATIONS` runtime permission requested on launch (Android
+  13+); if denied, notifications just silently don't show — no further
+  handling.
+- `notification/QuizNotificationWorker` (`CoroutineWorker` via
+  WorkManager, not `AlarmManager`/exact alarms — timing doesn't need to
+  be tight for passive practice): picks a random active entry from the
+  enabled pools, posts a notification (title "Quiz time", body = entry
+  text) if one was found, then always reschedules itself via
+  `enqueueUniqueWork` (`REPLACE` when called from within the worker,
+  `KEEP` when called from `MainActivity` on app start so relaunching the
+  app doesn't reset an in-flight countdown). No active entries in any
+  enabled pool → the DAO query naturally returns null (empty SQL `IN ()`
+  matches nothing) and the worker just skips posting, still reschedules.
 
 ## Tech stack
 

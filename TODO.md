@@ -163,18 +163,53 @@ See DESIGN.md for the decisions behind these.
       KANA flipped to `0`, N5 stayed `1` — no cross-talk between rows.
 
 ## 6. Notification scheduling
-- [ ] Request `POST_NOTIFICATIONS` permission on first launch.
-- [ ] WorkManager job: pick a random active entry from enabled pools, post a
-      notification with its text, reschedule itself after a random interval
-      within the active-hours window (hardcoded default, e.g. 8am–10pm).
-- [ ] Handle "no active entries in any enabled pool" — skip firing instead
-      of crashing/looping.
-- [ ] Notification tap → deep link into Quiz screen with the entry id.
+- [x] `POST_NOTIFICATIONS` requested on launch via
+      `ActivityResultContracts.RequestPermission()` (no further handling
+      if denied — notifications just silently won't show, matches YAGNI).
+- [x] `notification/QuizNotificationWorker` (`CoroutineWorker`): picks a
+      random active entry from `poolStateDao.getEnabledLevels()` via
+      `entryDao.getRandomActiveEntry`, posts a notification (title "Quiz
+      time", body = entry text, tap → `MainActivity` with the entry id as
+      an extra), then always reschedules itself regardless of whether a
+      notification fired.
+- [x] `notification/NotificationScheduling.kt`: pure `computeNextDelayMillis`
+      function (random 20–90 min, clamped into the 8am–10pm active-hours
+      window, rolling to next day if it'd land after hours) — random
+      component is an injectable parameter so it's fully deterministic to
+      test. 4 unit tests: stays-as-is, clamp-to-start, clamp-to-next-day,
+      never-negative.
+- [x] No active entries in any enabled pool → `getRandomActiveEntry`
+      returns null (empty `IN ()` matches nothing — standard SQL, not
+      special-cased), worker just skips posting and reschedules. Not
+      independently tested (would need real Room to confirm the empty-IN
+      behavior; low risk, well-established SQL semantics).
+- [x] Notification tap → deep link into Quiz: `MainActivity` reads
+      `EXTRA_ENTRY_ID` from its intent (`onCreate` for cold start,
+      `onNewIntent` for an already-running instance — `launchMode=
+      singleTop` added to the manifest so repeated notification taps
+      don't stack activity instances) and shows `QuizScreen` for that
+      entry instead of `HomeScreen`.
+- [x] **Verified for real, including forcing the actual scheduled job to
+      fire** (not just reasoning about the code): launched the emulator,
+      confirmed via `adb shell dumpsys jobscheduler` that WorkManager
+      scheduled the job with the expected ~20–90 min delay, force-ran it
+      with `adb shell cmd jobscheduler run -f -n androidx.work.systemjobscheduler
+      <pkg> 0`, confirmed via `dumpsys notification` that a real
+      notification posted with the right channel/title/text, then tapped
+      it through the notification shade and confirmed `QuizScreen` opened
+      showing the exact entry from the notification.
 
-## 7. Navigation wiring
-- [ ] Compose Navigation graph: Home ⇄ Quiz.
-- [ ] Cold start from notification tap goes straight to Quiz; cold start
-      otherwise goes to Home.
+## 7. Navigation wiring — resolved without a formal nav graph
+Home ⇄ Quiz turned out to need nothing more than the nullable-`entryId`
+state already in `MainActivity` (set from the notification intent, cleared
+by Quiz's `onBack`) — a `NavHost`/route graph would be pure ceremony for
+2 screens with one trivial transition and no back-stack complexity. Removed
+the now-unused `navigation-compose` dependency that Part 1 added
+preemptively. Both requirements are already satisfied:
+- [x] Cold start from a notification tap goes straight to Quiz (extra
+      present in the launch intent); cold start otherwise goes to Home
+      (no extra).
+- [x] Reconsider only if a real need for more screens/back-stack shows up.
 
 ## 8. Polish pass
 - [ ] Empty/edge states: all pools disabled, all entries everywhere
