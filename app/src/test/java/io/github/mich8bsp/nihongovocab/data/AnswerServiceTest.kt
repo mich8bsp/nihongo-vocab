@@ -136,6 +136,20 @@ class AnswerServiceTest {
     }
 
     @Test
+    fun giveUpAlwaysRecordsAsWrongRegardlessOfStreak() = runTest {
+        val entryDao = FakeEntryDao(listOf(entry(1, Level.N5, streak = 2)))
+        val service = AnswerService(entryDao, FakePoolStateDao(mapOf(Level.N5 to true)))
+
+        val result = service.giveUp(1)
+
+        assertFalse(result.correct)
+        val updated = entryDao.getById(1)!!
+        assertEquals(0, updated.correctStreak)
+        assertEquals(1, updated.totalWrong)
+        assertEquals(0, updated.totalCorrect)
+    }
+
+    @Test
     fun answerMatchingIsCaseInsensitiveTrimmedAndAcceptsAnyMeaning() {
         val e = entry(1, Level.N5, meanings = listOf("to eat", "to have a meal"))
         assertTrue(isCorrectAnswer(e, "  TO EAT  "))

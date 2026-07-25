@@ -76,6 +76,9 @@ Default: KANA and N5 `enabled = true`, N4–N1 `enabled = false`.
   completion for that entry's level.
 - Implemented in `data/AnswerService.kt` (`isCorrectAnswer` +
   `AnswerService.submitAnswer`), operating on `EntryDao`/`PoolStateDao`.
+  `submitAnswer` and `giveUp` (see "Screens" → Quiz screen) both funnel
+  into a private `recordResult(entry, correct)` so the streak/counters/
+  pool-completion logic lives in exactly one place.
 - The post-answer feedback also shows the entry's `romaji` in parentheses
   after the meanings, e.g. `counter for small animals (~hiki)` — except
   for `KANA` entries, where the answer being checked *is* the romaji
@@ -127,8 +130,13 @@ Default: KANA and N5 `enabled = true`, N4–N1 `enabled = false`.
   actual launch screen now (after seeding completes).
 
 **Quiz screen** (opened via notification tap, with entry id as extra)
-- Word/kana/kanji display, free-text field, submit button.
-- Submit → feedback (correct/incorrect + correct answer) → "Next" button,
+- Word/kana/kanji display, free-text field, Submit button, and a "Give
+  Up" button next to it for when the user doesn't know the answer and
+  doesn't want to type gibberish just to move on — recorded identically
+  to a wrong answer (`AnswerService.giveUp`: streak reset, `totalWrong`
+  incremented, same `AnswerResult` shape), just skipping the string
+  comparison. Unlike Submit it's always enabled (no text required).
+- Submit/Give Up → feedback (correct/incorrect + correct answer) → "Next" button,
   which picks another random active entry (`AnswerService.pickNext()`,
   same selection a notification/the Home Practice button would make) and
   swaps the Quiz screen straight to it — no detour through Home. Falls

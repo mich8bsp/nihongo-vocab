@@ -24,8 +24,16 @@ class AnswerService(
 
     suspend fun submitAnswer(entryId: Long, answer: String): AnswerResult {
         val entry = entryDao.getById(entryId) ?: error("Entry $entryId not found")
-        val correct = isCorrectAnswer(entry, answer)
+        return recordResult(entry, correct = isCorrectAnswer(entry, answer))
+    }
 
+    /** User gave up instead of typing - always recorded as wrong, same as an incorrect answer. */
+    suspend fun giveUp(entryId: Long): AnswerResult {
+        val entry = entryDao.getById(entryId) ?: error("Entry $entryId not found")
+        return recordResult(entry, correct = false)
+    }
+
+    private suspend fun recordResult(entry: Entry, correct: Boolean): AnswerResult {
         val updated = if (correct) {
             entry.copy(
                 correctStreak = minOf(entry.correctStreak + 1, 3),

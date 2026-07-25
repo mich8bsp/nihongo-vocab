@@ -2,6 +2,7 @@ package io.github.mich8bsp.nihongovocab.ui
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
@@ -11,6 +12,7 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -73,15 +75,26 @@ fun QuizScreen(
                     singleLine = true,
                 )
                 Spacer(Modifier.height(16.dp))
-                Button(
-                    onClick = {
-                        scope.launch {
-                            result = answerService.submitAnswer(entryId, answerText)
-                        }
-                    },
-                    enabled = answerText.isNotBlank(),
-                ) {
-                    Text("Submit")
+                Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                    Button(
+                        onClick = {
+                            scope.launch {
+                                result = answerService.submitAnswer(entryId, answerText)
+                            }
+                        },
+                        enabled = answerText.isNotBlank(),
+                    ) {
+                        Text("Submit")
+                    }
+                    OutlinedButton(
+                        onClick = {
+                            scope.launch {
+                                result = answerService.giveUp(entryId)
+                            }
+                        },
+                    ) {
+                        Text("Give Up")
+                    }
                 }
             } else {
                 Text(if (currentResult.correct) "Correct!" else "Incorrect")

@@ -306,3 +306,12 @@ thousands of real quiz answers, then drove the app for real:
       none's left. `./gradlew test assembleDebug` pass; verified live on
       the `Medium_Phone` emulator: Next loads a new entry directly, back
       button still returns Home from the result screen.
+- [x] **Added a "Give Up" button** next to Submit on the Quiz screen, for
+      when the user doesn't know the answer and doesn't want to type
+      gibberish. Recorded identically to a wrong answer (new
+      `AnswerService.giveUp`, sharing the streak/counter/pool-completion
+      logic with `submitAnswer` via a private `recordResult` helper).
+      Added `giveUpAlwaysRecordsAsWrongRegardlessOfStreak` unit test.
+      `./gradlew test assembleDebug` pass; verified live on the
+      `Medium_Phone` emulator: tapping Give Up with an empty answer field
+      shows "Incorrect" + the correct answer, same as a wrong Submit.
