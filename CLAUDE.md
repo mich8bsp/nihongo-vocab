@@ -62,3 +62,30 @@ Everything should be tested in a reasonable manner. Concretely:
 - Run `./gradlew test` (see above for the `JAVA_HOME` needed in this
   environment) before considering a TODO item done, not just after the
   user reports back from a device.
+
+## Verifying UI changes yourself (don't just ask the user)
+
+An AVD named `Medium_Phone` exists and can be driven headlessly, no
+Android Studio GUI needed:
+
+```
+/home/michael/Android/Sdk/emulator/emulator -avd Medium_Phone -no-window -no-audio -no-boot-anim &
+adb wait-for-device
+until [ "$(adb shell getprop sys.boot_completed | tr -d '\r')" = "1" ]; do sleep 3; done
+adb install -r app/build/outputs/apk/debug/app-debug.apk
+adb shell am start -n io.github.mich8bsp.nihongovocab/.MainActivity
+adb shell screencap -p /sdcard/s.png && adb pull /sdcard/s.png <scratchpad>
+```
+
+(`/home/michael/Android/Sdk/platform-tools` needs to be on `PATH` for
+bare `adb`.) Use `adb shell input tap <x> <y>` / `input text "..."` to
+drive it, and `adb shell uiautomator dump` to get real element bounds —
+**don't guess tap coordinates from a screenshot's displayed size**, they
+must be real device pixels (a screenshot's stated "displayed at WxH"
+scale factor needs applying, or just read bounds from the dump instead).
+`adb logcat -d | grep -i fatal` catches crashes; `uiautomator dump` also
+catches layout bugs a screenshot alone won't explain (e.g. an element
+silently stretching to fill its parent).
+
+Kill it when done (`adb emu kill`) — it's the same AVD the user runs from
+Android Studio, don't leave it running/consuming resources unnecessarily.

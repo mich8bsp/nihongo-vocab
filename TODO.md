@@ -104,10 +104,28 @@ See DESIGN.md for the decisions behind these.
       both succeed (verified via CLI, see CLAUDE.md).
 
 ## 4. Quiz screen (UI)
-- [ ] Screen taking an entry id, loading the entry.
-- [ ] Free-text field + submit button.
-- [ ] Feedback state: correct/incorrect + correct answer shown.
-- [ ] "Back to Home" navigates to Home screen.
+- [x] `ui/QuizScreen.kt`: takes `entryId` + `AnswerService` + `onBack`
+      callback (no navigation graph yet — that's Part 7 — so this screen
+      is self-contained and callback-driven). Loads the entry via
+      `AnswerService.getEntry` (added for this).
+- [x] Free-text field + submit button (disabled while blank).
+- [x] Feedback state: correct/incorrect + correct answer shown, replacing
+      the input with a "Back to Home" button.
+- [x] `onBack` callback fires on tap — real wiring happens in Part 7.
+- [x] Verified for real: launched an emulator myself (headless, via the
+      SDK tools directly — no Android Studio GUI needed) and drove the
+      full flow with `adb shell input` + screenshots: correct-answer path,
+      incorrect-answer path, and the callback firing. Caught and fixed a
+      real layout bug this way — a bare `Button` as `Surface`'s sole child
+      with no wrapping `Box`/`Column` stretches to fill the entire screen
+      (confirmed via `uiautomator dump`, not just a screenshot guess).
+      Only affected the temporary `MainActivity` placeholder, not
+      `QuizScreen` itself, but fixed since it was cheap and already found.
+      No automated UI test added — this is presentation logic layered
+      over the already-unit-tested `AnswerService`, consistent with
+      CLAUDE.md's "pure UI layout doesn't need tests."
+- [ ] `MainActivity` still temporarily wired to always show entry id `1`
+      (the first kana entry) — replace with real navigation in Part 7.
 
 ## 5. Home screen (UI)
 - [ ] Per-level stats display (correct/wrong/mastered-of-total), read from

@@ -104,6 +104,11 @@ Default: KANA and N5 `enabled = true`, N4–N1 `enabled = false`.
 **Quiz screen** (opened via notification tap, with entry id as extra)
 - Word/kana/kanji display, free-text field, submit button.
 - Submit → feedback (correct/incorrect + correct answer) → "Back to Home".
+- Implemented in `ui/QuizScreen.kt`: a self-contained composable taking
+  `entryId` + `AnswerService` + an `onBack` callback — no dependency on
+  the navigation graph (Part 7 wires the callback to real navigation;
+  until then `MainActivity` calls it directly with a hardcoded entry id
+  as a temporary stand-in, see TODO.md Part 4).
 
 ## Notifications
 

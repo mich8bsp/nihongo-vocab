@@ -11,6 +11,8 @@ class AnswerService(
     private val entryDao: EntryDao,
     private val poolStateDao: PoolStateDao,
 ) {
+    suspend fun getEntry(entryId: Long): Entry? = entryDao.getById(entryId)
+
     suspend fun submitAnswer(entryId: Long, answer: String): AnswerResult {
         val entry = entryDao.getById(entryId) ?: error("Entry $entryId not found")
         val correct = isCorrectAnswer(entry, answer)
