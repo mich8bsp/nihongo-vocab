@@ -46,7 +46,8 @@
   {
     "text": "明るい",
     "meanings": [
-      "bright (in reference to personality or weather); cheerful"
+      "bright (in reference to personality or weather)",
+      "cheerful"
     ],
     "romaji": "akarui"
   },
@@ -104,7 +105,8 @@
   {
     "text": "足; 脚",
     "meanings": [
-      "foot; leg"
+      "foot",
+      "leg"
     ],
     "romaji": "ashi"
   },
@@ -127,7 +129,9 @@
   {
     "text": "遊ぶ",
     "meanings": [
-      "to play; to spend time pleasantly; to hang out"
+      "to play",
+      "to spend time pleasantly",
+      "to hang out"
     ],
     "romaji": "asobu"
   },
@@ -194,7 +198,10 @@
   {
     "text": "後",
     "meanings": [
-      "afterwards (later); in the future; the rest; since then"
+      "afterwards (later)",
+      "in the future",
+      "the rest",
+      "since then"
     ],
     "romaji": "ato"
   },
@@ -229,8 +236,10 @@
   {
     "text": "あの",
     "meanings": [
-      "that over there; like that",
-      "that way; um..."
+      "that over there",
+      "like that",
+      "that way",
+      "um..."
     ],
     "romaji": "ano"
   },
@@ -261,7 +270,8 @@
   {
     "text": "余り",
     "meanings": [
-      "not very; surplus"
+      "not very",
+      "surplus"
     ],
     "romaji": "amari"
   },
@@ -387,7 +397,8 @@
   {
     "text": "医者",
     "meanings": [
-      "doctor; physician"
+      "doctor",
+      "physician"
     ],
     "romaji": "isha"
   },
@@ -401,15 +412,16 @@
   {
     "text": "忙しい",
     "meanings": [
-      "busy (people",
-      "days)"
+      "busy (people, days)"
     ],
     "romaji": "isogashii"
   },
   {
     "text": "痛い",
     "meanings": [
-      "hurt; painful; sore"
+      "hurt",
+      "painful",
+      "sore"
     ],
     "romaji": "itai"
   },
@@ -424,7 +436,8 @@
     "text": "一日",
     "meanings": [
       "one day (duration)",
-      "one day; first day of the month"
+      "one day",
+      "first day of the month"
     ],
     "romaji": "ichinichi"
   },
@@ -447,7 +460,8 @@
   {
     "text": "五日",
     "meanings": [
-      "five days; fifth day of the month"
+      "five days",
+      "fifth day of the month"
     ],
     "romaji": "itsuka"
   },
@@ -559,9 +573,7 @@
   {
     "text": "上",
     "meanings": [
-      "above (up",
-      "top",
-      "etc.)",
+      "above (up, top, etc.)",
       "over",
       "on top of"
     ],
@@ -601,7 +613,9 @@
   {
     "text": "うち",
     "meanings": [
-      "home; house; my place"
+      "home",
+      "house",
+      "my place"
     ],
     "romaji": "uchi"
   },
@@ -630,7 +644,8 @@
   {
     "text": "うるさい",
     "meanings": [
-      "noisy; annoying"
+      "noisy",
+      "annoying"
     ],
     "romaji": "urusai"
   },
@@ -645,7 +660,9 @@
   {
     "text": "絵",
     "meanings": [
-      "a painting; a picture; a drawing"
+      "a painting",
+      "a picture",
+      "a drawing"
     ],
     "romaji": "e"
   },
@@ -725,7 +742,8 @@
   {
     "text": "多い",
     "meanings": [
-      "many; there are a lot"
+      "many",
+      "there are a lot"
     ],
     "romaji": "ooi"
   },
@@ -777,15 +795,17 @@
   {
     "text": "起きる",
     "meanings": [
-      "to get up (e.g.",
-      "from sleeping); to happen"
+      "to get up (e.g., from sleeping)",
+      "to happen"
     ],
     "romaji": "okiru"
   },
   {
     "text": "置く",
     "meanings": [
-      "to put; to lay; to place"
+      "to put",
+      "to lay",
+      "to place"
     ],
     "romaji": "oku"
   },
@@ -799,7 +819,8 @@
   {
     "text": "お酒",
     "meanings": [
-      "sake; alcohol"
+      "sake",
+      "alcohol"
     ],
     "romaji": "osake"
   },
@@ -841,15 +862,15 @@
     "meanings": [
       "to push",
       "to press",
-      "to stamp (e.g.",
-      "a passport)"
+      "to stamp (e.g., a passport)"
     ],
     "romaji": "osu"
   },
   {
     "text": "遅い",
     "meanings": [
-      "slow; (to be) late"
+      "slow",
+      "(to be) late"
     ],
     "romaji": "osoi"
   },
@@ -865,8 +886,7 @@
     "meanings": [
       "toilet",
       "restroom",
-      "bathroom (lit.",
-      "a place to wash one's hands)"
+      "bathroom (lit., a place to wash one's hands)"
     ],
     "romaji": "otearai"
   },
@@ -998,7 +1018,8 @@
   {
     "text": "重い",
     "meanings": [
-      "heavy; serious"
+      "heavy",
+      "serious"
     ],
     "romaji": "omoi"
   },
@@ -1071,7 +1092,8 @@
   {
     "text": "外国",
     "meanings": [
-      "foreign country; abroad"
+      "foreign country",
+      "abroad"
     ],
     "romaji": "gaikoku"
   },
@@ -1137,15 +1159,15 @@
   {
     "text": "かかる",
     "meanings": [
-      "it takes (amount of time",
-      "money) (v.i.)"
+      "it takes (amount of time, money) (v.i.)"
     ],
     "romaji": "kakaru"
   },
   {
     "text": "鍵",
     "meanings": [
-      "a lock; a key"
+      "a lock",
+      "a key"
     ],
     "romaji": "kagi"
   },
@@ -1173,17 +1195,16 @@
   {
     "text": "掛ける",
     "meanings": [
-      "to put on (e.g.",
-      "glasses); to hang (e.g.",
-      "on a wall)"
+      "to put on (e.g., glasses)",
+      "to hang (e.g., on a wall)"
     ],
     "romaji": "kakeru"
   },
   {
     "text": "かける",
     "meanings": [
-      "to dial/call (e.g.",
-      "phone); to sit down"
+      "to dial/call (e.g., phone)",
+      "to sit down"
     ],
     "romaji": "kakeru"
   },
@@ -1221,7 +1242,8 @@
   {
     "text": "方",
     "meanings": [
-      "-- honorific form for 人 (ひと) --; way of doing"
+      "-- honorific form for 人 (ひと) --",
+      "way of doing"
     ],
     "romaji": "kata"
   },
@@ -1264,16 +1286,15 @@
   {
     "text": "家庭",
     "meanings": [
-      "home; family"
+      "home",
+      "family"
     ],
     "romaji": "katei"
   },
   {
     "text": "角",
     "meanings": [
-      "corner (e.g.",
-      "desk",
-      "pavement)"
+      "corner (e.g., desk, pavement)"
     ],
     "romaji": "kado"
   },
@@ -1296,8 +1317,7 @@
     "text": "かぶる",
     "meanings": [
       "to wear",
-      "to put on (e.g.",
-      "a hat on the head)"
+      "to put on (e.g., a hat on the head)"
     ],
     "romaji": "kaburu"
   },
@@ -1325,14 +1345,16 @@
   {
     "text": "辛い",
     "meanings": [
-      "hot and spicy; salty"
+      "hot and spicy",
+      "salty"
     ],
     "romaji": "karai"
   },
   {
     "text": "体",
     "meanings": [
-      "body; health"
+      "body",
+      "health"
     ],
     "romaji": "karada"
   },
@@ -1399,7 +1421,8 @@
   {
     "text": "漢字",
     "meanings": [
-      "kanji; Chinese character"
+      "kanji",
+      "Chinese character"
     ],
     "romaji": "kanji"
   },
@@ -1555,14 +1578,16 @@
   {
     "text": "切る",
     "meanings": [
-      "to cut; to hang up (a phone)"
+      "to cut",
+      "to hang up (a phone)"
     ],
     "romaji": "kiru"
   },
   {
     "text": "着る",
     "meanings": [
-      "to put on (clothes above your waist); to wear"
+      "to put on (clothes above your waist)",
+      "to wear"
     ],
     "romaji": "kiru"
   },
@@ -1627,7 +1652,8 @@
   {
     "text": "口",
     "meanings": [
-      "job opening; mouth"
+      "job opening",
+      "mouth"
     ],
     "romaji": "kuchi"
   },
@@ -1649,7 +1675,8 @@
   {
     "text": "国",
     "meanings": [
-      "country; place of origin"
+      "country",
+      "place of origin"
     ],
     "romaji": "kuni"
   },
@@ -1723,7 +1750,8 @@
   {
     "text": "黒い",
     "meanings": [
-      "black; dark"
+      "black",
+      "dark"
     ],
     "romaji": "kuroi"
   },
@@ -1753,7 +1781,8 @@
   {
     "text": "結構",
     "meanings": [
-      "splendid; enough",
+      "splendid",
+      "enough",
       "tolerably"
     ],
     "romaji": "kekkou"
@@ -1790,9 +1819,7 @@
   {
     "text": "～個",
     "meanings": [
-      "counter for small items (e.g.",
-      "fruits",
-      "cups)"
+      "counter for small items (e.g., fruits, cups)"
     ],
     "romaji": "~ko"
   },
@@ -1849,8 +1876,8 @@
   {
     "text": "コート",
     "meanings": [
-      "coat; court (e.g.",
-      "tennis)"
+      "coat",
+      "court (e.g., tennis)"
     ],
     "romaji": "kooto"
   },
@@ -1880,7 +1907,8 @@
   {
     "text": "九日",
     "meanings": [
-      "nine days; ninth day of the month"
+      "nine days",
+      "ninth day of the month"
     ],
     "romaji": "kokonoka"
   },
@@ -1910,21 +1938,25 @@
   {
     "text": "こちら",
     "meanings": [
-      "this person (polite); this way (polite)"
+      "this person (polite)",
+      "this way (polite)"
     ],
     "romaji": "kochira"
   },
   {
     "text": "こっち",
     "meanings": [
-      "this person; this direction; this side"
+      "this person",
+      "this direction",
+      "this side"
     ],
     "romaji": "kotchi"
   },
   {
     "text": "コップ",
     "meanings": [
-      "a tumbler; a glass"
+      "a tumbler",
+      "a glass"
     ],
     "romaji": "koppu"
   },
@@ -1938,7 +1970,9 @@
   {
     "text": "言葉",
     "meanings": [
-      "language; word(s); expression(s)"
+      "language",
+      "word(s)",
+      "expression(s)"
     ],
     "romaji": "kotoba"
   },
@@ -1959,7 +1993,8 @@
   {
     "text": "御飯",
     "meanings": [
-      "rice (cooked); meal"
+      "rice (cooked)",
+      "meal"
     ],
     "romaji": "gohan"
   },
@@ -2056,7 +2091,8 @@
   {
     "text": "先",
     "meanings": [
-      "future; recent",
+      "future",
+      "recent",
       "previous"
     ],
     "romaji": "saki"
@@ -2071,7 +2107,8 @@
   {
     "text": "作文",
     "meanings": [
-      "essay; composition"
+      "essay",
+      "composition"
     ],
     "romaji": "sakubun"
   },
@@ -2079,8 +2116,7 @@
     "text": "差す",
     "meanings": [
       "to raise (stretch out) hands",
-      "to raise (e.g.",
-      "umbrella)"
+      "to raise (e.g., umbrella)"
     ],
     "romaji": "sasu"
   },
@@ -2168,7 +2204,8 @@
   {
     "text": "しかし",
     "meanings": [
-      "however; but"
+      "however",
+      "but"
     ],
     "romaji": "shikashi"
   },
@@ -2307,7 +2344,8 @@
   {
     "text": "写真",
     "meanings": [
-      "a picture; a photograph"
+      "a picture",
+      "a photograph"
     ],
     "romaji": "shashin"
   },
@@ -2465,7 +2503,8 @@
   {
     "text": "～すぎ",
     "meanings": [
-      "past; to exceed",
+      "past",
+      "to exceed",
       "~ too much"
     ],
     "romaji": "~sugi"
@@ -2473,7 +2512,8 @@
   {
     "text": "少ない",
     "meanings": [
-      "a little; a few"
+      "a little",
+      "a few"
     ],
     "romaji": "sukunai"
   },
@@ -2548,10 +2588,8 @@
     "text": "する",
     "meanings": [
       "to do",
-      "to try; to wear small items (e.g.",
-      "necktie",
-      "watch",
-      "etc.)"
+      "to try",
+      "to wear small items (e.g., necktie, watch, etc.)"
     ],
     "romaji": "suru"
   },
@@ -2573,7 +2611,8 @@
   {
     "text": "生徒",
     "meanings": [
-      "student; pupil"
+      "student",
+      "pupil"
     ],
     "romaji": "seito"
   },
@@ -2601,7 +2640,8 @@
   {
     "text": "狭い",
     "meanings": [
-      "narrow; not spacious"
+      "narrow",
+      "not spacious"
     ],
     "romaji": "semai"
   },
@@ -2637,7 +2677,9 @@
     "text": "先生",
     "meanings": [
       "teacher",
-      "professor; master; doctor"
+      "professor",
+      "master",
+      "doctor"
     ],
     "romaji": "sensei"
   },
@@ -2661,7 +2703,8 @@
   {
     "text": "そう; そうです",
     "meanings": [
-      "yes; appears",
+      "yes",
+      "appears",
       "to be the case"
     ],
     "romaji": "sou; soudesu"
@@ -2686,7 +2729,8 @@
     "text": "そこ",
     "meanings": [
       "that place",
-      "there; bottom",
+      "there",
+      "bottom",
       "sole"
     ],
     "romaji": "soko"
@@ -2727,7 +2771,8 @@
     "meanings": [
       "near",
       "close",
-      "beside; Japanese traditional buckwheat noodle"
+      "beside",
+      "Japanese traditional buckwheat noodle"
     ],
     "romaji": "soba"
   },
@@ -2764,14 +2809,16 @@
   {
     "text": "～台",
     "meanings": [
-      "counter for vehicles; machines"
+      "counter for vehicles",
+      "machines"
     ],
     "romaji": "~dai"
   },
   {
     "text": "大学",
     "meanings": [
-      "college; university"
+      "college",
+      "university"
     ],
     "romaji": "daigaku"
   },
@@ -2785,7 +2832,9 @@
   {
     "text": "大丈夫",
     "meanings": [
-      "It's ok (all right); No need to worry; Everything is under control"
+      "It's ok (all right)",
+      "No need to worry",
+      "Everything is under control"
     ],
     "romaji": "daijoubu"
   },
@@ -2814,7 +2863,8 @@
   {
     "text": "大変",
     "meanings": [
-      "very; difficult",
+      "very",
+      "difficult",
       "hard"
     ],
     "romaji": "taihen"
@@ -2823,7 +2873,8 @@
     "text": "高い",
     "meanings": [
       "tall",
-      "high; expensive"
+      "high",
+      "expensive"
     ],
     "romaji": "takai"
   },
@@ -2854,7 +2905,8 @@
   {
     "text": "出す",
     "meanings": [
-      "to take (something) out; to hand in (something)"
+      "to take (something) out",
+      "to hand in (something)"
     ],
     "romaji": "dasu"
   },
@@ -2998,14 +3050,17 @@
   {
     "text": "違う",
     "meanings": [
-      "to be different; to differ; wrong"
+      "to be different",
+      "to differ",
+      "wrong"
     ],
     "romaji": "chigau"
   },
   {
     "text": "近く",
     "meanings": [
-      "nearby; in the neighborhood"
+      "nearby",
+      "in the neighborhood"
     ],
     "romaji": "chikaku"
   },
@@ -3058,8 +3113,8 @@
     "text": "ちょっと",
     "meanings": [
       "a little",
-      "somewhat; just a little",
-      "somewhat"
+      "somewhat",
+      "just a little"
     ],
     "romaji": "chotto"
   },
@@ -3073,7 +3128,8 @@
   {
     "text": "疲れる",
     "meanings": [
-      "to get (become) tired; to become fatigued"
+      "to get (become) tired",
+      "to become fatigued"
     ],
     "romaji": "tsukareru"
   },
@@ -3110,8 +3166,8 @@
   {
     "text": "つける",
     "meanings": [
-      "to turn on (e.g.",
-      "a light); to take"
+      "to turn on (e.g., a light)",
+      "to take"
     ],
     "romaji": "tsukeru"
   },
@@ -3126,15 +3182,15 @@
     "text": "つまらない",
     "meanings": [
       "boring",
-      "dull; insignificant"
+      "dull",
+      "insignificant"
     ],
     "romaji": "tsumaranai"
   },
   {
     "text": "冷たい",
     "meanings": [
-      "cold (things",
-      "people)"
+      "cold (things, people)"
     ],
     "romaji": "tsumetai"
   },
@@ -3177,7 +3233,8 @@
   {
     "text": "出かける",
     "meanings": [
-      "to go out; to depart"
+      "to go out",
+      "to depart"
     ],
     "romaji": "dekakeru"
   },
@@ -3288,7 +3345,9 @@
   {
     "text": "～度",
     "meanings": [
-      "counter for occurrences; ~ degree; ~ point"
+      "counter for occurrences",
+      "~ degree",
+      "~ point"
     ],
     "romaji": "~do"
   },
@@ -3302,7 +3361,8 @@
   {
     "text": "トイレ",
     "meanings": [
-      "bathroom; toilet"
+      "bathroom",
+      "toilet"
     ],
     "romaji": "toire"
   },
@@ -3341,7 +3401,9 @@
   {
     "text": "どうも",
     "meanings": [
-      "Thank you; somehow; no matter how hard one may try"
+      "Thank you",
+      "somehow",
+      "no matter how hard one may try"
     ],
     "romaji": "doumo"
   },
@@ -3356,7 +3418,8 @@
   {
     "text": "十日",
     "meanings": [
-      "ten days; tenth day of the month"
+      "ten days",
+      "tenth day of the month"
     ],
     "romaji": "tooka"
   },
@@ -3370,7 +3433,8 @@
   {
     "text": "時計",
     "meanings": [
-      "a watch; a clock"
+      "a watch",
+      "a clock"
     ],
     "romaji": "tokei"
   },
@@ -3407,7 +3471,8 @@
   {
     "text": "どちら",
     "meanings": [
-      "which (one) (way); where (polite)"
+      "which (one) (way)",
+      "where (polite)"
     ],
     "romaji": "dochira"
   },
@@ -3482,8 +3547,7 @@
   {
     "text": "鳥",
     "meanings": [
-      "chicken (lit.",
-      "bird)"
+      "chicken (lit., bird)"
     ],
     "romaji": "tori"
   },
@@ -3497,7 +3561,8 @@
   {
     "text": "取る",
     "meanings": [
-      "to take (a class); to get (a grade)"
+      "to take (a class)",
+      "to get (a grade)"
     ],
     "romaji": "toru"
   },
@@ -3615,7 +3680,8 @@
   {
     "text": "七日",
     "meanings": [
-      "seven days; seventh day (of the month)"
+      "seven days",
+      "seventh day (of the month)"
     ],
     "romaji": "nanoka"
   },
@@ -3644,7 +3710,8 @@
   {
     "text": "並べる",
     "meanings": [
-      "to put (things) side by side; to line up"
+      "to put (things) side by side",
+      "to line up"
     ],
     "romaji": "naraberu"
   },
@@ -3709,7 +3776,8 @@
   {
     "text": "荷物",
     "meanings": [
-      "luggage; baggage"
+      "luggage",
+      "baggage"
     ],
     "romaji": "nimotsu"
   },
@@ -3759,7 +3827,9 @@
   {
     "text": "寝る",
     "meanings": [
-      "to sleep; to go to sleep; to go to bed"
+      "to sleep",
+      "to go to sleep",
+      "to go to bed"
     ],
     "romaji": "neru"
   },
@@ -3919,7 +3989,9 @@
   {
     "text": "バス",
     "meanings": [
-      "bus; bath; bass"
+      "bus",
+      "bath",
+      "bass"
     ],
     "romaji": "basu"
   },
@@ -4020,7 +4092,9 @@
   {
     "text": "貼る",
     "meanings": [
-      "to post; to paste; to attach"
+      "to post",
+      "to paste",
+      "to attach"
     ],
     "romaji": "haru"
   },
@@ -4041,8 +4115,7 @@
   {
     "text": "半",
     "meanings": [
-      "half (e.g.",
-      "にじはん | half-past two)"
+      "half (e.g., にじはん | half-past two)"
     ],
     "romaji": "han"
   },
@@ -4056,7 +4129,8 @@
   {
     "text": "～番",
     "meanings": [
-      "~st; ~th best"
+      "~st",
+      "~th best"
     ],
     "romaji": "~ban"
   },
@@ -4115,7 +4189,8 @@
     "text": "引く",
     "meanings": [
       "to pull",
-      "to draw; subtract"
+      "to draw",
+      "subtract"
     ],
     "romaji": "hiku"
   },
@@ -4202,7 +4277,8 @@
   {
     "text": "病気",
     "meanings": [
-      "illness; sickness"
+      "illness",
+      "sickness"
     ],
     "romaji": "byouki"
   },
@@ -4232,7 +4308,9 @@
   {
     "text": "広い",
     "meanings": [
-      "spacious; wide; broad"
+      "spacious",
+      "wide",
+      "broad"
     ],
     "romaji": "hiroi"
   },
@@ -4267,8 +4345,7 @@
   {
     "text": "吹く",
     "meanings": [
-      "to blow (wind",
-      "etc.)"
+      "to blow (wind, etc.)"
     ],
     "romaji": "fuku"
   },
@@ -4303,7 +4380,8 @@
   {
     "text": "二日",
     "meanings": [
-      "two days; second day of the month"
+      "two days",
+      "second day of the month"
     ],
     "romaji": "futsuka"
   },
@@ -4326,18 +4404,14 @@
     "text": "降る",
     "meanings": [
       "to precipitate",
-      "to fall (e.g.",
-      "rain",
-      "snow",
-      "etc.)"
+      "to fall (e.g., rain, snow, etc.)"
     ],
     "romaji": "furu"
   },
   {
     "text": "古い",
     "meanings": [
-      "old (in reference to objects",
-      "not people)",
+      "old (in reference to objects, not people)",
       "aged",
       "ancient"
     ],
@@ -4427,7 +4501,8 @@
   {
     "text": "帽子",
     "meanings": [
-      "hat; cap"
+      "hat",
+      "cap"
     ],
     "romaji": "boushi"
   },
@@ -4456,7 +4531,8 @@
   {
     "text": "ポスト",
     "meanings": [
-      "mailbox; post",
+      "mailbox",
+      "post",
       "position"
     ],
     "romaji": "posuto"
@@ -4600,7 +4676,8 @@
   {
     "text": "また",
     "meanings": [
-      "and; furthermore"
+      "and",
+      "furthermore"
     ],
     "romaji": "mata"
   },
@@ -4616,7 +4693,8 @@
   {
     "text": "町",
     "meanings": [
-      "town; city"
+      "town",
+      "city"
     ],
     "romaji": "machi"
   },
@@ -4674,7 +4752,8 @@
   {
     "text": "磨く",
     "meanings": [
-      "to brush (teeth); to polish"
+      "to brush (teeth)",
+      "to polish"
     ],
     "romaji": "migaku"
   },
@@ -4719,7 +4798,8 @@
     "text": "道",
     "meanings": [
       "road",
-      "street; way",
+      "street",
+      "way",
       "directions"
     ],
     "romaji": "michi"
@@ -4788,7 +4868,8 @@
   {
     "text": "六日",
     "meanings": [
-      "six days; sixth day of month"
+      "six days",
+      "sixth day of month"
     ],
     "romaji": "muika"
   },
@@ -4845,7 +4926,9 @@
   {
     "text": "もう",
     "meanings": [
-      "already; again; more"
+      "already",
+      "again",
+      "more"
     ],
     "romaji": "mou"
   },
@@ -4867,7 +4950,8 @@
     "text": "持つ",
     "meanings": [
       "to hold",
-      "to carry; to possess"
+      "to carry",
+      "to possess"
     ],
     "romaji": "motsu"
   },
@@ -4932,14 +5016,17 @@
   {
     "text": "安い",
     "meanings": [
-      "inexpensive; cheap (things)"
+      "inexpensive",
+      "cheap (things)"
     ],
     "romaji": "yasui"
   },
   {
     "text": "休み",
     "meanings": [
-      "holiday; day off; absence"
+      "holiday",
+      "day off",
+      "absence"
     ],
     "romaji": "yasumi"
   },
@@ -4969,10 +5056,8 @@
   {
     "text": "やる",
     "meanings": [
-      "to do; to give (to pets",
-      "parents",
-      "siblings",
-      "etc.)"
+      "to do",
+      "to give (to pets, parents, siblings, etc.)"
     ],
     "romaji": "yaru"
   },
@@ -5032,7 +5117,8 @@
   {
     "text": "八日",
     "meanings": [
-      "eight days; eighth day of the month"
+      "eight days",
+      "eighth day of the month"
     ],
     "romaji": "youka"
   },
@@ -5047,7 +5133,8 @@
     "text": "よく",
     "meanings": [
       "frequently",
-      "often (much); well",
+      "often (much)",
+      "well",
       "skillfully"
     ],
     "romaji": "yoku"
@@ -5055,14 +5142,17 @@
   {
     "text": "横",
     "meanings": [
-      "beside; side; width"
+      "beside",
+      "side",
+      "width"
     ],
     "romaji": "yoko"
   },
   {
     "text": "四日",
     "meanings": [
-      "four days; fourth day of the month"
+      "four days",
+      "fourth day of the month"
     ],
     "romaji": "yokka"
   },
@@ -5076,7 +5166,8 @@
   {
     "text": "呼ぶ",
     "meanings": [
-      "to call (one's name); to invite"
+      "to call (one's name)",
+      "to invite"
     ],
     "romaji": "yobu"
   },
@@ -5155,15 +5246,15 @@
   {
     "text": "両親",
     "meanings": [
-      "parents (lit.",
-      "both parents)"
+      "parents (lit., both parents)"
     ],
     "romaji": "ryoushin"
   },
   {
     "text": "料理",
     "meanings": [
-      "cooking; cuisine"
+      "cooking",
+      "cuisine"
     ],
     "romaji": "ryouri"
   },
@@ -5267,7 +5358,8 @@
   {
     "text": "渡す",
     "meanings": [
-      "to hand (something) over (v.t.); to get across"
+      "to hand (something) over (v.t.)",
+      "to get across"
     ],
     "romaji": "watasu"
   },
@@ -5283,7 +5375,8 @@
     "text": "悪い",
     "meanings": [
       "bad",
-      "sinful; inferior"
+      "sinful",
+      "inferior"
     ],
     "romaji": "warui"
   }

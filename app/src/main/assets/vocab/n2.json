@@ -434,7 +434,8 @@
   {
     "text": "蒸発",
     "meanings": [
-      "evaporation; unexplained disappearance"
+      "evaporation",
+      "unexplained disappearance"
     ],
     "romaji": "jouhatsu"
   },
@@ -1026,7 +1027,8 @@
   {
     "text": "ステージ",
     "meanings": [
-      "stage; performance"
+      "stage",
+      "performance"
     ],
     "romaji": "suteeji"
   },
@@ -1181,9 +1183,7 @@
   {
     "text": "制作",
     "meanings": [
-      "work (e.g.",
-      "film",
-      "book)"
+      "work (e.g., film, book)"
     ],
     "romaji": "seisaku"
   },
@@ -1300,7 +1300,8 @@
   {
     "text": "背負う",
     "meanings": [
-      "to be burdened with; to carry on (one's) back or shoulder(s)"
+      "to be burdened with",
+      "to carry on (one's) back or shoulder(s)"
     ],
     "romaji": "seou"
   },
@@ -1339,7 +1340,8 @@
   {
     "text": "接する",
     "meanings": [
-      "to attend to (someone); to associate with"
+      "to attend to (someone)",
+      "to associate with"
     ],
     "romaji": "sessuru"
   },
@@ -1357,7 +1359,8 @@
       "connection",
       "union",
       "join",
-      "link; changing trains"
+      "link",
+      "changing trains"
     ],
     "romaji": "setsuzoku"
   },
@@ -1910,7 +1913,8 @@
     "meanings": [
       "first",
       "foremost",
-      "&nbsp;&nbsp;#1"
+      "&nbsp",
+      "#1"
     ],
     "romaji": "daiichi (toriwake)"
   },
@@ -2144,9 +2148,7 @@
   {
     "text": "発",
     "meanings": [
-      "to depart (e.g.",
-      "on a plane",
-      "train)"
+      "to depart (e.g., on a plane, train)"
     ],
     "romaji": "hatsu"
   },
@@ -2511,8 +2513,7 @@
   {
     "text": "お願いします",
     "meanings": [
-      "Please (lit.",
-      "I request)"
+      "Please (lit., I request)"
     ],
     "romaji": "onegaishimasu"
   },
@@ -2639,7 +2640,8 @@
     "text": "お休み",
     "meanings": [
       "holiday",
-      "absence; (exp.) Good night"
+      "absence",
+      "(exp.) Good night"
     ],
     "romaji": "oyasumi"
   },
@@ -2750,7 +2752,8 @@
   {
     "text": "カーブ",
     "meanings": [
-      "curve; curve ball (baseball)"
+      "curve",
+      "curve ball (baseball)"
     ],
     "romaji": "kaabu"
   },
@@ -3083,9 +3086,7 @@
     "text": "可決",
     "meanings": [
       "approval",
-      "adoption (e.g.",
-      "motion",
-      "bill)",
+      "adoption (e.g., motion, bill)",
       "passage"
     ],
     "romaji": "kaketsu"
@@ -3361,8 +3362,7 @@
   {
     "text": "カバー",
     "meanings": [
-      "cover (e.g.",
-      "book)"
+      "cover (e.g., book)"
     ],
     "romaji": "kabaa"
   },
@@ -3399,7 +3399,8 @@
   {
     "text": "構いません",
     "meanings": [
-      "it's all right; one doesn’t mind"
+      "it's all right",
+      "one doesn’t mind"
     ],
     "romaji": "kamaimasen"
   },
@@ -3513,8 +3514,7 @@
   {
     "text": "～刊",
     "meanings": [
-      "~ issued (magazine",
-      "newspaper)"
+      "~ issued (magazine, newspaper)"
     ],
     "romaji": "~kan"
   },
@@ -3662,7 +3662,8 @@
     "text": "観念",
     "meanings": [
       "idea",
-      "notion; sense"
+      "notion",
+      "sense"
     ],
     "romaji": "kannen"
   },
@@ -3699,8 +3700,7 @@
   {
     "text": "漢和",
     "meanings": [
-      "Chinese Character-Japanese (e.g.",
-      "dictionary)"
+      "Chinese Character-Japanese (e.g., dictionary)"
     ],
     "romaji": "kanwa"
   },
@@ -4020,7 +4020,8 @@
     "text": "行列",
     "meanings": [
       "line",
-      "procession; matrix (math)"
+      "procession",
+      "matrix (math)"
     ],
     "romaji": "gyouretsu"
   },
@@ -4246,7 +4247,8 @@
   {
     "text": "～口",
     "meanings": [
-      "~ opening; ~ entrance",
+      "~ opening",
+      "~ entrance",
       "~ exit"
     ],
     "romaji": "~kuchi"
@@ -4400,8 +4402,7 @@
   {
     "text": "敬語",
     "meanings": [
-      "honorific language (lit.",
-      "respect language)"
+      "honorific language (lit., respect language)"
     ],
     "romaji": "keigo"
   },
@@ -4622,7 +4623,8 @@
     "text": "険しい",
     "meanings": [
       "steep",
-      "rugged; severe"
+      "rugged",
+      "severe"
     ],
     "romaji": "kewashii"
   },
@@ -4772,7 +4774,8 @@
     "text": "恋しい",
     "meanings": [
       "dear",
-      "beloved; to miss"
+      "beloved",
+      "to miss"
     ],
     "romaji": "koishii"
   },
@@ -4800,7 +4803,8 @@
   {
     "text": "～号",
     "meanings": [
-      "counter for magazine; the name of ship"
+      "counter for magazine",
+      "the name of ship"
     ],
     "romaji": "~gou"
   },
@@ -4831,7 +4835,8 @@
   {
     "text": "高級",
     "meanings": [
-      "high class; first-rate"
+      "high class",
+      "first-rate"
     ],
     "romaji": "koukyuu"
   },
@@ -4991,7 +4996,8 @@
     "text": "高度",
     "meanings": [
       "altitude",
-      "height; advanced"
+      "height",
+      "advanced"
     ],
     "romaji": "koudo"
   },
@@ -5066,7 +5072,8 @@
   {
     "text": "交流",
     "meanings": [
-      "exchange; alternating current"
+      "exchange",
+      "alternating current"
     ],
     "romaji": "kouryuu"
   },
@@ -5232,7 +5239,8 @@
   {
     "text": "コック",
     "meanings": [
-      "cook; tap",
+      "cook",
+      "tap",
       "cock"
     ],
     "romaji": "kokku"
@@ -5312,7 +5320,8 @@
   {
     "text": "御免",
     "meanings": [
-      "declining (something); pardon",
+      "declining (something)",
+      "pardon",
       "sorry"
     ],
     "romaji": "gomen"
@@ -5362,7 +5371,8 @@
   {
     "text": "コレクション",
     "meanings": [
-      "collection; correction"
+      "collection",
+      "correction"
     ],
     "romaji": "korekushon"
   },
@@ -5422,7 +5432,8 @@
   {
     "text": "コンセント",
     "meanings": [
-      "consent; power outlet"
+      "consent",
+      "power outlet"
     ],
     "romaji": "konsento"
   },
@@ -5444,8 +5455,7 @@
     "text": "サークル",
     "meanings": [
       "circle",
-      "sports club (e.g.",
-      "at a company)"
+      "sports club (e.g., at a company)"
     ],
     "romaji": "saakuru"
   },
@@ -5562,7 +5572,8 @@
     "text": "遡る",
     "meanings": [
       "to go back",
-      "to date back; ascend"
+      "to date back",
+      "ascend"
     ],
     "romaji": "sakanoboru"
   },
@@ -5687,7 +5698,8 @@
   {
     "text": "(かさを～) さす",
     "meanings": [
-      "to open; hold (an umbrella)"
+      "to open",
+      "hold (an umbrella)"
     ],
     "romaji": "(kasawo~) sasu"
   },
@@ -5710,8 +5722,7 @@
   {
     "text": "雑音",
     "meanings": [
-      "noise (jarring",
-      "grating)"
+      "noise (jarring, grating)"
     ],
     "romaji": "zatsuon"
   },
@@ -5771,7 +5782,8 @@
   {
     "text": "サラリーマン",
     "meanings": [
-      "salaryman; company employee"
+      "salaryman",
+      "company employee"
     ],
     "romaji": "sarariiman"
   },
@@ -6037,7 +6049,8 @@
   {
     "text": "姿勢",
     "meanings": [
-      "attitude; posture"
+      "attitude",
+      "posture"
     ],
     "romaji": "shisei"
   },
@@ -6806,7 +6819,8 @@
   {
     "text": "～羽",
     "meanings": [
-      "counter for rabbits; birds"
+      "counter for rabbits",
+      "birds"
     ],
     "romaji": "~wa"
   },
@@ -7291,7 +7305,9 @@
   {
     "text": "以後",
     "meanings": [
-      "after this; from now on; hereafter"
+      "after this",
+      "from now on",
+      "hereafter"
     ],
     "romaji": "igo"
   },
@@ -7564,7 +7580,8 @@
   {
     "text": "浮かべる",
     "meanings": [
-      "to float; to express"
+      "to float",
+      "to express"
     ],
     "romaji": "ukaberu"
   },
@@ -7768,8 +7785,7 @@
   {
     "text": "英和",
     "meanings": [
-      "English-Japanese (e.g.",
-      "dictionary)"
+      "English-Japanese (e.g., dictionary)"
     ],
     "romaji": "eiwa"
   },
@@ -7892,8 +7908,7 @@
   {
     "text": "追い越す",
     "meanings": [
-      "to pass (e.g.",
-      "car)",
+      "to pass (e.g., car)",
       "to outdistance",
       "to outstrip"
     ],
@@ -8190,7 +8205,9 @@
   {
     "text": "～通り",
     "meanings": [
-      "in accordance with ~; following ~; ~ street",
+      "in accordance with ~",
+      "following ~",
+      "~ street",
       "~ avenue"
     ],
     "romaji": "~toori"
@@ -8261,7 +8278,8 @@
   {
     "text": "溶け込む",
     "meanings": [
-      "to melt into; to become a part of"
+      "to melt into",
+      "to become a part of"
     ],
     "romaji": "tokekomu"
   },
@@ -8338,7 +8356,8 @@
   {
     "text": "留まる",
     "meanings": [
-      "to be fixed; to abide",
+      "to be fixed",
+      "to abide",
       "to stay (in the one place)"
     ],
     "romaji": "todomaru"
@@ -8412,8 +8431,8 @@
   {
     "text": "採る",
     "meanings": [
-      "to adopt (measure",
-      "proposal); to pick (fruit)"
+      "to adopt (measure, proposal)",
+      "to pick (fruit)"
     ],
     "romaji": "toru"
   },
@@ -8755,8 +8774,7 @@
   {
     "text": "鈍い",
     "meanings": [
-      "dull (e.g.",
-      "a knife)",
+      "dull (e.g., a knife)",
       "thickheaded",
       "slow (opposite of fast)",
       "stupid"
@@ -8781,7 +8799,8 @@
     "text": "睨む",
     "meanings": [
       "to glare at",
-      "to stare; to keep an eye on"
+      "to stare",
+      "to keep an eye on"
     ],
     "romaji": "niramu"
   },
@@ -8945,9 +8964,7 @@
   {
     "text": "乗換",
     "meanings": [
-      "a transfer (e.g.",
-      "trains",
-      "buses)"
+      "a transfer (e.g., trains, buses)"
     ],
     "romaji": "norikae"
   },
@@ -9070,8 +9087,7 @@
   {
     "text": "～泊",
     "meanings": [
-      "counter for staying (e.g.",
-      "2 nights)"
+      "counter for staying (e.g., 2 nights)"
     ],
     "romaji": "~haku"
   },
@@ -9102,7 +9118,9 @@
   {
     "text": "挟む",
     "meanings": [
-      "to pinch; to hold between; to insert"
+      "to pinch",
+      "to hold between",
+      "to insert"
     ],
     "romaji": "hasamu"
   },
@@ -9208,15 +9226,15 @@
   {
     "text": "発想",
     "meanings": [
-      "idea; way of thinking (same as 考え方 (かんがえかた))"
+      "idea",
+      "way of thinking (same as 考え方 (かんがえかた))"
     ],
     "romaji": "hassou"
   },
   {
     "text": "発電",
     "meanings": [
-      "generation (e.g.",
-      "power)"
+      "generation (e.g., power)"
     ],
     "romaji": "hatsuden"
   },
@@ -9277,9 +9295,7 @@
   {
     "text": "ばね",
     "meanings": [
-      "spring (e.g.",
-      "coil",
-      "leaf)"
+      "spring (e.g., coil, leaf)"
     ],
     "romaji": "bane"
   },
@@ -9479,7 +9495,8 @@
   {
     "text": "比較的",
     "meanings": [
-      "comparatively; relatively"
+      "comparatively",
+      "relatively"
     ],
     "romaji": "hikakuteki"
   },
@@ -9590,7 +9607,8 @@
   {
     "text": "ぴたり",
     "meanings": [
-      "exactly; close-fitting"
+      "exactly",
+      "close-fitting"
     ],
     "romaji": "pitari"
   },
@@ -9779,7 +9797,8 @@
   {
     "text": "響く",
     "meanings": [
-      "to resound; to affect"
+      "to resound",
+      "to affect"
     ],
     "romaji": "hibiku"
   },
@@ -10491,7 +10510,9 @@
   {
     "text": "別荘",
     "meanings": [
-      "villa; vacation home; summer cottage"
+      "villa",
+      "vacation home",
+      "summer cottage"
     ],
     "romaji": "bessou"
   },
@@ -10537,8 +10558,7 @@
     "meanings": [
       "editing",
       "compilation",
-      "editorial (e.g.",
-      "committee)"
+      "editorial (e.g., committee)"
     ],
     "romaji": "henshuu"
   },
@@ -10688,7 +10708,8 @@
   {
     "text": "方面",
     "meanings": [
-      "direction; area"
+      "direction",
+      "area"
     ],
     "romaji": "houmen"
   },
@@ -10725,7 +10746,8 @@
   {
     "text": "牧場",
     "meanings": [
-      "farm (livestock); pasture land"
+      "farm (livestock)",
+      "pasture land"
     ],
     "romaji": "bokujou"
   },
@@ -10809,15 +10831,15 @@
   {
     "text": "盆",
     "meanings": [
-      "Festival of the Dead; tray"
+      "Festival of the Dead",
+      "tray"
     ],
     "romaji": "bon"
   },
   {
     "text": "盆地",
     "meanings": [
-      "basin (e.g.",
-      "between mountains)"
+      "basin (e.g., between mountains)"
     ],
     "romaji": "bonchi"
   },
@@ -10848,7 +10870,9 @@
   {
     "text": "まあまあ",
     "meanings": [
-      "okay; so-so; decent"
+      "okay",
+      "so-so",
+      "decent"
     ],
     "romaji": "maamaa"
   },
@@ -10901,7 +10925,9 @@
   {
     "text": "摩擦",
     "meanings": [
-      "friction; rubbing; chafe"
+      "friction",
+      "rubbing",
+      "chafe"
     ],
     "romaji": "masatsu"
   },
@@ -11087,7 +11113,9 @@
   {
     "text": "見送る",
     "meanings": [
-      "to see off; to escort; to let pass"
+      "to see off",
+      "to escort",
+      "to let pass"
     ],
     "romaji": "miokuru"
   },
@@ -11556,8 +11584,7 @@
     "text": "儲ける",
     "meanings": [
       "to earn",
-      "to have (bear",
-      "beget) a child"
+      "to have (bear, beget) a child"
     ],
     "romaji": "moukeru"
   },
@@ -11596,7 +11623,8 @@
     "text": "潜る",
     "meanings": [
       "to drive",
-      "to pass through; to evade",
+      "to pass through",
+      "to evade",
       "to hide"
     ],
     "romaji": "moguru"
@@ -11715,7 +11743,9 @@
   {
     "text": "盛る",
     "meanings": [
-      "to serve (food); to fill up; to prescribe"
+      "to serve (food)",
+      "to fill up",
+      "to prescribe"
     ],
     "romaji": "moru"
   },
@@ -12139,8 +12169,8 @@
     "text": "よこす",
     "meanings": [
       "to send",
-      "to forward; to hand over (e.g.",
-      "money)"
+      "to forward",
+      "to hand over (e.g., money)"
     ],
     "romaji": "yokosu"
   },
@@ -12190,8 +12220,7 @@
     "text": "呼び出す",
     "meanings": [
       "to summon",
-      "to call (e.g.",
-      "phone)"
+      "to call (e.g., phone)"
     ],
     "romaji": "yobidasu"
   },
@@ -12237,8 +12266,7 @@
   {
     "text": "欄",
     "meanings": [
-      "column of text (e.g.",
-      "as in a newspaper)"
+      "column of text (e.g., as in a newspaper)"
     ],
     "romaji": "ran"
   },
@@ -12252,7 +12280,8 @@
   {
     "text": "ランニング",
     "meanings": [
-      "running; tank top"
+      "running",
+      "tank top"
     ],
     "romaji": "ranningu"
   },
@@ -12308,7 +12337,8 @@
     "text": "短所",
     "meanings": [
       "defect",
-      "weak point; disadvantage"
+      "weak point",
+      "disadvantage"
     ],
     "romaji": "tansho"
   },
@@ -12358,9 +12388,7 @@
   {
     "text": "短編",
     "meanings": [
-      "short (e.g.",
-      "story",
-      "film)"
+      "short (e.g., story, film)"
     ],
     "romaji": "tanpen"
   },
@@ -12473,7 +12501,8 @@
     "text": "チップ",
     "meanings": [
       "gratuity",
-      "tip; chip"
+      "tip",
+      "chip"
     ],
     "romaji": "chippu"
   },
@@ -12502,7 +12531,8 @@
   {
     "text": "～着",
     "meanings": [
-      "counter for clothes; finishing place"
+      "counter for clothes",
+      "finishing place"
     ],
     "romaji": "~chaku"
   },
@@ -12619,7 +12649,8 @@
     "text": "長所",
     "meanings": [
       "strong point",
-      "merit; advantage"
+      "merit",
+      "advantage"
     ],
     "romaji": "chousho"
   },
@@ -12691,8 +12722,7 @@
   {
     "text": "～丁目",
     "meanings": [
-      "~ district (of a town; city",
-      "block)"
+      "~ district (of a town; city, block)"
     ],
     "romaji": "~choume"
   },
@@ -12864,8 +12894,7 @@
   {
     "text": "突き当たり",
     "meanings": [
-      "end (e.g.",
-      "of street)"
+      "end (e.g., of street)"
     ],
     "romaji": "tsukiatari"
   },
@@ -13046,8 +13075,7 @@
     "text": "定員",
     "meanings": [
       "fixed number of regular personnel",
-      "capacity (e.g.",
-      "of boat)"
+      "capacity (e.g., of boat)"
     ],
     "romaji": "teiin"
   },
@@ -13093,8 +13121,7 @@
   {
     "text": "停車",
     "meanings": [
-      "stopping (e.g.",
-      "train)"
+      "stopping (e.g., train)"
     ],
     "romaji": "teisha"
   },
@@ -13206,7 +13233,8 @@
     "text": "でたらめ",
     "meanings": [
       "irresponsible utterance",
-      "nonsense; random"
+      "nonsense",
+      "random"
     ],
     "romaji": "detarame"
   },

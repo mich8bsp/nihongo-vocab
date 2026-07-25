@@ -109,11 +109,32 @@ Default: KANA and N5 `enabled = true`, N4–N1 `enabled = false`.
     it's not used. elzup's CSVs have `expression,reading,meaning,tags`
     columns, which is what's actually needed.
   - Reshaped by `scripts/generate_vocab_assets.py` into the `Entry`
-    schema: `meaning` column split on `,` into the `meanings` list,
-    same-text rows within a level merged (union of meanings), and any
-    expression appearing in more than one level's file is kept only in
-    the easiest level it appears in (small overlaps exist between level
-    files in the source data).
+    schema, same-text rows within a level merged (union of meanings), and
+    any expression appearing in more than one level's file is kept only
+    in the easiest level it appears in (small overlaps exist between
+    level files in the source data).
+  - The `meaning` column isn't a plain comma-separated list: elzup uses
+    `;` between distinct senses and `,` between synonyms within a sense
+    (e.g. `coat; court (e.g., tennis)` is the senses `coat` and
+    `court (e.g., tennis)`), and a plain split-on-`,` corrupts this - it
+    either never splits a `;`-only meaning (leaving an untypeable
+    compound answer) or splits *inside* an `(e.g., ...)` aside, producing
+    broken fragments with unbalanced parens. Found by auditing all
+    generated entries (565 of 7836, ~7%, were affected).
+    `split_meanings()` fixes this properly: mask `(...)` content first
+    (so its `;`/`,` can't be mistaken for a separator), split on `;` then
+    `,`, restore the masked content per part. Leaves a `_self_check()`
+    covering the known tricky cases (asides, a `;` *inside* parens),
+    run at the top of `main()`. ~10 entries still have a stray unmatched
+    `(` because the *source* CSV itself has a typo (missing `)`) -
+    accepted as a known ceiling, not worth special-casing for 10 rows.
+  - Before committing to this fix, considered switching to a JMDict-based
+    source (`AnchorI/jlpt-kanji-dictionary`) for genuinely clean gloss
+    arrays - rejected: it has no per-word JLPT level tag (only kanji do),
+    so elzup's level list would still be needed anyway, plus it's ~57MB,
+    needs kanji+reading cross-referencing with homograph-ambiguity risk,
+    and a second license to attribute, all to solve a problem the parser
+    fix above already solves directly.
   - `tags` column from the source is discarded. `reading` is kept, but not
     stored verbatim — `scripts/generate_vocab_assets.py` converts it to
     Hepburn romaji at generation time via `pykakasi` (not a repo

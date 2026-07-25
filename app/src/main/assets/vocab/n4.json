@@ -27,7 +27,8 @@
   {
     "text": "盗む",
     "meanings": [
-      "to steal; to rob"
+      "to steal",
+      "to rob"
     ],
     "romaji": "nusumu"
   },
@@ -135,7 +136,8 @@
   {
     "text": "テキスト",
     "meanings": [
-      "text; text book"
+      "text",
+      "text book"
     ],
     "romaji": "tekisuto"
   },
@@ -143,7 +145,8 @@
     "text": "折る",
     "meanings": [
       "to snap",
-      "to break; to bend"
+      "to break",
+      "to bend"
     ],
     "romaji": "oru"
   },
@@ -195,7 +198,8 @@
   {
     "text": "怒る",
     "meanings": [
-      "to get angry; to scold angrily"
+      "to get angry",
+      "to scold angrily"
     ],
     "romaji": "okoru"
   },
@@ -238,7 +242,9 @@
   {
     "text": "表",
     "meanings": [
-      "surface; front; outside"
+      "surface",
+      "front",
+      "outside"
     ],
     "romaji": "omote"
   },
@@ -283,14 +289,16 @@
   {
     "text": "非常に",
     "meanings": [
-      "extremely; very"
+      "extremely",
+      "very"
     ],
     "romaji": "hijouni"
   },
   {
     "text": "お宅",
     "meanings": [
-      "(someone else's) house; home -- polite word for 家 (いえ) --"
+      "(someone else's) house",
+      "home -- polite word for 家 (いえ) --"
     ],
     "romaji": "otaku"
   },
@@ -423,7 +431,8 @@
     "text": "失礼",
     "meanings": [
       "discourtesy",
-      "impoliteness; Excuse me"
+      "impoliteness",
+      "Excuse me"
     ],
     "romaji": "shitsurei"
   },
@@ -447,7 +456,8 @@
     "meanings": [
       "mark",
       "score",
-      "grade; point",
+      "grade",
+      "point",
       "dot"
     ],
     "romaji": "ten"
@@ -530,14 +540,16 @@
   {
     "text": "贈り物",
     "meanings": [
-      "a gift; a present"
+      "a gift",
+      "a present"
     ],
     "romaji": "okurimono"
   },
   {
     "text": "泥棒",
     "meanings": [
-      "thief; burglar"
+      "thief",
+      "burglar"
     ],
     "romaji": "dorobou"
   },
@@ -583,7 +595,8 @@
     "text": "そう",
     "meanings": [
       "really",
-      "(is that) so; yes",
+      "(is that) so",
+      "yes",
       "right"
     ],
     "romaji": "sou"
@@ -674,7 +687,9 @@
   {
     "text": "厳しい",
     "meanings": [
-      "hard; rigorous; strict"
+      "hard",
+      "rigorous",
+      "strict"
     ],
     "romaji": "kibishii"
   },
@@ -778,7 +793,8 @@
   {
     "text": "祈る",
     "meanings": [
-      "to pray; to wish"
+      "to pray",
+      "to wish"
     ],
     "romaji": "inoru"
   },
@@ -860,7 +876,8 @@
   {
     "text": "それに",
     "meanings": [
-      "moreover; besides"
+      "moreover",
+      "besides"
     ],
     "romaji": "soreni"
   },
@@ -908,7 +925,8 @@
   {
     "text": "～式",
     "meanings": [
-      "~ ceremony; ~ style"
+      "~ ceremony",
+      "~ style"
     ],
     "romaji": "~shiki"
   },
@@ -929,7 +947,9 @@
   {
     "text": "迎える",
     "meanings": [
-      "to welcome; to meet; to greet"
+      "to welcome",
+      "to meet",
+      "to greet"
     ],
     "romaji": "mukaeru"
   },
@@ -988,7 +1008,8 @@
   {
     "text": "決まる",
     "meanings": [
-      "to be set; fixed (v.i.)"
+      "to be set",
+      "fixed (v.i.)"
     ],
     "romaji": "kimaru"
   },
@@ -1003,14 +1024,16 @@
   {
     "text": "だから",
     "meanings": [
-      "so; therefore"
+      "so",
+      "therefore"
     ],
     "romaji": "dakara"
   },
   {
     "text": "残念",
     "meanings": [
-      "regret; regrettable"
+      "regret",
+      "regrettable"
     ],
     "romaji": "zannen"
   },
@@ -1139,7 +1162,9 @@
   {
     "text": "用事",
     "meanings": [
-      "business to take care of; tasks; errands"
+      "business to take care of",
+      "tasks",
+      "errands"
     ],
     "romaji": "youji"
   },
@@ -1192,9 +1217,8 @@
   {
     "text": "受ける",
     "meanings": [
-      "to take (an examination",
-      "interview",
-      "etc.); to receive"
+      "to take (an examination, interview, etc.)",
+      "to receive"
     ],
     "romaji": "ukeru"
   },
@@ -1248,14 +1272,16 @@
   {
     "text": "足りる",
     "meanings": [
-      "to be sufficient; to be enough"
+      "to be sufficient",
+      "to be enough"
     ],
     "romaji": "tariru"
   },
   {
     "text": "行う",
     "meanings": [
-      "to carry out; to conduct (typically used in written language)"
+      "to carry out",
+      "to conduct (typically used in written language)"
     ],
     "romaji": "okonau"
   },
@@ -1291,7 +1317,8 @@
   {
     "text": "住所",
     "meanings": [
-      "address; place of residence"
+      "address",
+      "place of residence"
     ],
     "romaji": "juusho"
   },
@@ -1349,7 +1376,10 @@
   {
     "text": "調べる",
     "meanings": [
-      "to check; to look up; to inquire; to search"
+      "to check",
+      "to look up",
+      "to inquire",
+      "to search"
     ],
     "romaji": "shiraberu"
   },
@@ -1460,7 +1490,8 @@
   {
     "text": "昔",
     "meanings": [
-      "old days; past"
+      "old days",
+      "past"
     ],
     "romaji": "mukashi"
   },
@@ -1500,7 +1531,8 @@
   {
     "text": "どんどん",
     "meanings": [
-      "quickly and steadily; at a rapid pace"
+      "quickly and steadily",
+      "at a rapid pace"
     ],
     "romaji": "dondon"
   },
@@ -1524,7 +1556,8 @@
   {
     "text": "素晴らしい",
     "meanings": [
-      "wonderful; terrific"
+      "wonderful",
+      "terrific"
     ],
     "romaji": "subarashii"
   },
@@ -1568,7 +1601,10 @@
   {
     "text": "お礼",
     "meanings": [
-      "expression of gratitude; thanking; gift of appreciation; bow"
+      "expression of gratitude",
+      "thanking",
+      "gift of appreciation",
+      "bow"
     ],
     "romaji": "orei"
   },
@@ -1625,7 +1661,8 @@
   {
     "text": "治る",
     "meanings": [
-      "to get better; to recover from illness (v.i.)"
+      "to get better",
+      "to recover from illness (v.i.)"
     ],
     "romaji": "naoru"
   },
@@ -1677,7 +1714,9 @@
   {
     "text": "おかしい",
     "meanings": [
-      "strange; odd; funny"
+      "strange",
+      "odd",
+      "funny"
     ],
     "romaji": "okashii"
   },
@@ -1755,7 +1794,8 @@
   {
     "text": "いただく",
     "meanings": [
-      "-- extra-modest expression for たべる and のむ; humble expression for もらう --"
+      "-- extra-modest expression for たべる and のむ",
+      "humble expression for もらう --"
     ],
     "romaji": "itadaku"
   },
@@ -1856,7 +1896,8 @@
   {
     "text": "選ぶ",
     "meanings": [
-      "to choose; to select"
+      "to choose",
+      "to select"
     ],
     "romaji": "erabu"
   },
@@ -1915,7 +1956,8 @@
   {
     "text": "確か",
     "meanings": [
-      "if I remember correctly; certain",
+      "if I remember correctly",
+      "certain",
       "definite"
     ],
     "romaji": "tashika"
@@ -1962,7 +2004,8 @@
   {
     "text": "オーバー",
     "meanings": [
-      "overcoat; over",
+      "overcoat",
+      "over",
       "exceeding",
       "exaggeration"
     ],
@@ -2000,7 +2043,8 @@
   {
     "text": "細かい",
     "meanings": [
-      "small; fine",
+      "small",
+      "fine",
       "minute"
     ],
     "romaji": "komakai"
@@ -2016,8 +2060,7 @@
   {
     "text": "ご主人",
     "meanings": [
-      "(your",
-      "her) husband"
+      "(your, her) husband"
     ],
     "romaji": "goshujin"
   },
@@ -2145,7 +2188,8 @@
   {
     "text": "育てる",
     "meanings": [
-      "to raise (v.t.); to bring up"
+      "to raise (v.t.)",
+      "to bring up"
     ],
     "romaji": "sodateru"
   },
@@ -2183,7 +2227,8 @@
   {
     "text": "通う",
     "meanings": [
-      "to go back and forth; to commute"
+      "to go back and forth",
+      "to commute"
     ],
     "romaji": "kayou"
   },
@@ -2324,7 +2369,8 @@
   {
     "text": "店員",
     "meanings": [
-      "clerk; shop-employee"
+      "clerk",
+      "shop-employee"
     ],
     "romaji": "ten'in"
   },
@@ -2355,7 +2401,8 @@
   {
     "text": "おつり",
     "meanings": [
-      "change; balance of money returned to the purchaser"
+      "change",
+      "balance of money returned to the purchaser"
     ],
     "romaji": "otsuri"
   },
@@ -2589,7 +2636,8 @@
   {
     "text": "写す",
     "meanings": [
-      "to copy (v.t.); to photograph"
+      "to copy (v.t.)",
+      "to photograph"
     ],
     "romaji": "utsusu"
   },
@@ -2654,7 +2702,8 @@
   {
     "text": "男性",
     "meanings": [
-      "man; male"
+      "man",
+      "male"
     ],
     "romaji": "dansei"
   },
@@ -2668,14 +2717,16 @@
   {
     "text": "生産",
     "meanings": [
-      "production; to produce"
+      "production",
+      "to produce"
     ],
     "romaji": "seisansuru"
   },
   {
     "text": "着物",
     "meanings": [
-      "kimono; Japanese traditional dress"
+      "kimono",
+      "Japanese traditional dress"
     ],
     "romaji": "kimono"
   },
@@ -2944,7 +2995,9 @@
   {
     "text": "うまい",
     "meanings": [
-      "delicious; skillful; fortunate"
+      "delicious",
+      "skillful",
+      "fortunate"
     ],
     "romaji": "umai"
   },
@@ -3054,7 +3107,8 @@
     "text": "是非",
     "meanings": [
       "certainly",
-      "by all means; without fail"
+      "by all means",
+      "without fail"
     ],
     "romaji": "zehi"
   },
@@ -3153,7 +3207,8 @@
   {
     "text": "見える",
     "meanings": [
-      "to be visible; -- polite verb meaning 来る (くる) --"
+      "to be visible",
+      "-- polite verb meaning 来る (くる) --"
     ],
     "romaji": "mieru"
   },
@@ -3201,7 +3256,10 @@
   {
     "text": "大体",
     "meanings": [
-      "approximately; in most cases; in general; to begin with (same as もともと)"
+      "approximately",
+      "in most cases",
+      "in general",
+      "to begin with (same as もともと)"
     ],
     "romaji": "daitai"
   },
@@ -3210,7 +3268,8 @@
     "meanings": [
       "to break",
       "to be folded",
-      "to give in; to turn (a corner)"
+      "to give in",
+      "to turn (a corner)"
     ],
     "romaji": "oreru"
   },
@@ -3253,7 +3312,8 @@
   {
     "text": "伝える",
     "meanings": [
-      "to convey (a message); to tell",
+      "to convey (a message)",
+      "to tell",
       "to report"
     ],
     "romaji": "tsutaeru"
@@ -3297,14 +3357,16 @@
   {
     "text": "それほど",
     "meanings": [
-      "to that degree; extent"
+      "to that degree",
+      "extent"
     ],
     "romaji": "sorehodo"
   },
   {
     "text": "以上",
     "meanings": [
-      "more than; this is all"
+      "more than",
+      "this is all"
     ],
     "romaji": "ijou"
   },
@@ -3410,7 +3472,8 @@
   {
     "text": "彼女",
     "meanings": [
-      "girlfriend; she"
+      "girlfriend",
+      "she"
     ],
     "romaji": "kanojo"
   },
@@ -3449,7 +3512,8 @@
   {
     "text": "専門",
     "meanings": [
-      "major; speciality"
+      "major",
+      "speciality"
     ],
     "romaji": "senmon"
   },
@@ -3592,7 +3656,8 @@
     "text": "下りる",
     "meanings": [
       "to get down",
-      "to go; come down"
+      "to go",
+      "come down"
     ],
     "romaji": "oriru"
   },
@@ -3606,7 +3671,8 @@
   {
     "text": "訳",
     "meanings": [
-      "reason; explanation"
+      "reason",
+      "explanation"
     ],
     "romaji": "wake"
   },
@@ -3629,7 +3695,8 @@
   {
     "text": "高校; 高等学校",
     "meanings": [
-      "high school; senior high school"
+      "high school",
+      "senior high school"
     ],
     "romaji": "koukou; koutougakkou"
   },
@@ -3658,7 +3725,8 @@
   {
     "text": "留守",
     "meanings": [
-      "absence; not at home"
+      "absence",
+      "not at home"
     ],
     "romaji": "rusu"
   },
@@ -3688,7 +3756,8 @@
   {
     "text": "普通",
     "meanings": [
-      "common; usual"
+      "common",
+      "usual"
     ],
     "romaji": "futsuu"
   },
@@ -3702,7 +3771,8 @@
   {
     "text": "なるほど",
     "meanings": [
-      "I see; I now understand"
+      "I see",
+      "I now understand"
     ],
     "romaji": "naruhodo"
   },
@@ -3810,7 +3880,8 @@
   {
     "text": "字",
     "meanings": [
-      "letter; character"
+      "letter",
+      "character"
     ],
     "romaji": "ji"
   },
@@ -3824,7 +3895,8 @@
   {
     "text": "褒める",
     "meanings": [
-      "to praise; to say nice things"
+      "to praise",
+      "to say nice things"
     ],
     "romaji": "homeru"
   },
@@ -3853,7 +3925,8 @@
   {
     "text": "～代",
     "meanings": [
-      "~ age; period"
+      "~ age",
+      "period"
     ],
     "romaji": "~dai"
   },
@@ -3889,7 +3962,8 @@
   {
     "text": "久しぶり",
     "meanings": [
-      "it has been a long time; for the first time in a long time"
+      "it has been a long time",
+      "for the first time in a long time"
     ],
     "romaji": "hisashiburi"
   },
@@ -4001,7 +4075,8 @@
   {
     "text": "直す",
     "meanings": [
-      "to correct (v.t.); to fix"
+      "to correct (v.t.)",
+      "to fix"
     ],
     "romaji": "naosu"
   },
@@ -4031,7 +4106,8 @@
   {
     "text": "世話",
     "meanings": [
-      "looking after; to look after"
+      "looking after",
+      "to look after"
     ],
     "romaji": "sewasuru"
   },
@@ -4045,7 +4121,8 @@
   {
     "text": "将来",
     "meanings": [
-      "(in the) future; prospects"
+      "(in the) future",
+      "prospects"
     ],
     "romaji": "shourai"
   },
@@ -4266,7 +4343,8 @@
   {
     "text": "考える",
     "meanings": [
-      "to think (about); to consider"
+      "to think (about)",
+      "to consider"
     ],
     "romaji": "kangaeru"
   },
@@ -4333,7 +4411,9 @@
   {
     "text": "移る",
     "meanings": [
-      "to move (from a house); to transfer (from a department); to shift"
+      "to move (from a house)",
+      "to transfer (from a department)",
+      "to shift"
     ],
     "romaji": "utsuru"
   },
@@ -4354,7 +4434,8 @@
   {
     "text": "研究室",
     "meanings": [
-      "the professor's office; laboratory"
+      "the professor's office",
+      "laboratory"
     ],
     "romaji": "kenkyuushitsu"
   },
@@ -4486,7 +4567,8 @@
   {
     "text": "警察",
     "meanings": [
-      "police; police station"
+      "police",
+      "police station"
     ],
     "romaji": "keisatsu"
   },
@@ -4524,7 +4606,8 @@
   {
     "text": "全然",
     "meanings": [
-      "not at all; wholly",
+      "not at all",
+      "wholly",
       "entirely"
     ],
     "romaji": "zenzen"
@@ -4562,7 +4645,9 @@
   {
     "text": "もうすぐ",
     "meanings": [
-      "very soon; in a few moments; days"
+      "very soon",
+      "in a few moments",
+      "days"
     ],
     "romaji": "mousugu"
   },
@@ -4577,7 +4662,8 @@
   {
     "text": "戻る",
     "meanings": [
-      "to return (v.i.); to come back"
+      "to return (v.i.)",
+      "to come back"
     ],
     "romaji": "modoru"
   },
@@ -4629,7 +4715,8 @@
   {
     "text": "下げる",
     "meanings": [
-      "to lower (v.t.); to hang"
+      "to lower (v.t.)",
+      "to hang"
     ],
     "romaji": "sageru"
   },
@@ -4659,9 +4746,7 @@
     "text": "乗り換える",
     "meanings": [
       "to transfer (trains)",
-      "to change (bus",
-      "train",
-      "etc.)"
+      "to change (bus, train, etc.)"
     ],
     "romaji": "norikaeru"
   },
@@ -4785,7 +4870,8 @@
   {
     "text": "会議",
     "meanings": [
-      "business meeting; conference"
+      "business meeting",
+      "conference"
     ],
     "romaji": "kaigi"
   },
@@ -4815,7 +4901,8 @@
     "text": "生活",
     "meanings": [
       "living",
-      "life; to live"
+      "life",
+      "to live"
     ],
     "romaji": "seikatsusuru"
   },
@@ -4845,7 +4932,8 @@
     "text": "～目",
     "meanings": [
       "number ~ sequence",
-      "~nd; ~th"
+      "~nd",
+      "~th"
     ],
     "romaji": "~me"
   },
@@ -4860,7 +4948,8 @@
     "text": "急",
     "meanings": [
       "urgent",
-      "sudden; steep"
+      "sudden",
+      "steep"
     ],
     "romaji": "kyuu"
   },
@@ -4904,7 +4993,8 @@
   {
     "text": "うれしい",
     "meanings": [
-      "to be happy; to be glad"
+      "to be happy",
+      "to be glad"
     ],
     "romaji": "ureshii"
   },
@@ -4918,7 +5008,9 @@
   {
     "text": "ソフト",
     "meanings": [
-      "soft; soft hat; software"
+      "soft",
+      "soft hat",
+      "software"
     ],
     "romaji": "sofuto"
   },
@@ -4950,7 +5042,8 @@
   {
     "text": "趣味",
     "meanings": [
-      "hobby; pastime"
+      "hobby",
+      "pastime"
     ],
     "romaji": "shumi"
   },

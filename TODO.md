@@ -336,3 +336,25 @@ thousands of real quiz answers, then drove the app for real:
       live on the `Medium_Phone` emulator by launching the Quiz screen
       directly for a known entry id ("秋" / "fall (season)", via `am
       start --el entry_id <id>`) and submitting "fall" → scored Correct.
+- [x] **Fixed the source data's `;`/`,` meaning-splitting bug** (reported
+      by the user: elzup's `meaning` column mixes `;` between senses and
+      `,` between synonyms within a sense, e.g. `coat; court (e.g.,
+      tennis)`; splitting on `,` alone either never splits a `;`-only
+      meaning or splits inside an `(e.g., ...)` aside). Audited the
+      generated assets first: 565/7836 entries (~7%) were affected,
+      e.g. コート generated as `["coat; court (e.g.", "tennis)"]` -
+      neither "coat" nor "court" would score correct. Considered
+      switching to a JMDict-based source
+      (`AnchorI/jlpt-kanji-dictionary`) for clean gloss arrays; consulted
+      the user and decided against it (no per-word JLPT tags of its own,
+      57MB, homograph-matching risk, second license) in favor of fixing
+      the parser. Rewrote `scripts/generate_vocab_assets.py`'s
+      `split_meanings()` to mask `(...)` content before splitting on `;`
+      then `,`, regenerated `n5-n1.json` (same entry counts as before,
+      just corrected splitting) - only ~10 entries still broken, all
+      from an unmatched `(` typo in elzup's own CSV, accepted as a known
+      ceiling. Added a `_self_check()` in the script (asides, a `;`
+      *inside* parens) run at the top of `main()`. `./gradlew test
+      assembleDebug` pass; verified live on the `Medium_Phone` emulator:
+      launched Quiz directly for コート (`am start --el entry_id <id>`)
+      and submitted "coat" → scored Correct.
