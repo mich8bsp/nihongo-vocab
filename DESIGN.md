@@ -127,6 +127,11 @@ Default: KANA and N5 `enabled = true`, N4–N1 `enabled = false`.
   behavior across OEMs (this app has already hit one Samsung-specific
   surprise, see Part 9 in TODO.md, so pairing both rather than relying on
   just one).
+- System back button on Quiz is intercepted with `BackHandler(onBack =
+  onBack)` so it returns to Home (same as the "Back to Home" button)
+  instead of the default Activity behavior of finishing the app — there's
+  no back stack (see "Navigation"), so an unhandled back press would just
+  exit.
 
 ## Navigation
 
@@ -181,6 +186,16 @@ behavior shows up.
   death mid-seed must never leave entries populated but pool_state
   empty, since that would silently disable re-seeding forever).
 - No backend, no accounts, no sync
+
+## App icon
+
+Adaptive icon (`mipmap-anydpi-v26/ic_launcher.xml` + `ic_launcher_round.xml`):
+a simple vermillion torii gate (`drawable/ic_launcher_foreground.xml`, plain
+rectangles for kasagi/shimaki/pillars/nuki, `#C8332B`) on a cream background
+(`drawable/ic_launcher_background.xml`, `#FDF6EC`). No legacy PNG mipmaps —
+`minSdk 33` is well above adaptive icons' API 26 floor, so the vector-only
+adaptive icon covers every supported device. Wired via `android:icon` /
+`android:roundIcon` on `<application>` in the manifest.
 
 ## Out of scope for v1
 

@@ -274,3 +274,14 @@ thousands of real quiz answers, then drove the app for real:
       pass; **not yet verified live** — no device (emulator or physical)
       was connected when this was made, per explicit instruction to skip
       that and just confirm the build.
+- [x] **Back button on Quiz screen quit the app** instead of returning to
+      Home. Fixed by adding `BackHandler(onBack = onBack)` in
+      `QuizScreen.kt`, reusing the same callback as the "Back to Home"
+      button. `./gradlew test assembleDebug` both pass; not yet verified
+      live.
+- [x] **App icon is a torii gate.** Added an adaptive icon (vector-only,
+      no legacy PNGs needed since `minSdk 33` > API 26): cream background
+      + vermillion torii foreground drawable. Wired via `android:icon`/
+      `android:roundIcon` in the manifest. `./gradlew test assembleDebug`
+      pass; verified live on the `Medium_Phone` emulator (visible in the
+      recents/task-switcher header).

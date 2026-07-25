@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
+import androidx.activity.compose.BackHandler
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
@@ -38,6 +39,8 @@ fun QuizScreen(
     var answerText by remember(entryId) { mutableStateOf("") }
     var result by remember(entryId) { mutableStateOf<AnswerResult?>(null) }
     val scope = rememberCoroutineScope()
+
+    BackHandler(onBack = onBack)
 
     LaunchedEffect(entryId) {
         entry = answerService.getEntry(entryId)
