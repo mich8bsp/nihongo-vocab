@@ -65,7 +65,11 @@ class MainActivity : ComponentActivity() {
                             answerService = answerService,
                             onBack = { quizEntryId = null },
                         )
-                        else -> HomeScreen(entryDao = db.entryDao(), poolStateDao = db.poolStateDao())
+                        else -> HomeScreen(
+                            entryDao = db.entryDao(),
+                            poolStateDao = db.poolStateDao(),
+                            onPractice = { id -> quizEntryId = id },
+                        )
                     }
                 }
             }

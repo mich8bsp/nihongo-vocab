@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
@@ -28,16 +29,19 @@ import io.github.mich8bsp.nihongovocab.data.EntryDao
 import io.github.mich8bsp.nihongovocab.data.Level
 import io.github.mich8bsp.nihongovocab.data.LevelStats
 import io.github.mich8bsp.nihongovocab.data.PoolStateDao
+import io.github.mich8bsp.nihongovocab.data.pickRandomActiveEntry
 import kotlinx.coroutines.launch
 
 @Composable
 fun HomeScreen(
     entryDao: EntryDao,
     poolStateDao: PoolStateDao,
+    onPractice: (Long) -> Unit,
 ) {
     var statsByLevel by remember { mutableStateOf<Map<Level, LevelStats>>(emptyMap()) }
     var enabledByLevel by remember { mutableStateOf<Map<Level, Boolean>>(emptyMap()) }
     var loaded by remember { mutableStateOf(false) }
+    var practiceMessage by remember { mutableStateOf<String?>(null) }
     val scope = rememberCoroutineScope()
 
     suspend fun reload() {
@@ -55,6 +59,23 @@ fun HomeScreen(
 
     Column(Modifier.fillMaxSize().padding(24.dp)) {
         Text("Nihongo Vocab", style = MaterialTheme.typography.headlineMedium)
+        Spacer(Modifier.height(16.dp))
+
+        Button(onClick = {
+            scope.launch {
+                val entry = pickRandomActiveEntry(entryDao, poolStateDao)
+                if (entry != null) {
+                    onPractice(entry.id)
+                } else {
+                    practiceMessage = "Nothing to practice - enable a pool, or you've mastered everything in it"
+                }
+            }
+        }) {
+            Text("Practice")
+        }
+        practiceMessage?.let {
+            Text(it, style = MaterialTheme.typography.bodySmall)
+        }
         Spacer(Modifier.height(16.dp))
 
         LazyColumn {

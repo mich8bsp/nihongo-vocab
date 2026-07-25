@@ -161,6 +161,13 @@ See DESIGN.md for the decisions behind these.
 - [x] Toggle interaction verified live: tapped KANA's switch off, UI
       updated immediately, and confirmed via direct DB dump that only
       KANA flipped to `0`, N5 stayed `1` — no cross-talk between rows.
+- [x] **Added later, during Part 9 real-device testing**: a "Practice"
+      button, picks a random active entry exactly like a notification
+      would and opens Quiz for it directly. Extracted the pick-an-entry
+      logic out of `QuizNotificationWorker` into a shared
+      `pickRandomActiveEntry(entryDao, poolStateDao)` function so both
+      use the exact same selection, rather than duplicating it. Verified
+      by the user directly on their physical phone.
 
 ## 6. Notification scheduling
 - [x] `POST_NOTIFICATIONS` requested on launch via

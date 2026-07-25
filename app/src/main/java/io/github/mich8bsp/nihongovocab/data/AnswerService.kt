@@ -7,6 +7,12 @@ fun isCorrectAnswer(entry: Entry, answer: String): Boolean {
     return entry.meanings.any { it.trim().lowercase() == normalized }
 }
 
+/** Same selection notifications use - shared so "Practise" behaves identically to a real notification tap. */
+suspend fun pickRandomActiveEntry(entryDao: EntryDao, poolStateDao: PoolStateDao): Entry? {
+    val enabledLevels = poolStateDao.getEnabledLevels()
+    return entryDao.getRandomActiveEntry(enabledLevels)
+}
+
 class AnswerService(
     private val entryDao: EntryDao,
     private val poolStateDao: PoolStateDao,

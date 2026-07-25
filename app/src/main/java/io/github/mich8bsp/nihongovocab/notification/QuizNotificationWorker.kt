@@ -18,6 +18,7 @@ import androidx.work.WorkerParameters
 import io.github.mich8bsp.nihongovocab.MainActivity
 import io.github.mich8bsp.nihongovocab.data.AppDatabase
 import io.github.mich8bsp.nihongovocab.data.Entry
+import io.github.mich8bsp.nihongovocab.data.pickRandomActiveEntry
 import java.util.concurrent.TimeUnit
 
 private const val WORK_NAME = "quiz_notification"
@@ -26,8 +27,7 @@ private const val CHANNEL_ID = "quiz_reminders"
 class QuizNotificationWorker(context: Context, params: WorkerParameters) : CoroutineWorker(context, params) {
     override suspend fun doWork(): Result {
         val db = AppDatabase.getInstance(applicationContext)
-        val enabledLevels = db.poolStateDao().getEnabledLevels()
-        val entry = db.entryDao().getRandomActiveEntry(enabledLevels)
+        val entry = pickRandomActiveEntry(db.entryDao(), db.poolStateDao())
         if (entry != null) {
             showNotification(applicationContext, entry)
         }

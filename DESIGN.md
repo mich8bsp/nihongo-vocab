@@ -100,6 +100,14 @@ Default: KANA and N5 `enabled = true`, N4–N1 `enabled = false`.
 **Home screen** (default screen; also reached via "Back to Home" from quiz)
 - Per-level stats: correct / wrong counts, mastered count out of total.
 - Per-level enable/disable toggle.
+- **Practice button**: picks a random active entry the same way a
+  notification would (`pickRandomActiveEntry`, shared with
+  `QuizNotificationWorker` so both pick identically) and opens Quiz for
+  it directly — an on-demand way to practice without waiting for a
+  notification, and a much faster way to test the quiz flow than fighting
+  notification timing or OEM battery restrictions. Shows a message
+  instead if nothing's available (no enabled pool, or everything in the
+  enabled pools already mastered).
 - Implemented in `ui/HomeScreen.kt`, backed by `EntryDao.getStatsByLevel()`
   and `PoolStateDao.getAll()`/`setEnabled()`. This is `MainActivity`'s
   actual launch screen now (after seeding completes).
