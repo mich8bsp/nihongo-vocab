@@ -26,6 +26,17 @@ private class FakeEntryDao(initial: List<Entry>) : EntryDao {
 
     override suspend fun countUnmastered(level: Level): Int =
         entries.values.count { it.level == level && it.correctStreak < 3 }
+
+    override suspend fun getStatsByLevel(): List<LevelStats> =
+        entries.values.groupBy { it.level }.map { (level, es) ->
+            LevelStats(
+                level = level,
+                totalCorrect = es.sumOf { it.totalCorrect },
+                totalWrong = es.sumOf { it.totalWrong },
+                masteredCount = es.count { it.correctStreak >= 3 },
+                totalCount = es.size,
+            )
+        }
 }
 
 private class FakePoolStateDao(initial: Map<Level, Boolean>) : PoolStateDao {
@@ -38,6 +49,8 @@ private class FakePoolStateDao(initial: Map<Level, Boolean>) : PoolStateDao {
     override suspend fun count(): Int = enabled.size
 
     override suspend fun getEnabledLevels(): List<Level> = enabled.filterValues { it }.keys.toList()
+
+    override suspend fun getAll(): List<PoolState> = enabled.map { (level, e) -> PoolState(level, e) }
 
     override suspend fun setEnabled(level: Level, enabled: Boolean) {
         this.enabled[level] = enabled

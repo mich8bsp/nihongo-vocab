@@ -5,6 +5,14 @@ import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Update
 
+data class LevelStats(
+    val level: Level,
+    val totalCorrect: Int,
+    val totalWrong: Int,
+    val masteredCount: Int,
+    val totalCount: Int,
+)
+
 @Dao
 interface EntryDao {
     @Insert
@@ -24,4 +32,17 @@ interface EntryDao {
 
     @Query("SELECT COUNT(*) FROM entries WHERE level = :level AND correctStreak < 3")
     suspend fun countUnmastered(level: Level): Int
+
+    @Query(
+        """
+        SELECT level,
+               SUM(totalCorrect) AS totalCorrect,
+               SUM(totalWrong) AS totalWrong,
+               SUM(CASE WHEN correctStreak >= 3 THEN 1 ELSE 0 END) AS masteredCount,
+               COUNT(*) AS totalCount
+        FROM entries
+        GROUP BY level
+        """,
+    )
+    suspend fun getStatsByLevel(): List<LevelStats>
 }

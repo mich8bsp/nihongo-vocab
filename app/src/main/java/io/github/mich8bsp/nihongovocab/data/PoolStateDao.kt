@@ -15,6 +15,9 @@ interface PoolStateDao {
     @Query("SELECT level FROM pool_state WHERE enabled = 1")
     suspend fun getEnabledLevels(): List<Level>
 
+    @Query("SELECT * FROM pool_state")
+    suspend fun getAll(): List<PoolState>
+
     @Query("UPDATE pool_state SET enabled = :enabled WHERE level = :level")
     suspend fun setEnabled(level: Level, enabled: Boolean)
 }

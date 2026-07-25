@@ -124,14 +124,43 @@ See DESIGN.md for the decisions behind these.
       No automated UI test added — this is presentation logic layered
       over the already-unit-tested `AnswerService`, consistent with
       CLAUDE.md's "pure UI layout doesn't need tests."
-- [ ] `MainActivity` still temporarily wired to always show entry id `1`
-      (the first kana entry) — replace with real navigation in Part 7.
+- [x] `MainActivity`'s temporary hardcoded-entry-id wiring was replaced in
+      Part 5 by showing the real `HomeScreen` — per DESIGN.md, Quiz is
+      only ever reached via a notification tap, so there's no in-app path
+      to it until Part 6/7 exist. `QuizScreen` itself needs no further
+      changes for that.
 
 ## 5. Home screen (UI)
-- [ ] Per-level stats display (correct/wrong/mastered-of-total), read from
-      Room.
-- [ ] Per-level enable/disable toggle switches, wired to `PoolState`.
-- [ ] This is also the app's launch screen (default start destination).
+- [x] `ui/HomeScreen.kt`: per-level rows (mastered/total, correct/wrong)
+      + a `Switch` per level wired to `PoolState`. Added
+      `EntryDao.getStatsByLevel()` (GROUP BY aggregate query → `LevelStats`)
+      and `PoolStateDao.getAll()` for this. One-shot load on screen entry
+      (`LaunchedEffect`), not live-reactive — matches how `QuizScreen`
+      already loads, and is enough since Home is only re-entered via
+      "Back to Home", not left open during other state changes.
+- [x] `MainActivity` now shows `HomeScreen` as the launch screen (after
+      seeding), replacing the Part 4 stub entirely.
+- [x] **Real bug found and fixed via live device testing, not just unit
+      tests**: `AssetSeeder` guarded re-seeding on `entryDao.count() > 0`
+      alone, but seeded entries and pool-state in two separate steps. If
+      the process ever died between them (it did, during my own repeated
+      kill/relaunch cycles across earlier parts' testing), the app would
+      permanently skip pool-state seeding forever after, since only the
+      entries guard was checked. First fresh-DB screenshot showed every
+      toggle OFF including KANA/N5, which should default on — traced it
+      to `pool_state` having 0 rows via a direct `run-as` + sqlite3 dump,
+      not just guessing from the screenshot. Fixed by wrapping the actual
+      DB inserts in `db.withTransaction { }` (asset file reads stay
+      outside it) so seeding is now all-or-nothing atomic. Verified with
+      a full uninstall + fresh install: KANA/N5 now correctly default on,
+      rest off. No automated test added for the atomicity property itself
+      — that needs real Room transaction/rollback semantics, which fakes
+      can't meaningfully simulate, and stands up real `androidTest` infra
+      for one narrow scenario; relying on Room's own transaction guarantee
+      plus this live verification instead.
+- [x] Toggle interaction verified live: tapped KANA's switch off, UI
+      updated immediately, and confirmed via direct DB dump that only
+      KANA flipped to `0`, N5 stayed `1` — no cross-talk between rows.
 
 ## 6. Notification scheduling
 - [ ] Request `POST_NOTIFICATIONS` permission on first launch.

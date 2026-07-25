@@ -1,6 +1,7 @@
 package io.github.mich8bsp.nihongovocab.data
 
 import android.content.Context
+import androidx.room.withTransaction
 import org.json.JSONArray
 
 private val ASSET_BY_LEVEL = mapOf(
@@ -17,16 +18,23 @@ class AssetSeeder(private val context: Context, private val db: AppDatabase) {
     suspend fun seedIfNeeded() {
         if (db.entryDao().count() > 0) return
 
-        for ((level, assetPath) in ASSET_BY_LEVEL) {
+        // Read assets outside the transaction, then insert everything
+        // atomically - if the process dies mid-seed, entries and
+        // pool_state must never end up out of sync with each other, or
+        // this count()-based guard would skip re-seeding forever.
+        val entriesByLevel = ASSET_BY_LEVEL.map { (level, assetPath) ->
             val json = context.assets.open(assetPath).bufferedReader().use { it.readText() }
-            db.entryDao().insertAll(parseEntries(json, level))
+            parseEntries(json, level)
         }
 
-        db.poolStateDao().insertAll(
-            Level.entries.map { level ->
-                PoolState(level = level, enabled = level == Level.KANA || level == Level.N5)
-            },
-        )
+        db.withTransaction {
+            entriesByLevel.forEach { db.entryDao().insertAll(it) }
+            db.poolStateDao().insertAll(
+                Level.entries.map { level ->
+                    PoolState(level = level, enabled = level == Level.KANA || level == Level.N5)
+                },
+            )
+        }
     }
 }
 

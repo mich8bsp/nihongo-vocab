@@ -100,6 +100,9 @@ Default: KANA and N5 `enabled = true`, N4–N1 `enabled = false`.
 **Home screen** (default screen; also reached via "Back to Home" from quiz)
 - Per-level stats: correct / wrong counts, mastered count out of total.
 - Per-level enable/disable toggle.
+- Implemented in `ui/HomeScreen.kt`, backed by `EntryDao.getStatsByLevel()`
+  and `PoolStateDao.getAll()`/`setEnabled()`. This is `MainActivity`'s
+  actual launch screen now (after seeding completes).
 
 **Quiz screen** (opened via notification tap, with entry id as extra)
 - Word/kana/kanji display, free-text field, submit button.
@@ -132,7 +135,12 @@ Default: KANA and N5 `enabled = true`, N4–N1 `enabled = false`.
 - Room (local DB)
 - WorkManager for scheduling
 - Word lists (JLPT-tagged vocab + kana charts) bundled as JSON assets,
-  seeded into Room on first launch — see "Vocabulary data source"
+  seeded into Room on first launch — see "Vocabulary data source".
+  Seeding (`AssetSeeder`) inserts entries and `PoolState` atomically in
+  one `db.withTransaction { }`, guarded by `entryDao.count() > 0` — this
+  guard is only reliable if seeding truly is all-or-nothing (a process
+  death mid-seed must never leave entries populated but pool_state
+  empty, since that would silently disable re-seeding forever).
 - No backend, no accounts, no sync
 
 ## Out of scope for v1
