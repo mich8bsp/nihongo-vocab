@@ -4,9 +4,18 @@ Ordered so each part is runnable/testable before moving to the next.
 See DESIGN.md for the decisions behind these.
 
 ## 1. Project setup
-- [ ] New Android Studio project, Kotlin + Jetpack Compose, min SDK covering
-      `POST_NOTIFICATIONS` (Android 13 / API 33) permission model.
-- [ ] Add dependencies: Room, WorkManager, Compose Navigation.
+- [x] Android Gradle project skeleton (Kotlin + Jetpack Compose), minSdk 33 /
+      targetSdk 36, hand-written (no Android Studio available in this
+      environment). Repo: https://github.com/mich8bsp/nihongo_vocab
+- [x] Dependencies wired in `app/build.gradle.kts`: Room 2.8.4 (+ KSP),
+      WorkManager 2.11.2, Navigation Compose 2.8.5.
+- [ ] **Open in Android Studio and let it generate the Gradle wrapper** —
+      this environment has no local JDK/Gradle, so `gradlew`/wrapper jar
+      were never generated and the project has not been build-verified.
+      First sync in Android Studio is the real correctness check; expect
+      possible minor version bumps it suggests (AGP 9.1.1, Kotlin 2.2.20,
+      Compose BOM 2026.04.01 were picked from web search, not compiled
+      locally).
 
 ## 2. Data layer
 - [ ] Room entities: `Entry`, `PoolState` (fields per DESIGN.md).
