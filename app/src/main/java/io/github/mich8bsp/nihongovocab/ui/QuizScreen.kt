@@ -35,10 +35,12 @@ fun QuizScreen(
     entryId: Long,
     answerService: AnswerService,
     onBack: () -> Unit,
+    onNext: (Long) -> Unit,
 ) {
     var entry by remember(entryId) { mutableStateOf<Entry?>(null) }
     var answerText by remember(entryId) { mutableStateOf("") }
     var result by remember(entryId) { mutableStateOf<AnswerResult?>(null) }
+    var nextMessage by remember(entryId) { mutableStateOf<String?>(null) }
     val scope = rememberCoroutineScope()
 
     BackHandler(onBack = onBack)
@@ -91,8 +93,21 @@ fun QuizScreen(
                 }
                 Text("Correct answer: ${currentResult.meanings.joinToString(", ")}$romajiSuffix")
                 Spacer(Modifier.height(16.dp))
-                Button(onClick = onBack) {
-                    Text("Back to Home")
+                Button(onClick = {
+                    scope.launch {
+                        val next = answerService.pickNext()
+                        if (next != null) {
+                            onNext(next.id)
+                        } else {
+                            nextMessage = "Nothing to practice - enable a pool, or you've mastered everything in it"
+                        }
+                    }
+                }) {
+                    Text("Next")
+                }
+                nextMessage?.let {
+                    Spacer(Modifier.height(8.dp))
+                    Text(it, style = MaterialTheme.typography.bodySmall)
                 }
             }
         }

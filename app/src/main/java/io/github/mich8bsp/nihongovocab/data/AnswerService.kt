@@ -19,6 +19,9 @@ class AnswerService(
 ) {
     suspend fun getEntry(entryId: Long): Entry? = entryDao.getById(entryId)
 
+    /** Same selection a notification/the Home "Practice" button would make. */
+    suspend fun pickNext(): Entry? = pickRandomActiveEntry(entryDao, poolStateDao)
+
     suspend fun submitAnswer(entryId: Long, answer: String): AnswerResult {
         val entry = entryDao.getById(entryId) ?: error("Entry $entryId not found")
         val correct = isCorrectAnswer(entry, answer)

@@ -64,6 +64,7 @@ class MainActivity : ComponentActivity() {
                             entryId = entryId,
                             answerService = answerService,
                             onBack = { quizEntryId = null },
+                            onNext = { id -> quizEntryId = id },
                         )
                         else -> HomeScreen(
                             entryDao = db.entryDao(),

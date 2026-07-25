@@ -12,7 +12,10 @@ single user, no backend.
 3. User answers via free text (no multiple choice — typing the answer
    tests recall better than picking from options).
 4. App shows correct/incorrect feedback + the correct answer.
-5. User taps "Back to Home" → **Home screen**.
+5. User taps "Next" to keep quizzing (picks another random active entry
+   the same way, staying on the Quiz screen) or presses back to return to
+   **Home screen** (no separate "Back to Home" button - system back
+   already does this, see "Navigation").
 6. Home screen is also what's shown when the app is opened normally (not via
    notification).
 
@@ -108,7 +111,7 @@ Default: KANA and N5 `enabled = true`, N4–N1 `enabled = false`.
 
 ## Screens
 
-**Home screen** (default screen; also reached via "Back to Home" from quiz)
+**Home screen** (default screen; also reached via system back from Quiz)
 - Per-level stats: correct / wrong counts, mastered count out of total.
 - Per-level enable/disable toggle.
 - **Practice button**: picks a random active entry the same way a
@@ -125,12 +128,21 @@ Default: KANA and N5 `enabled = true`, N4–N1 `enabled = false`.
 
 **Quiz screen** (opened via notification tap, with entry id as extra)
 - Word/kana/kanji display, free-text field, submit button.
-- Submit → feedback (correct/incorrect + correct answer) → "Back to Home".
+- Submit → feedback (correct/incorrect + correct answer) → "Next" button,
+  which picks another random active entry (`AnswerService.pickNext()`,
+  same selection a notification/the Home Practice button would make) and
+  swaps the Quiz screen straight to it — no detour through Home. Falls
+  back to a "nothing to practice" message (same wording as Home's
+  Practice button) if nothing's left to quiz. There's no separate "back
+  to Home" button on the result screen - the system back button already
+  does that (see below), so a dedicated button would just duplicate it.
 - Implemented in `ui/QuizScreen.kt`: a self-contained composable taking
-  `entryId` + `AnswerService` + an `onBack` callback. No formal navigation
-  graph — see "Navigation" below, this turned out not to need one.
-  `MainActivity` shows it whenever it has a real entry id (from a
-  notification tap), `onBack` clears that back to `HomeScreen`.
+  `entryId` + `AnswerService` + `onBack` + `onNext: (Long) -> Unit`
+  callbacks. No formal navigation graph — see "Navigation" below, this
+  turned out not to need one. `MainActivity` shows it whenever it has a
+  real entry id (from a notification tap or `onNext`); `onBack` clears
+  that back to `HomeScreen`, `onNext` just swaps in the new entry id
+  (identical wiring to Home's `onPractice`).
 - The Column uses `Modifier.imePadding()` so the keyboard doesn't cover
   the Submit button when the answer field is focused — paired with
   `android:windowSoftInputMode="adjustResize"` on `MainActivity` in the
@@ -139,10 +151,9 @@ Default: KANA and N5 `enabled = true`, N4–N1 `enabled = false`.
   surprise, see Part 9 in TODO.md, so pairing both rather than relying on
   just one).
 - System back button on Quiz is intercepted with `BackHandler(onBack =
-  onBack)` so it returns to Home (same as the "Back to Home" button)
-  instead of the default Activity behavior of finishing the app — there's
-  no back stack (see "Navigation"), so an unhandled back press would just
-  exit.
+  onBack)` so it returns to Home instead of the default Activity behavior
+  of finishing the app — there's no back stack (see "Navigation"), so an
+  unhandled back press would just exit.
 
 ## Navigation
 

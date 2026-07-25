@@ -297,3 +297,12 @@ thousands of real quiz answers, then drove the app for real:
       `KANA` entry doesn't, and upgrading an existing install in place
       (not uninstalling) ran the migration with no crash and preserved
       existing streak/mastery/stats data.
+- [x] **Replaced the redundant "Back to Home" button on the Quiz result
+      screen with "Next"**, since system back already returns Home.
+      "Next" picks another random active entry (new
+      `AnswerService.pickNext()`) and swaps straight to it without
+      detouring through Home - same selection Home's Practice button
+      uses, falls back to the same "nothing to practice" message if
+      none's left. `./gradlew test assembleDebug` pass; verified live on
+      the `Medium_Phone` emulator: Next loads a new entry directly, back
+      button still returns Home from the result screen.
