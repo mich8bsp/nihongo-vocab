@@ -62,11 +62,17 @@ See DESIGN.md for the decisions behind these.
       launch and displays entry/unmastered counts per level instead of the
       placeholder text — **replace this with the real Home screen in Part
       5**, it's not meant to survive past this milestone.
-- [ ] **Not yet verified: build/tests haven't run in this environment**
-      (still no local JDK/Gradle). Run `./gradlew test` for the unit test
-      and re-run the app to confirm the on-screen counts look right
-      (KANA: 142, N5: 710, N4: 663, N3: 2077, N2: 1731, N1: 2655, all
-      "unmastered" since streak starts at 0).
+- [x] Verified via CLI (Android Studio's bundled JDK, see CLAUDE.md):
+      `./gradlew test` — both `AssetSeederTest` cases pass. Fixed two real
+      bugs found this way: a suspend-fn-inside-non-inline-lambda compile
+      error in `MainActivity` (`joinToString`'s transform lambda isn't
+      inline, `map`'s is — split into `.map { suspend call }.joinToString()`),
+      and added `exportSchema = false` to `AppDatabase` (no migrations to
+      track yet). `./gradlew assembleDebug` also succeeds.
+- [ ] Still worth a real device/emulator run to eyeball the on-screen
+      counts (KANA 142, N5 710, N4 663, N3 2077, N2 1731, N1 2655, all
+      "unmastered") — build success proves it compiles and the parser is
+      correct, not that seeding wires up end-to-end on a real Room DB.
 
 ## 3. Core answer logic
 - [ ] Function: check free-text answer against `meanings` (case-insensitive).

@@ -31,10 +31,10 @@ class MainActivity : ComponentActivity() {
 
             LaunchedEffect(Unit) {
                 AssetSeeder(applicationContext, db).seedIfNeeded()
-                val perLevel = Level.entries.joinToString("\n") { level ->
+                val perLevel = Level.entries.map { level ->
                     "$level: ${db.entryDao().countUnmastered(level)} unmastered"
                 }
-                status = "DB entries: ${db.entryDao().count()}\n$perLevel"
+                status = "DB entries: ${db.entryDao().count()}\n${perLevel.joinToString("\n")}"
             }
 
             MaterialTheme {

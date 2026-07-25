@@ -6,7 +6,8 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 
-@Database(entities = [Entry::class, PoolState::class], version = 1)
+// ponytail: exportSchema off - no migrations to track yet for a v1 personal app.
+@Database(entities = [Entry::class, PoolState::class], version = 1, exportSchema = false)
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun entryDao(): EntryDao

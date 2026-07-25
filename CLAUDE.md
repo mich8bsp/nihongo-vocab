@@ -27,3 +27,18 @@ resuming, so:
   doesn't have to re-derive it from a half-finished diff.
 
 Never let these two files drift from the real code/design state.
+
+## Building/testing from the CLI in this environment
+
+The default shell has no `java`/`gradle` on `PATH` and no `ANDROID_HOME`,
+even though Android Studio is installed — its bundled JDK isn't on the
+default `PATH`. Don't conclude the build can't be verified; use:
+
+```
+JAVA_HOME=/home/michael/Devl/tools/android-studio/jbr ./gradlew <task>
+```
+
+`local.properties` (gitignored) already has `sdk.dir` pointing at
+`/home/michael/Android/Sdk`, written by Android Studio. `./gradlew test`
+and `./gradlew assembleDebug` both work fine with just `JAVA_HOME` set
+this way — no need to punt build verification to the user by default.
