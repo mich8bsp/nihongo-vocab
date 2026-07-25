@@ -77,10 +77,8 @@ See DESIGN.md for the decisions behind these.
       inline, `map`'s is — split into `.map { suspend call }.joinToString()`),
       and added `exportSchema = false` to `AppDatabase` (no migrations to
       track yet). `./gradlew assembleDebug` also succeeds.
-- [ ] Still worth a real device/emulator run to eyeball the on-screen
-      counts (KANA 142, N5 710, N4 663, N3 2077, N2 1731, N1 2655, all
-      "unmastered") — build success proves it compiles and the parser is
-      correct, not that seeding wires up end-to-end on a real Room DB.
+- [x] Confirmed on emulator: seeding runs end-to-end on a real Room DB,
+      on-screen counts look right. **Part 2 done.**
 
 ## 3. Core answer logic
 - [ ] Function: check free-text answer against `meanings` (case-insensitive).
