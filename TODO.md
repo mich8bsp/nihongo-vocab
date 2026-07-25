@@ -17,14 +17,21 @@ See DESIGN.md for the decisions behind these.
       `android.compileOptions.targetCompatibility` automatically. Kept
       `org.jetbrains.kotlin.plugin.compose` and `com.google.devtools.ksp`,
       per https://developer.android.com/build/migrate-to-built-in-kotlin.
-- [ ] **Re-sync in Android Studio to confirm the fix.** Note: AGP 9.1.1
-      requires Gradle 9.3.1 minimum — if the generated wrapper picks
-      something older, that's the next likely failure. Also unverified:
-      whether `org.jetbrains.kotlin.plugin.compose:2.2.20` and
-      `ksp:2.2.20-2.0.3` are compatible with whatever Kotlin version AGP's
-      built-in support uses internally — if sync complains about a
-      Compose-compiler/Kotlin version mismatch, that's expected and the
-      error message will name the exact required version to switch to.
+- [x] Fixed second sync error: KSP was registering generated sources via
+      the old `kotlin.sourceSets` DSL, which built-in Kotlin disallows
+      (must use `android.sourceSets` instead — KSP handles this itself
+      once new enough). Root cause was KSP plugin version too old for
+      built-in-Kotlin awareness. Bumped `com.google.devtools.ksp` to
+      `2.3.10` (first version with confirmed AGP 9 built-in-Kotlin fixes)
+      and `org.jetbrains.kotlin.plugin.compose` to `2.3.20` to match
+      (KSP/Compose-compiler versions >= 2.3.x line no longer use the old
+      `<kotlinVersion>-<suffix>` format now that there's no separate KGP
+      version to pair against).
+- [ ] **Re-sync in Android Studio to confirm.** Note: AGP 9.1.1 requires
+      Gradle 9.3.1 minimum — if the generated wrapper picks something
+      older, that's the next likely failure. If sync still complains about
+      a Compose-compiler/Kotlin version mismatch, the error message names
+      the exact required version — paste it back and it's a one-line fix.
 
 ## 2. Data layer
 - [ ] Room entities: `Entry`, `PoolState` (fields per DESIGN.md).
