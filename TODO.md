@@ -264,6 +264,13 @@ thousands of real quiz answers, then drove the app for real:
       needs real hardware (real Doze/battery behavior, real notification
       shade, etc.) that only the user can run.
 
-## 9. On-device test
-- [ ] Install on a real device, verify notification fires, tap flow works,
-      streak/mastery/auto-advance behave as designed, stats update.
+## Post-launch improvements
+- [x] **Keyboard covered the Submit button** on the Quiz screen (reported
+      by the user after testing on their physical phone). Fixed with
+      `Modifier.imePadding()` on `QuizScreen`'s Column, paired with
+      `android:windowSoftInputMode="adjustResize"` on `MainActivity` in
+      the manifest — the standard combination for reliable
+      keyboard-avoidance across OEMs. `./gradlew test assembleDebug` both
+      pass; **not yet verified live** — no device (emulator or physical)
+      was connected when this was made, per explicit instruction to skip
+      that and just confirm the build.

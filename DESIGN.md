@@ -120,6 +120,13 @@ Default: KANA and N5 `enabled = true`, N4–N1 `enabled = false`.
   graph — see "Navigation" below, this turned out not to need one.
   `MainActivity` shows it whenever it has a real entry id (from a
   notification tap), `onBack` clears that back to `HomeScreen`.
+- The Column uses `Modifier.imePadding()` so the keyboard doesn't cover
+  the Submit button when the answer field is focused — paired with
+  `android:windowSoftInputMode="adjustResize"` on `MainActivity` in the
+  manifest, the standard combination for reliable keyboard-avoidance
+  behavior across OEMs (this app has already hit one Samsung-specific
+  surprise, see Part 9 in TODO.md, so pairing both rather than relying on
+  just one).
 
 ## Navigation
 
