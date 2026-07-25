@@ -30,6 +30,8 @@ import io.github.mich8bsp.nihongovocab.data.AnswerResult
 import io.github.mich8bsp.nihongovocab.data.AnswerService
 import io.github.mich8bsp.nihongovocab.data.Entry
 import io.github.mich8bsp.nihongovocab.data.Level
+import io.github.mich8bsp.nihongovocab.data.isCorrectAnswer
+import io.github.mich8bsp.nihongovocab.data.isRomajiAnswer
 import kotlinx.coroutines.launch
 
 @Composable
@@ -43,6 +45,7 @@ fun QuizScreen(
     var answerText by remember(entryId) { mutableStateOf("") }
     var result by remember(entryId) { mutableStateOf<AnswerResult?>(null) }
     var nextMessage by remember(entryId) { mutableStateOf<String?>(null) }
+    var romajiHint by remember(entryId) { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
 
     BackHandler(onBack = onBack)
@@ -70,16 +73,30 @@ fun QuizScreen(
             if (currentResult == null) {
                 OutlinedTextField(
                     value = answerText,
-                    onValueChange = { answerText = it },
+                    onValueChange = {
+                        answerText = it
+                        romajiHint = false
+                    },
                     label = { Text("Your answer") },
                     singleLine = true,
                 )
+                if (romajiHint) {
+                    Spacer(Modifier.height(8.dp))
+                    Text(
+                        "That's the romaji reading - try the English meaning",
+                        style = MaterialTheme.typography.bodySmall,
+                    )
+                }
                 Spacer(Modifier.height(16.dp))
                 Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                     Button(
                         onClick = {
-                            scope.launch {
-                                result = answerService.submitAnswer(entryId, answerText)
+                            if (!isCorrectAnswer(currentEntry, answerText) && isRomajiAnswer(currentEntry, answerText)) {
+                                romajiHint = true
+                            } else {
+                                scope.launch {
+                                    result = answerService.submitAnswer(entryId, answerText)
+                                }
                             }
                         },
                         enabled = answerText.isNotBlank(),

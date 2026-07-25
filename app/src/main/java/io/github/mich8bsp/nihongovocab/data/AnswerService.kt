@@ -7,6 +7,15 @@ fun isCorrectAnswer(entry: Entry, answer: String): Boolean {
     return entry.meanings.any { it.trim().lowercase() == normalized }
 }
 
+/**
+ * True if [answer] is this entry's romaji reading rather than its English
+ * meaning - the instinct when seeing kanji is sometimes to type the
+ * reading, not translate it. Always false for KANA entries (`romaji` is
+ * blank there - the meaning itself already is the romaji).
+ */
+fun isRomajiAnswer(entry: Entry, answer: String): Boolean =
+    entry.romaji.isNotBlank() && entry.romaji.trim().lowercase() == answer.trim().lowercase()
+
 /** Same selection notifications use - shared so "Practise" behaves identically to a real notification tap. */
 suspend fun pickRandomActiveEntry(entryDao: EntryDao, poolStateDao: PoolStateDao): Entry? {
     val enabledLevels = poolStateDao.getEnabledLevels()

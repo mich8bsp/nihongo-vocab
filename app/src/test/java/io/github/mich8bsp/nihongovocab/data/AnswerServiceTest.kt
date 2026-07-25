@@ -58,8 +58,13 @@ private class FakePoolStateDao(initial: Map<Level, Boolean>) : PoolStateDao {
 }
 
 class AnswerServiceTest {
-    private fun entry(id: Long, level: Level, streak: Int = 0, meanings: List<String> = listOf("blue")) =
-        Entry(id = id, text = "x", meanings = meanings, level = level, correctStreak = streak)
+    private fun entry(
+        id: Long,
+        level: Level,
+        streak: Int = 0,
+        meanings: List<String> = listOf("blue"),
+        romaji: String = "",
+    ) = Entry(id = id, text = "x", meanings = meanings, romaji = romaji, level = level, correctStreak = streak)
 
     @Test
     fun correctAnswerIncrementsStreakAndTotalCorrect() = runTest {
@@ -155,5 +160,21 @@ class AnswerServiceTest {
         assertTrue(isCorrectAnswer(e, "  TO EAT  "))
         assertTrue(isCorrectAnswer(e, "to have a meal"))
         assertFalse(isCorrectAnswer(e, "to drink"))
+    }
+
+    @Test
+    fun romajiAnswerIsDetectedCaseInsensitiveAndTrimmed() {
+        val e = entry(1, Level.N5, meanings = listOf("to eat"), romaji = "taberu")
+        assertTrue(isRomajiAnswer(e, "  TABERU  "))
+        assertFalse(isRomajiAnswer(e, "to eat"))
+        assertFalse(isRomajiAnswer(e, "tabemasu"))
+    }
+
+    @Test
+    fun romajiAnswerIsNeverTrueWhenRomajiIsBlank() {
+        // KANA entries have no romaji field (their meaning already is the romaji)
+        val e = entry(1, Level.KANA, meanings = listOf("a"), romaji = "")
+        assertFalse(isRomajiAnswer(e, "a"))
+        assertFalse(isRomajiAnswer(e, ""))
     }
 }

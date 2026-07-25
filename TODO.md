@@ -315,3 +315,16 @@ thousands of real quiz answers, then drove the app for real:
       `./gradlew test assembleDebug` pass; verified live on the
       `Medium_Phone` emulator: tapping Give Up with an empty answer field
       shows "Incorrect" + the correct answer, same as a wrong Submit.
+- [x] **Romaji leniency on Submit.** If a vocab answer doesn't match a
+      meaning but matches the entry's romaji (typing the reading instead
+      of translating it - a common instinct when looking at kanji), it's
+      not scored at all: a hint appears ("That's the romaji reading - try
+      the English meaning") and the field stays open for a real attempt,
+      which is then scored normally. Added `isRomajiAnswer` (mirrors
+      `isCorrectAnswer`'s trim/case-insensitive normalization, always
+      false for `KANA` since `romaji` is blank there) plus two unit
+      tests. `./gradlew test assembleDebug` pass; verified live on the
+      `Medium_Phone` emulator end-to-end: typed the DB-confirmed romaji
+      for 大変 ("taihen") → got the hint, no score change; then submitted
+      "hard" → scored Correct, and the DB showed `totalWrong` still 0 -
+      the romaji attempt truly wasn't recorded.

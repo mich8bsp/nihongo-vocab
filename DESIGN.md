@@ -83,6 +83,16 @@ Default: KANA and N5 `enabled = true`, N4–N1 `enabled = false`.
   after the meanings, e.g. `counter for small animals (~hiki)` — except
   for `KANA` entries, where the answer being checked *is* the romaji
   already (showing it again would be redundant).
+- **Romaji leniency**: when looking at kanji, the instinct is sometimes to
+  type the reading instead of translating it. If Submit's answer doesn't
+  match a meaning but does match the entry's `romaji` (`isRomajiAnswer`,
+  same normalization as `isCorrectAnswer`), the attempt is *not* scored at
+  all - no streak reset, no `totalWrong` bump. Instead the Quiz screen
+  shows a hint ("That's the romaji reading - try the English meaning")
+  and leaves the text field open for a real attempt, which then goes
+  through the normal correct/incorrect scoring. The hint clears as soon
+  as the user edits the field again. Always false for `KANA` entries
+  (`romaji` is blank there, see above).
 
 ## Vocabulary data source
 
@@ -136,6 +146,10 @@ Default: KANA and N5 `enabled = true`, N4–N1 `enabled = false`.
   to a wrong answer (`AnswerService.giveUp`: streak reset, `totalWrong`
   incremented, same `AnswerResult` shape), just skipping the string
   comparison. Unlike Submit it's always enabled (no text required).
+- Submit checks locally first whether the typed answer is a romaji guess
+  (see "Answering" → Romaji leniency): if so it shows the hint and stays
+  on the entry field instead of scoring anything, otherwise it calls
+  `AnswerService.submitAnswer` as normal.
 - Submit/Give Up → feedback (correct/incorrect + correct answer) → "Next" button,
   which picks another random active entry (`AnswerService.pickNext()`,
   same selection a notification/the Home Practice button would make) and
