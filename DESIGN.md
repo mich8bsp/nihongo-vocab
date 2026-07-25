@@ -112,7 +112,7 @@ Default: KANA and N5 `enabled = true`, N4–N1 `enabled = false`.
   on; no reason to go lower for a single-device personal app).
 - Package/applicationId: `io.github.mich8bsp.nihongovocab` (personal
   project, no owned domain — `io.github.<username>` convention).
-- Repo: https://github.com/mich8bsp/nihongo_vocab (public).
+- Repo: https://github.com/mich8bsp/nihongo-vocab (public).
 - Kotlin + Jetpack Compose
 - Room (local DB)
 - WorkManager for scheduling

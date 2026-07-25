@@ -6,7 +6,7 @@ See DESIGN.md for the decisions behind these.
 ## 1. Project setup
 - [x] Android Gradle project skeleton (Kotlin + Jetpack Compose), minSdk 33 /
       targetSdk 36, hand-written (no Android Studio available in this
-      environment). Repo: https://github.com/mich8bsp/nihongo_vocab
+      environment). Repo: https://github.com/mich8bsp/nihongo-vocab
 - [x] Dependencies wired in `app/build.gradle.kts`: Room 2.8.4 (+ KSP),
       WorkManager 2.11.2, Navigation Compose 2.8.5.
 - [ ] **Open in Android Studio and let it generate the Gradle wrapper** —
