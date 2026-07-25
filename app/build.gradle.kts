@@ -46,4 +46,8 @@ dependencies {
     ksp("androidx.room:room-compiler:2.8.4")
 
     implementation("androidx.work:work-runtime-ktx:2.11.2")
+
+    testImplementation("junit:junit:4.13.2")
+    // Android's stub org.json throws in local unit tests - use the real impl for those.
+    testImplementation("org.json:json:20260719")
 }

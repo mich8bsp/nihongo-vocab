@@ -71,19 +71,27 @@ Default: KANA and N5 `enabled = true`, N4–N1 `enabled = false`.
 
 ## Vocabulary data source
 
-- **Vocab/kanji (N5–N1)**: converted from the tanos.co.uk JLPT list via
-  [Bluskyo/JLPT_Vocabulary](https://github.com/Bluskyo/JLPT_Vocabulary)
-  (JSON, already has word/reading/meaning/level). Reshaped by a one-off
-  script into the `Entry` schema — `meaning` strings split on `;`/`,` into
-  the `meanings` list.
-  - Fallback/alternative if this dataset has gaps:
-    [elzup/jlpt-word-list](https://github.com/elzup/jlpt-word-list).
-  - No stated reuse license on these repos (derived from tanos.co.uk, which
-    also has none posted) — fine for personal offline use; revisit if this
-    app is ever published publicly.
-- **Kana (hiragana + katakana)**: hand-authored JSON, not sourced from any
-  dataset. It's a fixed ~100-character set — writing it directly is less
-  work than finding/normalizing an external source for it.
+- **Vocab/kanji (N5–N1)**: [elzup/jlpt-word-list](https://github.com/elzup/jlpt-word-list)
+  (`src/n5.csv`–`src/n1.csv`), MIT licensed (Jamie Sinclair / elzup,
+  2020) — attribution kept in `app/src/main/assets/vocab/ATTRIBUTION.md`.
+  - Correction from initial plan: Bluskyo/JLPT_Vocabulary (the originally
+    picked primary source) turned out to only have kanji + reading, no
+    English meanings at all — useless for this app's answer-checking, so
+    it's not used. elzup's CSVs have `expression,reading,meaning,tags`
+    columns, which is what's actually needed.
+  - Reshaped by `scripts/generate_vocab_assets.py` into the `Entry`
+    schema: `meaning` column split on `,` into the `meanings` list,
+    same-text rows within a level merged (union of meanings), and any
+    expression appearing in more than one level's file is kept only in
+    the easiest level it appears in (small overlaps exist between level
+    files in the source data).
+  - `reading` and `tags` columns from the source are discarded — not part
+    of the `Entry` schema (design only quizzes English meaning).
+- **Kana (hiragana + katakana)**: hand-authored via
+  `scripts/generate_kana_assets.py` (a Python table of char/romaji pairs,
+  not an external dataset). Covers seion + dakuten + handakuten (142
+  entries total); youon (contracted sounds like きゃ) are out of scope for
+  v1 since they're combinations of already-covered characters.
 
 ## Screens
 

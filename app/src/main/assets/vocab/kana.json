@@ -1,0 +1,858 @@
+[
+  {
+    "text": "あ",
+    "meanings": [
+      "a"
+    ]
+  },
+  {
+    "text": "ア",
+    "meanings": [
+      "a"
+    ]
+  },
+  {
+    "text": "い",
+    "meanings": [
+      "i"
+    ]
+  },
+  {
+    "text": "イ",
+    "meanings": [
+      "i"
+    ]
+  },
+  {
+    "text": "う",
+    "meanings": [
+      "u"
+    ]
+  },
+  {
+    "text": "ウ",
+    "meanings": [
+      "u"
+    ]
+  },
+  {
+    "text": "え",
+    "meanings": [
+      "e"
+    ]
+  },
+  {
+    "text": "エ",
+    "meanings": [
+      "e"
+    ]
+  },
+  {
+    "text": "お",
+    "meanings": [
+      "o"
+    ]
+  },
+  {
+    "text": "オ",
+    "meanings": [
+      "o"
+    ]
+  },
+  {
+    "text": "か",
+    "meanings": [
+      "ka"
+    ]
+  },
+  {
+    "text": "カ",
+    "meanings": [
+      "ka"
+    ]
+  },
+  {
+    "text": "き",
+    "meanings": [
+      "ki"
+    ]
+  },
+  {
+    "text": "キ",
+    "meanings": [
+      "ki"
+    ]
+  },
+  {
+    "text": "く",
+    "meanings": [
+      "ku"
+    ]
+  },
+  {
+    "text": "ク",
+    "meanings": [
+      "ku"
+    ]
+  },
+  {
+    "text": "け",
+    "meanings": [
+      "ke"
+    ]
+  },
+  {
+    "text": "ケ",
+    "meanings": [
+      "ke"
+    ]
+  },
+  {
+    "text": "こ",
+    "meanings": [
+      "ko"
+    ]
+  },
+  {
+    "text": "コ",
+    "meanings": [
+      "ko"
+    ]
+  },
+  {
+    "text": "さ",
+    "meanings": [
+      "sa"
+    ]
+  },
+  {
+    "text": "サ",
+    "meanings": [
+      "sa"
+    ]
+  },
+  {
+    "text": "し",
+    "meanings": [
+      "shi"
+    ]
+  },
+  {
+    "text": "シ",
+    "meanings": [
+      "shi"
+    ]
+  },
+  {
+    "text": "す",
+    "meanings": [
+      "su"
+    ]
+  },
+  {
+    "text": "ス",
+    "meanings": [
+      "su"
+    ]
+  },
+  {
+    "text": "せ",
+    "meanings": [
+      "se"
+    ]
+  },
+  {
+    "text": "セ",
+    "meanings": [
+      "se"
+    ]
+  },
+  {
+    "text": "そ",
+    "meanings": [
+      "so"
+    ]
+  },
+  {
+    "text": "ソ",
+    "meanings": [
+      "so"
+    ]
+  },
+  {
+    "text": "た",
+    "meanings": [
+      "ta"
+    ]
+  },
+  {
+    "text": "タ",
+    "meanings": [
+      "ta"
+    ]
+  },
+  {
+    "text": "ち",
+    "meanings": [
+      "chi"
+    ]
+  },
+  {
+    "text": "チ",
+    "meanings": [
+      "chi"
+    ]
+  },
+  {
+    "text": "つ",
+    "meanings": [
+      "tsu"
+    ]
+  },
+  {
+    "text": "ツ",
+    "meanings": [
+      "tsu"
+    ]
+  },
+  {
+    "text": "て",
+    "meanings": [
+      "te"
+    ]
+  },
+  {
+    "text": "テ",
+    "meanings": [
+      "te"
+    ]
+  },
+  {
+    "text": "と",
+    "meanings": [
+      "to"
+    ]
+  },
+  {
+    "text": "ト",
+    "meanings": [
+      "to"
+    ]
+  },
+  {
+    "text": "な",
+    "meanings": [
+      "na"
+    ]
+  },
+  {
+    "text": "ナ",
+    "meanings": [
+      "na"
+    ]
+  },
+  {
+    "text": "に",
+    "meanings": [
+      "ni"
+    ]
+  },
+  {
+    "text": "ニ",
+    "meanings": [
+      "ni"
+    ]
+  },
+  {
+    "text": "ぬ",
+    "meanings": [
+      "nu"
+    ]
+  },
+  {
+    "text": "ヌ",
+    "meanings": [
+      "nu"
+    ]
+  },
+  {
+    "text": "ね",
+    "meanings": [
+      "ne"
+    ]
+  },
+  {
+    "text": "ネ",
+    "meanings": [
+      "ne"
+    ]
+  },
+  {
+    "text": "の",
+    "meanings": [
+      "no"
+    ]
+  },
+  {
+    "text": "ノ",
+    "meanings": [
+      "no"
+    ]
+  },
+  {
+    "text": "は",
+    "meanings": [
+      "ha"
+    ]
+  },
+  {
+    "text": "ハ",
+    "meanings": [
+      "ha"
+    ]
+  },
+  {
+    "text": "ひ",
+    "meanings": [
+      "hi"
+    ]
+  },
+  {
+    "text": "ヒ",
+    "meanings": [
+      "hi"
+    ]
+  },
+  {
+    "text": "ふ",
+    "meanings": [
+      "fu"
+    ]
+  },
+  {
+    "text": "フ",
+    "meanings": [
+      "fu"
+    ]
+  },
+  {
+    "text": "へ",
+    "meanings": [
+      "he"
+    ]
+  },
+  {
+    "text": "ヘ",
+    "meanings": [
+      "he"
+    ]
+  },
+  {
+    "text": "ほ",
+    "meanings": [
+      "ho"
+    ]
+  },
+  {
+    "text": "ホ",
+    "meanings": [
+      "ho"
+    ]
+  },
+  {
+    "text": "ま",
+    "meanings": [
+      "ma"
+    ]
+  },
+  {
+    "text": "マ",
+    "meanings": [
+      "ma"
+    ]
+  },
+  {
+    "text": "み",
+    "meanings": [
+      "mi"
+    ]
+  },
+  {
+    "text": "ミ",
+    "meanings": [
+      "mi"
+    ]
+  },
+  {
+    "text": "む",
+    "meanings": [
+      "mu"
+    ]
+  },
+  {
+    "text": "ム",
+    "meanings": [
+      "mu"
+    ]
+  },
+  {
+    "text": "め",
+    "meanings": [
+      "me"
+    ]
+  },
+  {
+    "text": "メ",
+    "meanings": [
+      "me"
+    ]
+  },
+  {
+    "text": "も",
+    "meanings": [
+      "mo"
+    ]
+  },
+  {
+    "text": "モ",
+    "meanings": [
+      "mo"
+    ]
+  },
+  {
+    "text": "や",
+    "meanings": [
+      "ya"
+    ]
+  },
+  {
+    "text": "ヤ",
+    "meanings": [
+      "ya"
+    ]
+  },
+  {
+    "text": "ゆ",
+    "meanings": [
+      "yu"
+    ]
+  },
+  {
+    "text": "ユ",
+    "meanings": [
+      "yu"
+    ]
+  },
+  {
+    "text": "よ",
+    "meanings": [
+      "yo"
+    ]
+  },
+  {
+    "text": "ヨ",
+    "meanings": [
+      "yo"
+    ]
+  },
+  {
+    "text": "ら",
+    "meanings": [
+      "ra"
+    ]
+  },
+  {
+    "text": "ラ",
+    "meanings": [
+      "ra"
+    ]
+  },
+  {
+    "text": "り",
+    "meanings": [
+      "ri"
+    ]
+  },
+  {
+    "text": "リ",
+    "meanings": [
+      "ri"
+    ]
+  },
+  {
+    "text": "る",
+    "meanings": [
+      "ru"
+    ]
+  },
+  {
+    "text": "ル",
+    "meanings": [
+      "ru"
+    ]
+  },
+  {
+    "text": "れ",
+    "meanings": [
+      "re"
+    ]
+  },
+  {
+    "text": "レ",
+    "meanings": [
+      "re"
+    ]
+  },
+  {
+    "text": "ろ",
+    "meanings": [
+      "ro"
+    ]
+  },
+  {
+    "text": "ロ",
+    "meanings": [
+      "ro"
+    ]
+  },
+  {
+    "text": "わ",
+    "meanings": [
+      "wa"
+    ]
+  },
+  {
+    "text": "ワ",
+    "meanings": [
+      "wa"
+    ]
+  },
+  {
+    "text": "を",
+    "meanings": [
+      "wo"
+    ]
+  },
+  {
+    "text": "ヲ",
+    "meanings": [
+      "wo"
+    ]
+  },
+  {
+    "text": "ん",
+    "meanings": [
+      "n"
+    ]
+  },
+  {
+    "text": "ン",
+    "meanings": [
+      "n"
+    ]
+  },
+  {
+    "text": "が",
+    "meanings": [
+      "ga"
+    ]
+  },
+  {
+    "text": "ガ",
+    "meanings": [
+      "ga"
+    ]
+  },
+  {
+    "text": "ぎ",
+    "meanings": [
+      "gi"
+    ]
+  },
+  {
+    "text": "ギ",
+    "meanings": [
+      "gi"
+    ]
+  },
+  {
+    "text": "ぐ",
+    "meanings": [
+      "gu"
+    ]
+  },
+  {
+    "text": "グ",
+    "meanings": [
+      "gu"
+    ]
+  },
+  {
+    "text": "げ",
+    "meanings": [
+      "ge"
+    ]
+  },
+  {
+    "text": "ゲ",
+    "meanings": [
+      "ge"
+    ]
+  },
+  {
+    "text": "ご",
+    "meanings": [
+      "go"
+    ]
+  },
+  {
+    "text": "ゴ",
+    "meanings": [
+      "go"
+    ]
+  },
+  {
+    "text": "ざ",
+    "meanings": [
+      "za"
+    ]
+  },
+  {
+    "text": "ザ",
+    "meanings": [
+      "za"
+    ]
+  },
+  {
+    "text": "じ",
+    "meanings": [
+      "ji"
+    ]
+  },
+  {
+    "text": "ジ",
+    "meanings": [
+      "ji"
+    ]
+  },
+  {
+    "text": "ず",
+    "meanings": [
+      "zu"
+    ]
+  },
+  {
+    "text": "ズ",
+    "meanings": [
+      "zu"
+    ]
+  },
+  {
+    "text": "ぜ",
+    "meanings": [
+      "ze"
+    ]
+  },
+  {
+    "text": "ゼ",
+    "meanings": [
+      "ze"
+    ]
+  },
+  {
+    "text": "ぞ",
+    "meanings": [
+      "zo"
+    ]
+  },
+  {
+    "text": "ゾ",
+    "meanings": [
+      "zo"
+    ]
+  },
+  {
+    "text": "だ",
+    "meanings": [
+      "da"
+    ]
+  },
+  {
+    "text": "ダ",
+    "meanings": [
+      "da"
+    ]
+  },
+  {
+    "text": "ぢ",
+    "meanings": [
+      "ji",
+      "di"
+    ]
+  },
+  {
+    "text": "ヂ",
+    "meanings": [
+      "ji",
+      "di"
+    ]
+  },
+  {
+    "text": "づ",
+    "meanings": [
+      "zu",
+      "du"
+    ]
+  },
+  {
+    "text": "ヅ",
+    "meanings": [
+      "zu",
+      "du"
+    ]
+  },
+  {
+    "text": "で",
+    "meanings": [
+      "de"
+    ]
+  },
+  {
+    "text": "デ",
+    "meanings": [
+      "de"
+    ]
+  },
+  {
+    "text": "ど",
+    "meanings": [
+      "do"
+    ]
+  },
+  {
+    "text": "ド",
+    "meanings": [
+      "do"
+    ]
+  },
+  {
+    "text": "ば",
+    "meanings": [
+      "ba"
+    ]
+  },
+  {
+    "text": "バ",
+    "meanings": [
+      "ba"
+    ]
+  },
+  {
+    "text": "び",
+    "meanings": [
+      "bi"
+    ]
+  },
+  {
+    "text": "ビ",
+    "meanings": [
+      "bi"
+    ]
+  },
+  {
+    "text": "ぶ",
+    "meanings": [
+      "bu"
+    ]
+  },
+  {
+    "text": "ブ",
+    "meanings": [
+      "bu"
+    ]
+  },
+  {
+    "text": "べ",
+    "meanings": [
+      "be"
+    ]
+  },
+  {
+    "text": "ベ",
+    "meanings": [
+      "be"
+    ]
+  },
+  {
+    "text": "ぼ",
+    "meanings": [
+      "bo"
+    ]
+  },
+  {
+    "text": "ボ",
+    "meanings": [
+      "bo"
+    ]
+  },
+  {
+    "text": "ぱ",
+    "meanings": [
+      "pa"
+    ]
+  },
+  {
+    "text": "パ",
+    "meanings": [
+      "pa"
+    ]
+  },
+  {
+    "text": "ぴ",
+    "meanings": [
+      "pi"
+    ]
+  },
+  {
+    "text": "ピ",
+    "meanings": [
+      "pi"
+    ]
+  },
+  {
+    "text": "ぷ",
+    "meanings": [
+      "pu"
+    ]
+  },
+  {
+    "text": "プ",
+    "meanings": [
+      "pu"
+    ]
+  },
+  {
+    "text": "ぺ",
+    "meanings": [
+      "pe"
+    ]
+  },
+  {
+    "text": "ペ",
+    "meanings": [
+      "pe"
+    ]
+  },
+  {
+    "text": "ぽ",
+    "meanings": [
+      "po"
+    ]
+  },
+  {
+    "text": "ポ",
+    "meanings": [
+      "po"
+    ]
+  }
+]
