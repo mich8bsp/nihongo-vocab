@@ -211,11 +211,51 @@ preemptively. Both requirements are already satisfied:
       (no extra).
 - [x] Reconsider only if a real need for more screens/back-stack shows up.
 
-## 8. Polish pass
-- [ ] Empty/edge states: all pools disabled, all entries everywhere
-      mastered, permission denied.
-- [ ] Manual pool toggle doesn't fight with an in-flight auto-advance
-      (e.g. re-enabling a "just completed" pool works as expected).
+## 8. Polish pass — all four edge cases verified live, zero code changes needed
+Set up each scenario by editing the real on-device Room DB directly (pull
+`nihongo_vocab.db`/`-wal`/`-shm` via `run-as`, edit with sqlite3 locally,
+checkpoint the WAL, push back via `/data/local/tmp` since `run-as` can't
+read `/sdcard` under scoped storage) rather than grinding through
+thousands of real quiz answers, then drove the app for real:
+- [x] **All pools disabled**: Home renders fine (no crash), force-ran the
+      notification worker (`adb shell cmd jobscheduler run -f -n
+      androidx.work.systemjobscheduler <pkg> <job>`) — no notification
+      posted, no crash, correctly rescheduled. (This run happened to land
+      after the 10pm active-hours cutoff at real emulator time, so it
+      also incidentally exercised the next-day clamping live, not just
+      in `NotificationSchedulingTest`.)
+- [x] **Enabled pool with zero active entries** (distinct from all pools
+      disabled — this is "pool on, but everything in it already
+      mastered"): set up by genuinely mastering all of N5 through the
+      real app (see below), then force-ran the worker — same graceful
+      no-crash/no-notification/reschedule result.
+- [x] **Permission denied**: revoked `POST_NOTIFICATIONS` via `adb shell
+      pm revoke`, force-ran the worker with a real active entry
+      available — no crash, no notification (the existing permission
+      check in `QuizNotificationWorker` already guarded this correctly),
+      job still rescheduled.
+- [x] **Manual toggle doesn't fight in-flight auto-advance**: genuinely
+      mastered N5 through the real app — set 709/710 entries to
+      `correctStreak=3` directly in the DB, left one real entry
+      unmastered, then answered *that exact entry* correctly 3 times
+      through the actual `QuizScreen` (not a DB edit) to trigger real
+      completion detection. Confirmed N5 hit 710/710, auto-disabled, and
+      N4 auto-enabled — the full real auto-advance chain, not just the
+      fake-backed `AnswerServiceTest` version. Then manually re-enabled
+      N5 and disabled N4 from Home right after — both stuck exactly as
+      toggled, no reverting or race.
+- Note: my first attempt at the last scenario looked like a bug (N5
+  stuck at 709/710 after one correct answer) — it wasn't. Mastery needs
+  3 *consecutive* correct answers, not one; I'd only answered once. Worth
+  recording since it's an easy mistake to repeat when re-testing this.
+
+## 9. On-device test
+- [ ] Install on a real device, verify notification fires, tap flow works,
+      streak/mastery/auto-advance behave as designed, stats update.
+      **Needs the user's physical phone** — everything up to Part 8 was
+      verified on an emulator from this environment; this final pass
+      needs real hardware (real Doze/battery behavior, real notification
+      shade, etc.) that only the user can run.
 
 ## 9. On-device test
 - [ ] Install on a real device, verify notification fires, tap flow works,
