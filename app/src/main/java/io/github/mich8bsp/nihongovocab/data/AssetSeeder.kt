@@ -44,6 +44,7 @@ internal fun parseEntries(json: String, level: Level): List<Entry> {
         val obj = array.getJSONObject(i)
         val meaningsArr = obj.getJSONArray("meanings")
         val meanings = (0 until meaningsArr.length()).map { meaningsArr.getString(it) }
-        Entry(text = obj.getString("text"), meanings = meanings, level = level)
+        val romaji = obj.optString("romaji", "")
+        Entry(text = obj.getString("text"), meanings = meanings, romaji = romaji, level = level)
     }
 }

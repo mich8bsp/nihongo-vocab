@@ -8,6 +8,7 @@ data class Entry(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
     val text: String,
     val meanings: List<String>,
+    val romaji: String = "",
     val level: Level,
     val correctStreak: Int = 0,
     val totalCorrect: Int = 0,

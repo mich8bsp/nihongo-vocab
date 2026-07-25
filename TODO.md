@@ -285,3 +285,15 @@ thousands of real quiz answers, then drove the app for real:
       `android:roundIcon` in the manifest. `./gradlew test assembleDebug`
       pass; verified live on the `Medium_Phone` emulator (visible in the
       recents/task-switcher header).
+- [x] **Correct-answer feedback now includes romaji** for vocab entries
+      (e.g. "counter for small animals (~hiki)"), skipped for `KANA`
+      entries since the answer there already is romaji. Added
+      `Entry.romaji`, regenerated `n5-n1.json` with romaji precomputed
+      from the source `reading` column via `pykakasi` (in
+      `scripts/generate_vocab_assets.py`), bumped Room schema to v2 with
+      `MIGRATION_1_2` (`ALTER TABLE ... ADD COLUMN romaji ... DEFAULT
+      ''`). `./gradlew test assembleDebug` pass; verified live on the
+      `Medium_Phone` emulator: fresh-install vocab entry shows romaji,
+      `KANA` entry doesn't, and upgrading an existing install in place
+      (not uninstalling) ran the migration with no crash and preserved
+      existing streak/mastery/stats data.

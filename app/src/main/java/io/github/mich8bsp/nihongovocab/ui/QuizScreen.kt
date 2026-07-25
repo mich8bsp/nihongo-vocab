@@ -27,6 +27,7 @@ import androidx.compose.ui.unit.dp
 import io.github.mich8bsp.nihongovocab.data.AnswerResult
 import io.github.mich8bsp.nihongovocab.data.AnswerService
 import io.github.mich8bsp.nihongovocab.data.Entry
+import io.github.mich8bsp.nihongovocab.data.Level
 import kotlinx.coroutines.launch
 
 @Composable
@@ -83,7 +84,12 @@ fun QuizScreen(
             } else {
                 Text(if (currentResult.correct) "Correct!" else "Incorrect")
                 Spacer(Modifier.height(8.dp))
-                Text("Correct answer: ${currentResult.meanings.joinToString(", ")}")
+                val romajiSuffix = if (currentEntry.level != Level.KANA && currentEntry.romaji.isNotBlank()) {
+                    " (${currentEntry.romaji})"
+                } else {
+                    ""
+                }
+                Text("Correct answer: ${currentResult.meanings.joinToString(", ")}$romajiSuffix")
                 Spacer(Modifier.height(16.dp))
                 Button(onClick = onBack) {
                     Text("Back to Home")

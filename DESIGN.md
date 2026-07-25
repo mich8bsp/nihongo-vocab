@@ -23,6 +23,9 @@ single user, no backend.
 - `text` — the kanji/kana/word as shown in the notification
 - `meanings: List<String>` — acceptable English answers (dictionary entries
   often have multiple valid glosses)
+- `romaji: String` — Hepburn romaji of the entry's reading, shown alongside
+  the meanings after answering (empty for `KANA` entries, where the
+  meaning itself already is the romaji - see "Answering")
 - `level` — KANA / N5 / N4 / N3 / N2 / N1. Kana is its own pool, separate
   from N5–N1 vocab/kanji.
 - `correctStreak: Int` (0–3) — consecutive correct answers. Any wrong answer
@@ -70,6 +73,10 @@ Default: KANA and N5 `enabled = true`, N4–N1 `enabled = false`.
   completion for that entry's level.
 - Implemented in `data/AnswerService.kt` (`isCorrectAnswer` +
   `AnswerService.submitAnswer`), operating on `EntryDao`/`PoolStateDao`.
+- The post-answer feedback also shows the entry's `romaji` in parentheses
+  after the meanings, e.g. `counter for small animals (~hiki)` — except
+  for `KANA` entries, where the answer being checked *is* the romaji
+  already (showing it again would be redundant).
 
 ## Vocabulary data source
 
@@ -87,8 +94,12 @@ Default: KANA and N5 `enabled = true`, N4–N1 `enabled = false`.
     expression appearing in more than one level's file is kept only in
     the easiest level it appears in (small overlaps exist between level
     files in the source data).
-  - `reading` and `tags` columns from the source are discarded — not part
-    of the `Entry` schema (design only quizzes English meaning).
+  - `tags` column from the source is discarded. `reading` is kept, but not
+    stored verbatim — `scripts/generate_vocab_assets.py` converts it to
+    Hepburn romaji at generation time via `pykakasi` (not a repo
+    dependency, only needed to regenerate the assets) and stores that as
+    `Entry.romaji`. Precomputing in Python means the app itself needs no
+    kana→romaji conversion logic at runtime.
 - **Kana (hiragana + katakana)**: hand-authored via
   `scripts/generate_kana_assets.py` (a Python table of char/romaji pairs,
   not an external dataset). Covers seion + dakuten + handakuten (142
@@ -176,7 +187,11 @@ behavior shows up.
   project, no owned domain — `io.github.<username>` convention).
 - Repo: https://github.com/mich8bsp/nihongo-vocab (public).
 - Kotlin + Jetpack Compose
-- Room (local DB)
+- Room (local DB), schema version 2 (v1 → v2 added `Entry.romaji` via
+  `MIGRATION_1_2`, an `ALTER TABLE ... ADD COLUMN ... DEFAULT ''` - existing
+  installs keep all progress, just with an empty `romaji` on
+  already-seeded entries until re-seeded; `exportSchema` stays off, still
+  not worth a schema-history folder for a single-device personal app)
 - WorkManager for scheduling
 - Word lists (JLPT-tagged vocab + kana charts) bundled as JSON assets,
   seeded into Room on first launch — see "Vocabulary data source".
