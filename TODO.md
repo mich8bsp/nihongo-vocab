@@ -57,7 +57,15 @@ See DESIGN.md for the decisions behind these.
 - [x] Self-check: `AssetSeederTest` (JVM unit test) covers the JSON→Entry
       parsing. Needed `testImplementation("org.json:json:...")` since
       Android's stub android.jar throws on org.json calls in local unit
-      tests otherwise.
+      tests otherwise. `ConvertersTest` and `LevelTest` added afterwards to
+      cover the meanings/Level round-trip and the `next()` chain — 9 JVM
+      unit tests total, all passing.
+- [ ] **Known test gap, deferred, not forgotten**: `EntryDao`/`PoolStateDao`
+      queries and `AssetSeeder.seedIfNeeded()`'s orchestration (idempotency,
+      correct KANA+N5 defaults) need real Room/SQLite — no `androidTest`
+      source set exists yet. Natural point to add it is Part 3, since the
+      streak-update/pool-complete logic there will exercise these DAOs for
+      real anyway rather than testing them in isolation now.
 - [x] Temporary verification stub: `MainActivity` now runs seeding on
       launch and displays entry/unmastered counts per level instead of the
       placeholder text — **replace this with the real Home screen in Part
