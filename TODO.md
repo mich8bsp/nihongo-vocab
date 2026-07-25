@@ -81,13 +81,27 @@ See DESIGN.md for the decisions behind these.
       on-screen counts look right. **Part 2 done.**
 
 ## 3. Core answer logic
-- [ ] Function: check free-text answer against `meanings` (case-insensitive).
-- [ ] Function: apply an answer result — update `correctStreak`,
-      `totalCorrect`/`totalWrong`, then check if the entry's pool just
-      became complete → auto-disable it / auto-enable its "next" pool per
-      the KANA→(none), N5→N4→N3→N2→N1→(none) chain.
-- [ ] Self-check: small test exercising streak reset on wrong answer, streak
-      mastery at 3, and pool auto-advance (including kana having no next).
+- [x] `isCorrectAnswer(entry, answer)`: case-insensitive, trimmed match
+      against any of `entry.meanings` (`data/AnswerService.kt`).
+- [x] `AnswerService.submitAnswer(entryId, answer)`: updates `correctStreak`
+      (reset to 0 on wrong, capped at 3 on correct so it never exceeds the
+      documented 0–3 range) and `totalCorrect`/`totalWrong`, then — only
+      when the entry just hit streak 3 — checks `countUnmastered(level)`
+      and if 0, disables that pool and enables `level.next()` (a no-op
+      "enable if not already enabled": setting an already-enabled pool
+      to enabled again changes nothing, so no extra "already enabled?"
+      check was needed).
+- [x] Self-check: `AnswerServiceTest`, 7 cases (streak increment/reset/cap,
+      pool completion + advance, pool-not-yet-complete leaves state alone,
+      kana completion touching no other pool, case/whitespace-insensitive
+      matching). Used lightweight in-memory fakes of `EntryDao`/
+      `PoolStateDao` (they're plain interfaces) rather than real Room —
+      resolves the "known test gap" noted at the end of Part 2 without
+      needing an `androidTest` source set after all; the orchestration
+      logic is what actually mattered; raw SQL query correctness against
+      real SQLite is lower-risk and still not directly covered.
+      9 → 16 total unit tests, all passing. `./gradlew test assembleDebug`
+      both succeed (verified via CLI, see CLAUDE.md).
 
 ## 4. Quiz screen (UI)
 - [ ] Screen taking an entry id, loading the entry.

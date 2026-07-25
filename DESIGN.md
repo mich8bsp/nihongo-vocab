@@ -68,6 +68,8 @@ Default: KANA and N5 `enabled = true`, N4–N1 `enabled = false`.
   already covers most valid synonym cases.
 - Updates `correctStreak`, `totalCorrect`/`totalWrong`, then re-checks pool
   completion for that entry's level.
+- Implemented in `data/AnswerService.kt` (`isCorrectAnswer` +
+  `AnswerService.submitAnswer`), operating on `EntryDao`/`PoolStateDao`.
 
 ## Vocabulary data source
 
