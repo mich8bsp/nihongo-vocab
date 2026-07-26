@@ -16,10 +16,12 @@ import androidx.core.content.getSystemService
 import io.github.mich8bsp.nihongovocab.MainActivity
 import io.github.mich8bsp.nihongovocab.data.AppDatabase
 import io.github.mich8bsp.nihongovocab.data.Entry
+import io.github.mich8bsp.nihongovocab.data.meaningsWithRomaji
 import io.github.mich8bsp.nihongovocab.data.pickRandomActiveEntry
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlin.random.Random
 
 private const val ACTION_FIRE = "io.github.mich8bsp.nihongovocab.ACTION_FIRE_QUIZ_NOTIFICATION"
 private const val CHANNEL_ID = "quiz_reminders"
@@ -45,7 +47,11 @@ class QuizAlarmReceiver : BroadcastReceiver() {
                         val db = AppDatabase.getInstance(context)
                         val entry = pickRandomActiveEntry(db.entryDao(), db.poolStateDao())
                         if (entry != null) {
-                            showNotification(context, entry)
+                            if (Random.nextBoolean()) {
+                                showRevealNotification(context, entry)
+                            } else {
+                                showQuizNotification(context, entry)
+                            }
                         }
                         scheduleNext(context)
                     } finally {
@@ -56,10 +62,8 @@ class QuizAlarmReceiver : BroadcastReceiver() {
         }
     }
 
-    private fun showNotification(context: Context, entry: Entry) {
-        val channel = NotificationChannel(CHANNEL_ID, "Quiz reminders", NotificationManager.IMPORTANCE_DEFAULT)
-        context.getSystemService(NotificationManager::class.java).createNotificationChannel(channel)
-
+    /** Tap opens the Quiz screen for [entry] - the original notification type. */
+    private fun showQuizNotification(context: Context, entry: Entry) {
         val activityIntent = Intent(context, MainActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
             putExtra(MainActivity.EXTRA_ENTRY_ID, entry.id)
@@ -77,11 +81,31 @@ class QuizAlarmReceiver : BroadcastReceiver() {
             .setContentIntent(pendingIntent)
             .setAutoCancel(true)
             .build()
+        postNotification(context, entry.id.toInt(), notification)
+    }
+
+    /**
+     * Shows the word, romaji, and meaning directly - not clickable (no
+     * `contentIntent`, no `setAutoCancel`), dismiss-only, for passive
+     * review without a quiz prompt.
+     */
+    private fun showRevealNotification(context: Context, entry: Entry) {
+        val notification = NotificationCompat.Builder(context, CHANNEL_ID)
+            .setContentTitle(entry.text)
+            .setContentText(entry.meaningsWithRomaji())
+            .setSmallIcon(android.R.drawable.ic_dialog_info)
+            .build()
+        postNotification(context, entry.id.toInt(), notification)
+    }
+
+    private fun postNotification(context: Context, id: Int, notification: android.app.Notification) {
+        val channel = NotificationChannel(CHANNEL_ID, "Quiz reminders", NotificationManager.IMPORTANCE_DEFAULT)
+        context.getSystemService(NotificationManager::class.java).createNotificationChannel(channel)
 
         if (ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) ==
             PackageManager.PERMISSION_GRANTED
         ) {
-            NotificationManagerCompat.from(context).notify(entry.id.toInt(), notification)
+            NotificationManagerCompat.from(context).notify(id, notification)
         }
     }
 

@@ -14,3 +14,13 @@ data class Entry(
     val totalCorrect: Int = 0,
     val totalWrong: Int = 0,
 )
+
+/**
+ * Meanings joined for display, with a "(romaji)" suffix for non-KANA
+ * entries - KANA's meaning is already the romaji reading, so it'd be
+ * redundant there.
+ */
+fun Entry.meaningsWithRomaji(): String {
+    val romajiSuffix = if (level != Level.KANA && romaji.isNotBlank()) " ($romaji)" else ""
+    return meanings.joinToString(", ") + romajiSuffix
+}

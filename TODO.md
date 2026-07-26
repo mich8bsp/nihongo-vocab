@@ -420,3 +420,24 @@ thousands of real quiz answers, then drove the app for real:
       and re-arms the next alarm - then reverted back to
       `exported="false"` and reinstalled to confirm `ensureScheduled`
       re-arms the same persisted trigger time on a fresh app start.
+- [x] **Added a second, non-clickable "Reveal" notification type**
+      (user request), shown alongside the existing Quiz notification: word
+      + romaji + meaning, dismiss-only (no `contentIntent`, no
+      `setAutoCancel`). `QuizAlarmReceiver` picks between Quiz and Reveal
+      with a 50/50 `Random.nextBoolean()` each time the shared alarm
+      fires - same entry pool (`pickRandomActiveEntry`), same 20–90 min
+      schedule, no new alarm chain or user setting. Extracted the
+      "meanings + romaji, KANA gets no suffix since its meaning already
+      is the romaji" formatting (previously inline in `QuizScreen`'s
+      post-answer text) into a shared `Entry.meaningsWithRomaji()` so
+      both the Reveal notification and `QuizScreen` use identical
+      formatting. Added `EntryTest` (3 cases: KANA, vocab with romaji,
+      vocab with blank romaji). Updated DESIGN.md's "Core loop" and
+      "Notifications" sections. `./gradlew test assembleDebug` pass;
+      verified live on the `Medium_Phone` emulator (temporarily
+      `exported="true"` again, same as above, to fire the receiver
+      directly via adb): fired the alarm 6 times, got a mix of both
+      types, confirmed via `dumpsys notification` that Reveal
+      notifications show correct title/body (e.g. "ネクタイ" / "tie,
+      necktie (nekutai)") with no `contentIntent` and no `AUTO_CANCEL`
+      flag, then reverted to `exported="false"` and reinstalled.

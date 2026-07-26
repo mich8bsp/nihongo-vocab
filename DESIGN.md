@@ -7,8 +7,11 @@ single user, no backend.
 ## Core loop
 
 1. App picks a random entry from the currently **enabled pools'** active
-   (unmastered) entries and fires a notification showing the word/kana/kanji.
-2. Tapping the notification opens the **Quiz screen** for that entry.
+   (unmastered) entries and fires a notification — either a **Quiz**
+   notification (word only) or a **Reveal** notification (word + romaji +
+   meaning, dismiss-only) — see "Notifications" for the split.
+2. Tapping a Quiz notification opens the **Quiz screen** for that entry;
+   Reveal notifications aren't clickable.
 3. User answers via free text (no multiple choice — typing the answer
    tests recall better than picking from options).
 4. App shows correct/incorrect feedback + the correct answer.
@@ -238,11 +241,23 @@ behavior shows up.
 - `POST_NOTIFICATIONS` runtime permission requested on launch (Android
   13+); if denied, notifications just silently don't show — no further
   handling.
+- Two notification types, picked with equal probability each time the
+  alarm fires (`Random.nextBoolean()` — no separate schedule, no user
+  setting, just a coin flip on the shared 20–90 min timer):
+  - **Quiz** (original): title "Quiz time", body = entry text, tapping
+    opens the Quiz screen for that entry (`setContentIntent` +
+    `setAutoCancel`).
+  - **Reveal**: title = entry text, body = meanings + romaji via
+    `Entry.meaningsWithRomaji()` (same formatting `QuizScreen` uses for
+    the post-answer "Correct answer: ..." line — KANA gets no romaji
+    suffix since its meaning already *is* the romaji). Not clickable at
+    all (no `contentIntent`, no `setAutoCancel`) — dismiss-only, for
+    passive review without a quiz prompt.
 - `notification/QuizAlarmReceiver` (`BroadcastReceiver` armed via
   `AlarmManager.setExactAndAllowWhileIdle`/`setAndAllowWhileIdle`, **not**
   WorkManager): picks a random active entry from the enabled pools, posts
-  a notification (title "Quiz time", body = entry text) if one was found,
-  then always reschedules the next alarm. **Originally built on
+  one of the two notification types above if an entry was found, then
+  always reschedules the next alarm. **Originally built on
   WorkManager** (`CoroutineWorker`, "timing doesn't need to be tight for
   passive practice") but that was wrong in practice: WorkManager's
   JobScheduler backend gets deferred indefinitely by Doze/App Standby
