@@ -3,15 +3,21 @@ package io.github.mich8bsp.nihongovocab.data
 data class AnswerResult(val correct: Boolean, val meanings: List<String>)
 
 fun isCorrectAnswer(entry: Entry, answer: String): Boolean {
-    val normalized = answer.trim().lowercase()
+    val normalizedAnswer = digitizeNumberWords(answer.trim().lowercase())
     return entry.meanings.any { meaning ->
-        val normalizedMeaning = meaning.trim().lowercase()
-        val withoutParenthetical = stripParenthetical(normalizedMeaning)
-        normalizedMeaning == normalized ||
-            withoutParenthetical == normalized ||
-            stripLeadingArticle(normalizedMeaning) == normalized ||
-            stripLeadingArticle(withoutParenthetical) == normalized
+        meaningVariants(meaning.trim().lowercase()).any { digitizeNumberWords(it) == normalizedAnswer }
     }
+}
+
+/** All phrasings of a single meaning gloss that should count as a correct answer. */
+private fun meaningVariants(meaning: String): List<String> {
+    val base = listOf(
+        meaning,
+        stripParenthetical(meaning),
+        unwrapParenthetical(meaning),
+        substituteMidParenthetical(meaning),
+    )
+    return base + base.map(::stripLeadingArticle)
 }
 
 /**
@@ -23,12 +29,50 @@ private fun stripParenthetical(meaning: String): String =
     meaning.replace(Regex("\\(.*?\\)"), "").replace(Regex("\\s+"), " ").trim()
 
 /**
+ * Keeps the parenthetical's content but drops the parens themselves, e.g.
+ * "to take off (clothes)" -> "to take off clothes" - some glosses use
+ * parens around a word that's still part of a natural answer, not just a
+ * dropped clarification.
+ */
+private fun unwrapParenthetical(meaning: String): String =
+    meaning.replace(Regex("[()]"), "").replace(Regex("\\s+"), " ").trim()
+
+/**
+ * Replaces a "word (altword)" pair with just the altword, but only when
+ * more text follows, e.g. "clear (sunny) weather" -> "sunny weather" -
+ * here the parenthetical is an alternate word choice, not a trailing note
+ * (a trailing "word (note)" like "mother (formal)" is left alone, since
+ * "note" alone isn't a valid answer).
+ */
+private fun substituteMidParenthetical(meaning: String): String =
+    meaning.replace(Regex("\\S+\\s*\\(([^)]+)\\)(?=\\s+\\S)"), "$1")
+
+/**
  * Drops a leading "a"/"an"/"the", e.g. "an exit" -> "exit" - source
  * glosses often include the article, but requiring it from the user adds
  * nothing to whether they knew the word.
  */
 private fun stripLeadingArticle(meaning: String): String =
     meaning.replace(Regex("^(a|an|the)\\s+"), "")
+
+private val NUMBER_WORDS = mapOf(
+    "one" to "1", "two" to "2", "three" to "3", "four" to "4", "five" to "5",
+    "six" to "6", "seven" to "7", "eight" to "8", "nine" to "9", "ten" to "10",
+    "eleven" to "11", "twelve" to "12", "thirteen" to "13", "fourteen" to "14",
+    "fifteen" to "15", "sixteen" to "16", "seventeen" to "17", "eighteen" to "18",
+    "nineteen" to "19", "twenty" to "20", "thirty" to "30", "forty" to "40",
+    "fifty" to "50", "sixty" to "60", "seventy" to "70", "eighty" to "80",
+    "ninety" to "90",
+)
+
+/**
+ * Normalizes spelled-out numbers to digits, e.g. "twenty days" -> "20
+ * days" - applied to both sides of a comparison, so it also normalizes a
+ * digit meaning against a spelled-out answer ("20 years old" vs "twenty
+ * years old").
+ */
+private fun digitizeNumberWords(text: String): String =
+    NUMBER_WORDS.entries.fold(text) { acc, (word, digit) -> acc.replace(Regex("\\b$word\\b"), digit) }
 
 /**
  * True if [answer] is this entry's romaji reading rather than its English

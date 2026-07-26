@@ -75,6 +75,16 @@ Default: KANA and N5 `enabled = true`, N4–N1 `enabled = false`.
   "the", e.g. `an exit` → `exit` (出口/deguchi) - articles are part of
   the gloss's English grammar, not part of knowing the word, and ~182
   meanings in the dataset start with one.
+- A mid-phrase `word (altword)` parenthetical also accepts the altword
+  substituted in, e.g. `clear (sunny) weather` → `sunny weather` as well
+  as `clear weather` (晴れ/hare) - a *trailing* parenthetical (e.g.
+  `mother (formal)`) is left alone, since the tag alone isn't a valid
+  answer. A parenthetical that's part of the answer also accepts just the
+  parens dropped, e.g. `to take off (clothes)` → `to take off clothes`
+  (脱ぐ/nugu). Spelled-out numbers and digits are interchangeable on both
+  sides of the comparison, e.g. `twenty days` accepts `20 days`
+  (二十日/hatsuka) and `20 years old` accepts `twenty years old`
+  (二十歳/hatachi).
 - If a plain match feels too strict in practice, add a small edit-distance
   tolerance (typo forgiveness) — stdlib-level, no new dependency. Not
   needed up front; the `meanings` list (split from multi-gloss source data)

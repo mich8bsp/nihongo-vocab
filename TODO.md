@@ -365,3 +365,20 @@ thousands of real quiz answers, then drove the app for real:
       `deguchiAcceptsAnswerWithOrWithoutLeadingArticle` unit test.
       `./gradlew test` passes - logic-only change, no emulator pass
       needed for this one.
+- [x] **Three more answer-leniency cases**, from user-reported examples:
+      1) a mid-phrase "word (altword)" parenthetical is now also accepted
+      with the altword substituted in, not just dropped, e.g. "sunny
+      weather" as well as "clear weather" for 晴れ's "clear (sunny)
+      weather" (a *trailing* parenthetical like "mother (formal)" is left
+      alone - "formal" alone still doesn't score, per the existing test).
+      2) a parenthetical whose content is part of the answer is now also
+      accepted with just the parens removed, e.g. "to take off clothes"
+      for 脱ぐ's "to take off (clothes)". 3) spelled-out numbers and
+      digits are now interchangeable, e.g. "20 days" for 二十日's "twenty
+      days" and "twenty years old" for 二十歳's "20 years old" (small
+      one-thousand word->digit map, applied to both sides of the
+      comparison so either direction matches). Added
+      `substituteMidParenthetical`, `unwrapParenthetical`,
+      `digitizeNumberWords` to `AnswerService.kt` plus four unit tests.
+      `./gradlew test` passes - logic-only change, no emulator pass
+      needed for this one.

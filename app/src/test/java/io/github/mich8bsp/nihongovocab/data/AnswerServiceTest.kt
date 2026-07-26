@@ -187,6 +187,37 @@ class AnswerServiceTest {
     }
 
     @Test
+    fun hareAcceptsEitherHalfOfAMidPhraseAlternate() {
+        // 晴れ (hare) - "clear (sunny) weather": the parenthetical is an alternate word, not a dropped note
+        val e = entry(1, Level.N5, meanings = listOf("clear (sunny) weather"))
+        assertTrue(isCorrectAnswer(e, "clear weather"))
+        assertTrue(isCorrectAnswer(e, "sunny weather"))
+        assertFalse(isCorrectAnswer(e, "sunny"))
+    }
+
+    @Test
+    fun nuguAcceptsParentheticalKeptWithoutParens() {
+        // 脱ぐ (nugu) - "to take off (clothes)"
+        val e = entry(1, Level.N5, meanings = listOf("to take off (clothes)"))
+        assertTrue(isCorrectAnswer(e, "to take off"))
+        assertTrue(isCorrectAnswer(e, "to take off clothes"))
+    }
+
+    @Test
+    fun hatsukaAcceptsDigitFormOfASpelledOutNumber() {
+        // 二十日 (hatsuka) - "twenty days"
+        val e = entry(1, Level.N5, meanings = listOf("twenty days"))
+        assertTrue(isCorrectAnswer(e, "20 days"))
+    }
+
+    @Test
+    fun hatachiAcceptsSpelledOutFormOfADigitNumber() {
+        // 二十歳 (hatachi) - "20 years old"
+        val e = entry(1, Level.N5, meanings = listOf("20 years old"))
+        assertTrue(isCorrectAnswer(e, "twenty years old"))
+    }
+
+    @Test
     fun romajiAnswerIsDetectedCaseInsensitiveAndTrimmed() {
         val e = entry(1, Level.N5, meanings = listOf("to eat"), romaji = "taberu")
         assertTrue(isRomajiAnswer(e, "  TABERU  "))
