@@ -358,3 +358,10 @@ thousands of real quiz answers, then drove the app for real:
       assembleDebug` pass; verified live on the `Medium_Phone` emulator:
       launched Quiz directly for コート (`am start --el entry_id <id>`)
       and submitted "coat" → scored Correct.
+- [x] **Answers without a leading "a"/"an"/"the" are now accepted**, e.g.
+      "exit" for 出口's gloss "an exit". `isCorrectAnswer` also strips a
+      leading article from each meaning before comparing (~182 meanings
+      in the dataset start with one, not just deguchi). Added
+      `deguchiAcceptsAnswerWithOrWithoutLeadingArticle` unit test.
+      `./gradlew test` passes - logic-only change, no emulator pass
+      needed for this one.

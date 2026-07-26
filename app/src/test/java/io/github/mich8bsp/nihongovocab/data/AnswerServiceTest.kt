@@ -178,6 +178,15 @@ class AnswerServiceTest {
     }
 
     @Test
+    fun deguchiAcceptsAnswerWithOrWithoutLeadingArticle() {
+        // 出口 (deguchi) - source gloss is "an exit"; the article shouldn't be required
+        val e = entry(1, Level.N5, meanings = listOf("an exit"))
+        assertTrue(isCorrectAnswer(e, "an exit"))
+        assertTrue(isCorrectAnswer(e, "exit"))
+        assertFalse(isCorrectAnswer(e, "entrance"))
+    }
+
+    @Test
     fun romajiAnswerIsDetectedCaseInsensitiveAndTrimmed() {
         val e = entry(1, Level.N5, meanings = listOf("to eat"), romaji = "taberu")
         assertTrue(isRomajiAnswer(e, "  TABERU  "))

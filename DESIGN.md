@@ -71,7 +71,10 @@ Default: KANA and N5 `enabled = true`, N4–N1 `enabled = false`.
   same meaning with any `(...)` context clarification dropped, e.g.
   `mother (formal)` → `mother`, `(my) older brother (humble)` → `older
   brother` - the source glosses use parentheses for nuance/grammar hints
-  the user shouldn't be required to type.
+  the user shouldn't be required to type. Same for a leading "a"/"an"/
+  "the", e.g. `an exit` → `exit` (出口/deguchi) - articles are part of
+  the gloss's English grammar, not part of knowing the word, and ~182
+  meanings in the dataset start with one.
 - If a plain match feels too strict in practice, add a small edit-distance
   tolerance (typo forgiveness) — stdlib-level, no new dependency. Not
   needed up front; the `meanings` list (split from multi-gloss source data)

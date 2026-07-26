@@ -6,7 +6,11 @@ fun isCorrectAnswer(entry: Entry, answer: String): Boolean {
     val normalized = answer.trim().lowercase()
     return entry.meanings.any { meaning ->
         val normalizedMeaning = meaning.trim().lowercase()
-        normalizedMeaning == normalized || stripParenthetical(normalizedMeaning) == normalized
+        val withoutParenthetical = stripParenthetical(normalizedMeaning)
+        normalizedMeaning == normalized ||
+            withoutParenthetical == normalized ||
+            stripLeadingArticle(normalizedMeaning) == normalized ||
+            stripLeadingArticle(withoutParenthetical) == normalized
     }
 }
 
@@ -17,6 +21,14 @@ fun isCorrectAnswer(entry: Entry, answer: String): Boolean {
  */
 private fun stripParenthetical(meaning: String): String =
     meaning.replace(Regex("\\(.*?\\)"), "").replace(Regex("\\s+"), " ").trim()
+
+/**
+ * Drops a leading "a"/"an"/"the", e.g. "an exit" -> "exit" - source
+ * glosses often include the article, but requiring it from the user adds
+ * nothing to whether they knew the word.
+ */
+private fun stripLeadingArticle(meaning: String): String =
+    meaning.replace(Regex("^(a|an|the)\\s+"), "")
 
 /**
  * True if [answer] is this entry's romaji reading rather than its English
