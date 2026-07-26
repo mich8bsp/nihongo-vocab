@@ -382,3 +382,41 @@ thousands of real quiz answers, then drove the app for real:
       `digitizeNumberWords` to `AnswerService.kt` plus four unit tests.
       `./gradlew test` passes - logic-only change, no emulator pass
       needed for this one.
+- [x] **Notifications weren't firing at all in the background** (reported
+      by the user from real-device use: no notifications ever appeared,
+      and opening the app immediately fired one that should've fired long
+      before). Root cause: WorkManager's `OneTimeWorkRequest` runs on
+      `JobScheduler`, which Doze/App Standby defers indefinitely for apps
+      that haven't been opened recently - opening the app promotes it back
+      to the active standby bucket, so the overdue job finally runs right
+      then. Replaced `notification/QuizNotificationWorker` with
+      `notification/QuizAlarmReceiver`, a `BroadcastReceiver` armed via
+      `AlarmManager.setExactAndAllowWhileIdle` (falls back to
+      `setAndAllowWhileIdle` if the `SCHEDULE_EXACT_ALARM` permission
+      isn't granted) - the platform's own Doze-resistant mechanism for
+      this, not something WorkManager was ever meant to solve. Added
+      `SCHEDULE_EXACT_ALARM` + `RECEIVE_BOOT_COMPLETED` permissions;
+      `MainActivity` sends the user to
+      `Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM` on launch if not yet
+      granted; the receiver also handles `BOOT_COMPLETED` since
+      `AlarmManager` alarms don't survive reboot. Next-trigger time is
+      persisted in `SharedPreferences` so `ensureScheduled` (app start +
+      boot) can re-arm the same pending time rather than resetting the
+      countdown, mirroring WorkManager's old `REPLACE`/`KEEP` split.
+      Dropped the now-unused `androidx.work` dependency. Updated
+      DESIGN.md's "Notifications" section (this reverses the original
+      "WorkManager, not AlarmManager - timing doesn't need to be tight"
+      call, which turned out to be wrong on real hardware). `./gradlew
+      test assembleDebug` pass; verified live on the `Medium_Phone`
+      emulator: confirmed via `dumpsys alarm` that a real
+      `setExactAndAllowWhileIdle` alarm gets armed (`exactAllowReason=
+      permission`) after granting `SCHEDULE_EXACT_ALARM` via `adb shell
+      appops set ... allow`, confirmed the `Settings.
+      ACTION_REQUEST_SCHEDULE_EXACT_ALARM` redirect fires when the
+      permission isn't granted, and (temporarily flipping the receiver to
+      `exported="true"` since `adb shell am broadcast` can't target a
+      non-exported receiver the way the real system-originated alarm
+      broadcast can) confirmed firing the receiver posts the notification
+      and re-arms the next alarm - then reverted back to
+      `exported="false"` and reinstalled to confirm `ensureScheduled`
+      re-arms the same persisted trigger time on a fresh app start.

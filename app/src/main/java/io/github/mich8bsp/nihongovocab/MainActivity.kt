@@ -1,9 +1,12 @@
 package io.github.mich8bsp.nihongovocab
 
 import android.Manifest
+import android.app.AlarmManager
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Bundle
+import android.provider.Settings
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
@@ -20,10 +23,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.core.content.ContextCompat
+import androidx.core.content.getSystemService
 import io.github.mich8bsp.nihongovocab.data.AnswerService
 import io.github.mich8bsp.nihongovocab.data.AppDatabase
 import io.github.mich8bsp.nihongovocab.data.AssetSeeder
-import io.github.mich8bsp.nihongovocab.notification.QuizNotificationWorker
+import io.github.mich8bsp.nihongovocab.notification.QuizAlarmReceiver
 import io.github.mich8bsp.nihongovocab.ui.HomeScreen
 import io.github.mich8bsp.nihongovocab.ui.QuizScreen
 
@@ -42,7 +46,12 @@ class MainActivity : ComponentActivity() {
         ) {
             requestNotificationPermission.launch(Manifest.permission.POST_NOTIFICATIONS)
         }
-        QuizNotificationWorker.ensureScheduled(applicationContext)
+        if (getSystemService<AlarmManager>()?.canScheduleExactAlarms() == false) {
+            startActivity(
+                Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM, Uri.fromParts("package", packageName, null)),
+            )
+        }
+        QuizAlarmReceiver.ensureScheduled(applicationContext)
 
         val db = AppDatabase.getInstance(applicationContext)
         val answerService = AnswerService(db.entryDao(), db.poolStateDao())

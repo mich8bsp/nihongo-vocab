@@ -238,16 +238,32 @@ behavior shows up.
 - `POST_NOTIFICATIONS` runtime permission requested on launch (Android
   13+); if denied, notifications just silently don't show — no further
   handling.
-- `notification/QuizNotificationWorker` (`CoroutineWorker` via
-  WorkManager, not `AlarmManager`/exact alarms — timing doesn't need to
-  be tight for passive practice): picks a random active entry from the
-  enabled pools, posts a notification (title "Quiz time", body = entry
-  text) if one was found, then always reschedules itself via
-  `enqueueUniqueWork` (`REPLACE` when called from within the worker,
-  `KEEP` when called from `MainActivity` on app start so relaunching the
-  app doesn't reset an in-flight countdown). No active entries in any
-  enabled pool → the DAO query naturally returns null (empty SQL `IN ()`
-  matches nothing) and the worker just skips posting, still reschedules.
+- `notification/QuizAlarmReceiver` (`BroadcastReceiver` armed via
+  `AlarmManager.setExactAndAllowWhileIdle`/`setAndAllowWhileIdle`, **not**
+  WorkManager): picks a random active entry from the enabled pools, posts
+  a notification (title "Quiz time", body = entry text) if one was found,
+  then always reschedules the next alarm. **Originally built on
+  WorkManager** (`CoroutineWorker`, "timing doesn't need to be tight for
+  passive practice") but that was wrong in practice: WorkManager's
+  JobScheduler backend gets deferred indefinitely by Doze/App Standby
+  once the app hasn't been opened in a while — on a real device this
+  meant *no* notifications until the app was opened, at which point the
+  overdue one fired immediately. Switched to AlarmManager's
+  `*AndAllowWhileIdle` variants, the platform's own Doze-resistant
+  mechanism for this. Requires the `SCHEDULE_EXACT_ALARM` permission
+  (Android 12+) — `MainActivity` sends the user to
+  `Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM` on launch if not
+  granted; without it, alarms still fire via the inexact
+  `setAndAllowWhileIdle` fallback (worse jitter, still far more reliable
+  than plain JobScheduler deferral). The next-alarm time is persisted in
+  `SharedPreferences` so `ensureScheduled` (called from `MainActivity` on
+  app start and from a `BOOT_COMPLETED` receiver, since `AlarmManager`
+  alarms don't survive reboot) can re-arm the *same* pending time instead
+  of resetting the countdown — mirrors WorkManager's old
+  `REPLACE`-from-worker / `KEEP`-from-app-start split. No active entries
+  in any enabled pool → the DAO query naturally returns null (empty SQL
+  `IN ()` matches nothing) and the receiver just skips posting, still
+  reschedules.
 
 ## Tech stack
 
