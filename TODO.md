@@ -441,3 +441,63 @@ thousands of real quiz answers, then drove the app for real:
       notifications show correct title/body (e.g. "ネクタイ" / "tie,
       necktie (nekutai)") with no `contentIntent` and no `AUTO_CANCEL`
       flag, then reverted to `exported="false"` and reinstalled.
+- [x] **Added a multiple-choice quiz mode** (user request), as an
+      alternative to free text to reduce frustration from imperfect
+      text-match leniency. A `Switch` on Home ("Multiple choice quiz")
+      toggles between the two modes, persisted immediately via new
+      `data/QuizPreferences.kt` (plain `SharedPreferences` boolean, same
+      pattern `QuizAlarmReceiver` already uses for its own prefs) so it
+      survives app restarts. `MainActivity` reads it once on launch,
+      holds it as state, and passes it down to both `HomeScreen` (to
+      render/change it) and `QuizScreen` (to pick which UI to show) -
+      mirrors how `quizEntryId` is already threaded through. Multiple
+      choice shows 3 buttons (new `AnswerService.buildQuizOptions`: the
+      entry's own first meaning + 2 distractors, same level, via new
+      `EntryDao.getRandomOtherEntries`, filtering out any distractor
+      meaning that coincidentally matches one of the entry's own
+      meanings); tapping an option calls the exact same
+      `AnswerService.submitAnswer(entryId, optionText)` free text uses,
+      so scoring/streak/pool-completion logic isn't duplicated. No "Give
+      Up" button in this mode - not needed when there's nothing to type.
+      Updated DESIGN.md's "Answering" and "Screens" sections, and struck
+      the old "out of scope" line for this. Added 2 `AnswerServiceTest`
+      cases (options include the correct meaning + 2 distractors;
+      distractors matching the entry's own meanings are excluded).
+      `./gradlew test assembleDebug` pass; verified live on the
+      `Medium_Phone` emulator: toggled the switch on, confirmed Practice
+      shows 3 option buttons instead of the text field, tapping one
+      scores and shows feedback + "Next" (which loads a fresh set of 3
+      options for the next entry), toggled back to free text and
+      confirmed the text field/Submit/Give Up flow still works
+      unchanged, then confirmed the toggle's state survives a full
+      `am force-stop` + relaunch (both on and off).
+- [x] **Added a two-stage quiz for non-KANA entries** (user request): stage
+      1 requires typing the reading in romaji before stage 2 (the existing
+      meaning check, free text or multiple choice) unlocks. Both stages
+      render on the same `QuizScreen` at once, stage 1 above stage 2;
+      stage 2 starts disabled + greyed out (`Modifier.alpha`) and swaps
+      to enabled once stage 1 is answered correctly, at which point stage
+      1 itself locks (disabled + greyed). A wrong stage-1 attempt just
+      shows "Incorrect - try again" and lets the user retry - not scored
+      at all (no streak/`totalWrong` change), since it's a gate on
+      reaching the real question, not the question itself; only stage 2's
+      result is ever recorded, via the same `AnswerService.submitAnswer`/
+      `giveUp` calls as before. KANA is exempt (its "meaning" already is
+      the romaji reading) - `stage1Passed` starts `true` for KANA entries,
+      collapsing back to the original single-stage flow with no visible
+      change. Reused `isRomajiAnswer` (previously only used for the
+      free-text romaji-leniency hint) as the stage-1 correctness check,
+      no new answer-matching logic needed. Updated DESIGN.md's "Core
+      loop", "Answering", and "Screens" sections (also fixed a stale
+      Core-loop line still claiming "free text only, no multiple choice"
+      left over from the previous session). No new unit tests - this is
+      presentation/gating logic in `QuizScreen` layered over the
+      already-tested `isRomajiAnswer`/`AnswerService`, consistent with
+      Part 4's precedent for this file. `./gradlew test assembleDebug`
+      pass; verified live on the `Medium_Phone` emulator: confirmed stage
+      2 starts greyed/disabled, a wrong romaji attempt shows the retry
+      message without unlocking stage 2, a correct romaji attempt locks
+      stage 1 and unlocks stage 2, completing stage 2 shows the normal
+      correct/incorrect feedback + Next, and that KANA-only practice
+      (N5 disabled) skips straight to the single-stage flow with no
+      stage labels at all, both with multiple choice on and off.

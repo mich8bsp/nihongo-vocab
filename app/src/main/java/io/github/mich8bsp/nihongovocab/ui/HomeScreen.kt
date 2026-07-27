@@ -36,6 +36,8 @@ import kotlinx.coroutines.launch
 fun HomeScreen(
     entryDao: EntryDao,
     poolStateDao: PoolStateDao,
+    multipleChoiceMode: Boolean,
+    onMultipleChoiceModeChange: (Boolean) -> Unit,
     onPractice: (Long) -> Unit,
 ) {
     var statsByLevel by remember { mutableStateOf<Map<Level, LevelStats>>(emptyMap()) }
@@ -77,6 +79,15 @@ fun HomeScreen(
             Text(it, style = MaterialTheme.typography.bodySmall)
         }
         Spacer(Modifier.height(16.dp))
+
+        Row(
+            modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Text("Multiple choice quiz", style = MaterialTheme.typography.titleMedium, modifier = Modifier.weight(1f))
+            Switch(checked = multipleChoiceMode, onCheckedChange = onMultipleChoiceModeChange)
+        }
+        Spacer(Modifier.height(8.dp))
 
         LazyColumn {
             items(Level.entries) { level ->

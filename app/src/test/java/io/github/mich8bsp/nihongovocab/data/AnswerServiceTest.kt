@@ -24,6 +24,9 @@ private class FakeEntryDao(initial: List<Entry>) : EntryDao {
     override suspend fun getRandomActiveEntry(levels: List<Level>): Entry? =
         entries.values.filter { it.level in levels && it.correctStreak < 3 }.randomOrNull()
 
+    override suspend fun getRandomOtherEntries(level: Level, excludeId: Long, limit: Int): List<Entry> =
+        entries.values.filter { it.level == level && it.id != excludeId }.shuffled().take(limit)
+
     override suspend fun countUnmastered(level: Level): Int =
         entries.values.count { it.level == level && it.correctStreak < 3 }
 
@@ -231,5 +234,43 @@ class AnswerServiceTest {
         val e = entry(1, Level.KANA, meanings = listOf("a"), romaji = "")
         assertFalse(isRomajiAnswer(e, "a"))
         assertFalse(isRomajiAnswer(e, ""))
+    }
+
+    @Test
+    fun quizOptionsIncludeTheCorrectMeaningAndTwoDistractors() = runTest {
+        val target = entry(1, Level.N5, meanings = listOf("blue"))
+        val entryDao = FakeEntryDao(
+            listOf(
+                target,
+                entry(2, Level.N5, meanings = listOf("red")),
+                entry(3, Level.N5, meanings = listOf("green")),
+                entry(4, Level.N4, meanings = listOf("yellow")), // different level - never picked
+            ),
+        )
+        val service = AnswerService(entryDao, FakePoolStateDao(mapOf(Level.N5 to true)))
+
+        val options = service.buildQuizOptions(target)
+
+        assertEquals(3, options.size)
+        assertTrue("blue" in options)
+        assertTrue(options.all { it in setOf("blue", "red", "green") })
+    }
+
+    @Test
+    fun quizOptionsExcludeDistractorsThatMatchOneOfTheEntrysOwnMeanings() = runTest {
+        val target = entry(1, Level.N5, meanings = listOf("blue", "azure"))
+        val entryDao = FakeEntryDao(
+            listOf(
+                target,
+                entry(2, Level.N5, meanings = listOf("Azure")), // same as target's own meaning, case-insensitive
+                entry(3, Level.N5, meanings = listOf("red")),
+            ),
+        )
+        val service = AnswerService(entryDao, FakePoolStateDao(mapOf(Level.N5 to true)))
+
+        val options = service.buildQuizOptions(target)
+
+        assertFalse("Azure" in options)
+        assertEquals(setOf("blue", "red"), options.toSet())
     }
 }

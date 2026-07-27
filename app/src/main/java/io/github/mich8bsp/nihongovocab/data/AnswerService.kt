@@ -98,6 +98,23 @@ class AnswerService(
     /** Same selection a notification/the Home "Practice" button would make. */
     suspend fun pickNext(): Entry? = pickRandomActiveEntry(entryDao, poolStateDao)
 
+    /**
+     * 3 shuffled answer options for multiple-choice mode: [entry]'s own first
+     * meaning plus 2 distractors from other same-level entries' first meanings.
+     * Distractors that happen to equal one of [entry]'s own meanings are
+     * dropped (over-fetches a few extra candidates to allow for this) so an
+     * option is never ambiguously "also correct".
+     */
+    suspend fun buildQuizOptions(entry: Entry): List<String> {
+        val ownMeanings = entry.meanings.map { it.trim().lowercase() }.toSet()
+        val distractors = entryDao.getRandomOtherEntries(entry.level, entry.id, limit = 6)
+            .map { it.meanings.first() }
+            .filter { it.trim().lowercase() !in ownMeanings }
+            .distinct()
+            .take(2)
+        return (listOf(entry.meanings.first()) + distractors).shuffled()
+    }
+
     suspend fun submitAnswer(entryId: Long, answer: String): AnswerResult {
         val entry = entryDao.getById(entryId) ?: error("Entry $entryId not found")
         return recordResult(entry, correct = isCorrectAnswer(entry, answer))

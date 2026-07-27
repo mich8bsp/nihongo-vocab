@@ -27,12 +27,14 @@ import androidx.core.content.getSystemService
 import io.github.mich8bsp.nihongovocab.data.AnswerService
 import io.github.mich8bsp.nihongovocab.data.AppDatabase
 import io.github.mich8bsp.nihongovocab.data.AssetSeeder
+import io.github.mich8bsp.nihongovocab.data.QuizPreferences
 import io.github.mich8bsp.nihongovocab.notification.QuizAlarmReceiver
 import io.github.mich8bsp.nihongovocab.ui.HomeScreen
 import io.github.mich8bsp.nihongovocab.ui.QuizScreen
 
 class MainActivity : ComponentActivity() {
     private var quizEntryId by mutableStateOf<Long?>(null)
+    private var multipleChoiceMode by mutableStateOf(false)
 
     private val requestNotificationPermission =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { /* no-op either way */ }
@@ -40,6 +42,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         quizEntryId = extractEntryId(intent)
+        multipleChoiceMode = QuizPreferences.isMultipleChoiceEnabled(applicationContext)
 
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) !=
             PackageManager.PERMISSION_GRANTED
@@ -72,12 +75,18 @@ class MainActivity : ComponentActivity() {
                         entryId != null -> QuizScreen(
                             entryId = entryId,
                             answerService = answerService,
+                            multipleChoice = multipleChoiceMode,
                             onBack = { quizEntryId = null },
                             onNext = { id -> quizEntryId = id },
                         )
                         else -> HomeScreen(
                             entryDao = db.entryDao(),
                             poolStateDao = db.poolStateDao(),
+                            multipleChoiceMode = multipleChoiceMode,
+                            onMultipleChoiceModeChange = { enabled ->
+                                QuizPreferences.setMultipleChoiceEnabled(applicationContext, enabled)
+                                multipleChoiceMode = enabled
+                            },
                             onPractice = { id -> quizEntryId = id },
                         )
                     }

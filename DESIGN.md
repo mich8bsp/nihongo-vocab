@@ -12,8 +12,10 @@ single user, no backend.
    meaning, dismiss-only) — see "Notifications" for the split.
 2. Tapping a Quiz notification opens the **Quiz screen** for that entry;
    Reveal notifications aren't clickable.
-3. User answers via free text (no multiple choice — typing the answer
-   tests recall better than picking from options).
+3. For non-KANA entries, user first types the reading in romaji (stage 1),
+   then answers the meaning (stage 2) via free text or multiple choice,
+   per the user's toggle; KANA entries skip straight to stage 2 (its
+   "meaning" already is the romaji reading) — see "Answering".
 4. App shows correct/incorrect feedback + the correct answer.
 5. User taps "Next" to keep quizzing (picks another random active entry
    the same way, staying on the Quiz screen) or presses back to return to
@@ -66,10 +68,48 @@ Default: KANA and N5 `enabled = true`, N4–N1 `enabled = false`.
 
 ## Answering
 
-- **Free text only**: no LLM grading — every check is local, instant, and
-  deterministic (see "Vocabulary data source" for why: offline-first, no
-  backend, reproducible feedback).
-- Match against any string in the entry's `meanings` list, after
+- **Two quiz modes, user-toggled**: free text (default) or multiple choice
+  (3 options: the entry's own first meaning + 2 distractors). Toggled from
+  a `Switch` on the Home screen, persisted in `SharedPreferences`
+  (`data/QuizPreferences.kt`) so it survives app restarts; read once by
+  `MainActivity` on launch/`onCreate` and held as in-memory state passed
+  to both `HomeScreen` (to render + change it) and `QuizScreen` (to decide
+  which UI to show) — same pattern as `quizEntryId`. No LLM grading in
+  either mode: every check is local, instant, and deterministic (see
+  "Vocabulary data source" for why: offline-first, no backend, reproducible
+  feedback).
+- **Two-stage quiz (reading gate), non-KANA only**: before checking the
+  meaning at all, the user must first type the entry's reading in romaji.
+  Both stages render on the same Quiz screen, stage 1 above stage 2 - not
+  a separate screen/step, since the entry text stays on screen throughout.
+  Stage 1 starts enabled, stage 2 starts disabled and greyed out
+  (`Modifier.alpha`); a wrong stage-1 submission just shows "Incorrect -
+  try again" and lets the user retry freely - it is **not** scored (no
+  streak reset, no `totalWrong`), since it's a gate on reaching the real
+  (meaning) question, not the question itself. Once stage 1 matches
+  `entry.romaji` (via `isRomajiAnswer`, reused as-is), stage 1 locks
+  (disabled + greyed) and stage 2 unlocks - stage 2's free-text/multiple-
+  choice UI is exactly what's described below, just gated on
+  `stage1Passed`. Only stage 2's result is ever recorded via
+  `AnswerService.submitAnswer`/`giveUp` - reading-stage attempts never
+  touch `correctStreak`/`totalCorrect`/`totalWrong`. KANA entries have no
+  stage 1 at all (`stage1Passed` starts `true` for them) since their
+  "meaning" already is the romaji reading - quizzing them is unchanged
+  from before this feature.
+- **Multiple choice**: `AnswerService.buildQuizOptions(entry)` picks 2
+  distractors via `EntryDao.getRandomOtherEntries` (same level as the
+  target entry, any mastery state, since a distractor's own progress
+  doesn't matter), takes each distractor's first meaning, and drops any
+  that happen to equal one of the target's own meanings (case-insensitive)
+  so no option is ambiguously "also correct" - over-fetches a few extra
+  candidates (limit 6) to leave enough after that filter. The correct
+  option is the target entry's own first meaning, so tapping it scores via
+  the exact same `AnswerService.submitAnswer(entryId, optionText)` path
+  free text uses - no separate scoring logic for multiple choice. No "Give
+  Up" button in this mode (picking from 3 options doesn't have the "typing
+  gibberish" problem Give Up exists for in free text).
+- **Free text matching**: match against any string in the entry's
+  `meanings` list, after
   normalizing both sides (lowercase, trim whitespace). Also accepts the
   same meaning with any `(...)` context clarification dropped, e.g.
   `mother (formal)` → `mother`, `(my) older brother (humble)` → `older
@@ -168,6 +208,10 @@ Default: KANA and N5 `enabled = true`, N4–N1 `enabled = false`.
 **Home screen** (default screen; also reached via system back from Quiz)
 - Per-level stats: correct / wrong counts, mastered count out of total.
 - Per-level enable/disable toggle.
+- **Multiple choice quiz toggle**: a `Switch` above the per-level list,
+  switching between free-text and multiple-choice quizzing (see
+  "Answering") for both Practice and notification-opened quizzes.
+  Persisted via `QuizPreferences` immediately on toggle.
 - **Practice button**: picks a random active entry the same way a
   notification would (`pickRandomActiveEntry`, shared with
   `QuizNotificationWorker` so both pick identically) and opens Quiz for
@@ -181,16 +225,36 @@ Default: KANA and N5 `enabled = true`, N4–N1 `enabled = false`.
   actual launch screen now (after seeding completes).
 
 **Quiz screen** (opened via notification tap, with entry id as extra)
-- Word/kana/kanji display, free-text field, Submit button, and a "Give
-  Up" button next to it for when the user doesn't know the answer and
-  doesn't want to type gibberish just to move on — recorded identically
-  to a wrong answer (`AnswerService.giveUp`: streak reset, `totalWrong`
-  incremented, same `AnswerResult` shape), just skipping the string
-  comparison. Unlike Submit it's always enabled (no text required).
-- Submit checks locally first whether the typed answer is a romaji guess
-  (see "Answering" → Romaji leniency): if so it shows the hint and stays
-  on the entry field instead of scoring anything, otherwise it calls
-  `AnswerService.submitAnswer` as normal.
+- Word/kana/kanji display, then (non-KANA only) **stage 1**: a "Stage 1:
+  write the reading (romaji)" label, text field, and Submit, gated as
+  described in "Answering" → Two-stage quiz. Rendered above stage 2
+  always (both stages are always present in the layout - only their
+  `enabled` state and `Modifier.alpha` change), so there's no jump/resize
+  when stage 2 unlocks.
+- **Stage 2** (the only stage for KANA; the meaning-check stage
+  otherwise), labeled "Stage 2: write the meaning" when stage 1 exists,
+  either the free-text UI or the multiple-choice UI depending on the Home
+  screen's toggle (passed in as `multipleChoice: Boolean`), disabled/
+  greyed until stage 1 passes (always enabled for KANA, which has no
+  stage 1):
+  - **Free text**: text field, Submit button, and a "Give Up" button next
+    to it for when the user doesn't know the answer and doesn't want to
+    type gibberish just to move on — recorded identically to a wrong
+    answer (`AnswerService.giveUp`: streak reset, `totalWrong`
+    incremented, same `AnswerResult` shape), just skipping the string
+    comparison. Unlike Submit it's always enabled (no text required) once
+    stage 2 itself is enabled. Submit checks locally first whether the
+    typed answer is a romaji guess (see "Answering" → Romaji leniency): if
+    so it shows the hint and stays on the entry field instead of scoring
+    anything, otherwise it calls `AnswerService.submitAnswer` as normal -
+    kept even though stage 1 already required the reading, since typing it
+    again out of habit at stage 2 is still plausible.
+  - **Multiple choice**: 3 buttons, one per option from
+    `AnswerService.buildQuizOptions` (loaded once alongside the entry in
+    the same `LaunchedEffect`, independent of stage 1's progress). Tapping
+    one immediately calls `AnswerService.submitAnswer(entryId, optionText)`
+    - no Submit/Give Up step. No romaji-leniency hint in this mode
+    (nothing is typed).
 - Submit/Give Up → feedback (correct/incorrect + correct answer) → "Next" button,
   which picks another random active entry (`AnswerService.pickNext()`,
   same selection a notification/the Home Practice button would make) and
@@ -200,8 +264,8 @@ Default: KANA and N5 `enabled = true`, N4–N1 `enabled = false`.
   to Home" button on the result screen - the system back button already
   does that (see below), so a dedicated button would just duplicate it.
 - Implemented in `ui/QuizScreen.kt`: a self-contained composable taking
-  `entryId` + `AnswerService` + `onBack` + `onNext: (Long) -> Unit`
-  callbacks. No formal navigation graph — see "Navigation" below, this
+  `entryId` + `AnswerService` + `multipleChoice: Boolean` + `onBack` +
+  `onNext: (Long) -> Unit` callbacks. No formal navigation graph — see "Navigation" below, this
   turned out not to need one. `MainActivity` shows it whenever it has a
   real entry id (from a notification tap or `onNext`); `onBack` clears
   that back to `HomeScreen`, `onNext` just swaps in the new entry id
@@ -318,5 +382,9 @@ adaptive icon covers every supported device. Wired via `android:icon` /
 
 - Accounts / multi-device sync
 - Configurable active-hours window (hardcoded default first)
-- Reading-based quizzing (meanings only, per earlier decision)
-- Multiple choice / distractor selection (free text only, per decision)
+- ~~Reading-based quizzing (meanings only, per earlier decision)~~ — added
+  post-v1 as stage 1 of the two-stage quiz for non-KANA entries, see
+  "Answering" and "Screens".
+- ~~Multiple choice / distractor selection (free text only, per decision)~~
+  — added post-v1 as a user-toggled second quiz mode alongside free text,
+  see "Answering" and "Screens".

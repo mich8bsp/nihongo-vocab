@@ -30,6 +30,10 @@ interface EntryDao {
     @Query("SELECT * FROM entries WHERE level IN (:levels) AND correctStreak < 3 ORDER BY RANDOM() LIMIT 1")
     suspend fun getRandomActiveEntry(levels: List<Level>): Entry?
 
+    /** Candidate distractors for multiple-choice quizzing - same level, any mastery state. */
+    @Query("SELECT * FROM entries WHERE level = :level AND id != :excludeId ORDER BY RANDOM() LIMIT :limit")
+    suspend fun getRandomOtherEntries(level: Level, excludeId: Long, limit: Int): List<Entry>
+
     @Query("SELECT COUNT(*) FROM entries WHERE level = :level AND correctStreak < 3")
     suspend fun countUnmastered(level: Level): Int
 
