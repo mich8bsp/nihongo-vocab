@@ -17,7 +17,14 @@ private class FakeEntryDao(initial: List<Entry>) : EntryDao {
         entries[entry.id] = entry
     }
 
+    override suspend fun updateAll(entries: List<Entry>) {
+        for (e in entries) this.entries[e.id] = e
+    }
+
     override suspend fun count(): Int = entries.size
+
+    override suspend fun getAllForLevel(level: Level): List<Entry> =
+        entries.values.filter { it.level == level }
 
     override suspend fun getById(id: Long): Entry? = entries[id]
 

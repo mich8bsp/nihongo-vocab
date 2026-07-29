@@ -97,6 +97,12 @@ with zero unmapped characters left over.
 - **Kana**: hand-authored via `scripts/generate_kana_assets.py` (142
   entries: seion + dakuten + handakuten; youon out of scope — they're
   combinations of already-covered characters).
+- `data/AssetSeeder.kt` seeds Room from these assets only on an empty DB.
+  On later launches it instead refreshes `meanings`/`romaji` on existing
+  entries (matched by `text`) against the bundled JSON, preserving `id`/
+  `correctStreak`/totals — so a future data-generation fix (like the one
+  above) reaches already-seeded installs too. Doesn't add newly-added
+  vocab to an existing install; that still needs a fresh seed.
 
 ## Screens
 

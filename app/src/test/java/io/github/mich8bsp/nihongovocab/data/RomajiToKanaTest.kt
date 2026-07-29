@@ -37,7 +37,7 @@ class RomajiToKanaTest {
 
     @Test
     fun `loanword combo not in the base kana chart`() {
-        assertEquals("ふぉーむ", romajiToKana("foomu"))
+        assertEquals("ふぉおむ", romajiToKana("foomu"))
     }
 
     @Test

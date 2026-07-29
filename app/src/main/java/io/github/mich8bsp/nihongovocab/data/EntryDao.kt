@@ -21,8 +21,14 @@ interface EntryDao {
     @Update
     suspend fun update(entry: Entry)
 
+    @Update
+    suspend fun updateAll(entries: List<Entry>)
+
     @Query("SELECT COUNT(*) FROM entries")
     suspend fun count(): Int
+
+    @Query("SELECT * FROM entries WHERE level = :level")
+    suspend fun getAllForLevel(level: Level): List<Entry>
 
     @Query("SELECT * FROM entries WHERE id = :id")
     suspend fun getById(id: Long): Entry?

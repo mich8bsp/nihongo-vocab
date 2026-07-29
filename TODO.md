@@ -48,3 +48,11 @@ of how.
 25. Added: notifications on/off toggle in Settings.
 26. Added: kana reading hint toggle + Quiz screen reveal button
     (`data/RomajiToKana.kt`).
+27. Fixed: item 17's meaning-split fix never reached installs that had
+    already seeded the old broken data (`AssetSeeder` only seeded an empty
+    DB). `AssetSeeder` now also refreshes `meanings`/`romaji` on existing
+    entries (matched by `text`) against the bundled JSON on every launch,
+    preserving `id`/`correctStreak`/totals.
+28. Fixed a wrong expectation in `RomajiToKanaTest` (asserted a chōon mark
+    `ー` the function was never designed to produce - found while fixing
+    item 27, unrelated to it).
