@@ -1,459 +1,162 @@
 # Nihongo Vocab — Design Document
 
-Android app for passive Japanese vocabulary practice. Fires notifications
-with a random word/kana/kanji; tapping opens a quiz for it. Fully offline,
-single user, no backend.
+Android app for passive Japanese vocabulary practice via notifications.
+Offline, single-user, no backend.
 
 ## Core loop
 
-1. App picks a random entry from the currently **enabled pools'** active
-   (unmastered) entries and fires a notification — either a **Quiz**
-   notification (word only) or a **Reveal** notification (word + romaji +
-   meaning, dismiss-only) — see "Notifications" for the split.
-2. Tapping a Quiz notification opens the **Quiz screen** for that entry;
-   Reveal notifications aren't clickable.
-3. For non-KANA entries, user first types the reading in romaji (stage 1),
-   then answers the meaning (stage 2) via free text or multiple choice,
-   per the user's toggle; KANA entries skip straight to stage 2 (its
-   "meaning" already is the romaji reading) — see "Answering".
-4. App shows correct/incorrect feedback + the correct answer.
-5. User taps "Next" to keep quizzing (picks another random active entry
-   the same way, staying on the Quiz screen) or presses back to return to
-   **Home screen** (no separate "Back to Home" button - system back
-   already does this, see "Navigation").
-6. Home screen is also what's shown when the app is opened normally (not via
-   notification).
+1. A random active (unmastered) entry from the enabled pools fires either a
+   Quiz notification (tap opens the quiz) or a Reveal notification
+   (word+romaji+meaning, dismiss-only, not clickable) — 1:4 quiz:reveal
+   ratio.
+2. Non-KANA entries: stage 1 (type the reading in romaji) gates stage 2
+   (the meaning, free text or multiple choice). KANA entries skip straight
+   to stage 2 (their "meaning" already is the romaji).
+3. Feedback (correct/incorrect + correct answer) → "Next" (another random
+   entry, stays on Quiz) or system back → Home.
+4. Home is also the normal launch screen (not via notification).
 
 ## Data model
 
-**Entry**
-- `id`
-- `text` — the kanji/kana/word as shown in the notification
-- `meanings: List<String>` — acceptable English answers (dictionary entries
-  often have multiple valid glosses)
-- `romaji: String` — Hepburn romaji of the entry's reading, shown alongside
-  the meanings after answering (empty for `KANA` entries, where the
-  meaning itself already is the romaji - see "Answering")
-- `level` — KANA / N5 / N4 / N3 / N2 / N1. Kana is its own pool, separate
-  from N5–N1 vocab/kanji.
-- `correctStreak: Int` (0–3) — consecutive correct answers. Any wrong answer
-  resets this to 0. At 3, the entry is "mastered" and drops out of the
-  notification pool (but stays in the DB).
-- `totalCorrect: Int`, `totalWrong: Int` — lifetime counters, never reset.
-  Used for the stats screen. Independent of `correctStreak`.
+**Entry**: `id`, `text`, `meanings: List<String>`, `romaji` (Hepburn, blank
+for KANA), `level` (KANA/N5-N1), `correctStreak` (0-3, resets on wrong,
+mastered at 3 and drops out of the notification pool), `totalCorrect`/
+`totalWrong` (lifetime, never reset).
 
-**PoolState** (one row per level)
-- `level`
-- `enabled: Boolean` — whether this level's entries are eligible for
-  notifications right now.
-
-Default: KANA and N5 `enabled = true`, N4–N1 `enabled = false`.
+**PoolState**: `level`, `enabled`. Default: KANA + N5 enabled.
 
 ## Pool enable/disable rules
 
-- A pool is **complete** when every entry in it has `correctStreak >= 3`.
-- Each pool has a fixed "next" pool for auto-advance purposes:
-  `KANA → (none)`, `N5 → N4 → N3 → N2 → N1 → (none)`. Kana sits outside the
-  JLPT chain — it starts enabled alongside N5 but doesn't feed into it.
-- On completion: that pool auto-disables, and if it has a "next" pool that
-  isn't already enabled, the next pool auto-enables.
-- The user can manually enable/disable any pool at any time from the Home
-  screen (e.g. re-enable N5 or Kana to review old words while also studying
-  N4). Manual toggles are not overridden except by the auto-advance rule
-  above.
-- Multiple pools can be enabled simultaneously. Notifications draw from the
-  combined active-entry set of all enabled pools.
-- If no enabled pool has any active (unmastered) entries, no notification
-  fires (nothing to quiz).
+- A pool is complete when every entry has `correctStreak >= 3`.
+- Auto-advance chain: `KANA→(none)`, `N5→N4→N3→N2→N1→(none)`. On
+  completion, that pool auto-disables and its "next" auto-enables (if not
+  already).
+- User can manually enable/disable any pool anytime, independent of the
+  chain; multiple pools can be enabled at once.
+- Notifications draw from the combined active-entry set of all enabled
+  pools; if none, no notification fires.
 
 ## Answering
 
-- **Two quiz modes, user-toggled**: free text (default) or multiple choice
-  (3 options: the entry's own first meaning + 2 distractors). Toggled from
-  a `Switch` on the Settings screen, persisted in `SharedPreferences`
-  (`data/QuizPreferences.kt`) so it survives app restarts; read once by
-  `MainActivity` on launch/`onCreate` and held as in-memory state passed
-  to both `SettingsScreen` (to render + change it) and `QuizScreen` (to decide
-  which UI to show) — same pattern as `quizEntryId`. No LLM grading in
-  either mode: every check is local, instant, and deterministic (see
-  "Vocabulary data source" for why: offline-first, no backend, reproducible
-  feedback).
-- **Two-stage quiz (reading gate), non-KANA only**: before checking the
-  meaning at all, the user must first type the entry's reading in romaji.
-  Both stages render on the same Quiz screen, stage 1 above stage 2 - not
-  a separate screen/step, since the entry text stays on screen throughout.
-  Stage 1 starts enabled, stage 2 starts disabled and greyed out
-  (`Modifier.alpha`); a wrong stage-1 submission just shows "Incorrect -
-  try again" and lets the user retry freely - it is **not** scored (no
-  streak reset, no `totalWrong`), since it's a gate on reaching the real
-  (meaning) question, not the question itself. Once stage 1 matches
-  `entry.romaji` (via `isRomajiAnswer`, reused as-is), stage 1 locks
-  (disabled + greyed) and stage 2 unlocks - stage 2's free-text/multiple-
-  choice UI is exactly what's described below, just gated on
-  `stage1Passed`. Only stage 2's result is ever recorded via
-  `AnswerService.submitAnswer`/`giveUp` - reading-stage attempts never
-  touch `correctStreak`/`totalCorrect`/`totalWrong`. KANA entries have no
-  stage 1 at all (`stage1Passed` starts `true` for them) since their
-  "meaning" already is the romaji reading - quizzing them is unchanged
-  from before this feature.
-- **Multiple choice**: `AnswerService.buildQuizOptions(entry)` picks 2
-  distractors via `EntryDao.getRandomOtherEntries` (same level as the
-  target entry, any mastery state, since a distractor's own progress
-  doesn't matter), takes each distractor's first meaning, and drops any
-  that happen to equal one of the target's own meanings (case-insensitive)
-  so no option is ambiguously "also correct" - over-fetches a few extra
-  candidates (limit 6) to leave enough after that filter. The correct
-  option is the target entry's own first meaning, so tapping it scores via
-  the exact same `AnswerService.submitAnswer(entryId, optionText)` path
-  free text uses - no separate scoring logic for multiple choice. No "Give
-  Up" button in this mode (picking from 3 options doesn't have the "typing
-  gibberish" problem Give Up exists for in free text).
-- **Free text matching**: match against any string in the entry's
-  `meanings` list, after
-  normalizing both sides (lowercase, trim whitespace). Also accepts the
-  same meaning with any `(...)` context clarification dropped, e.g.
-  `mother (formal)` → `mother`, `(my) older brother (humble)` → `older
-  brother` - the source glosses use parentheses for nuance/grammar hints
-  the user shouldn't be required to type. Same for a leading "a"/"an"/
-  "the", e.g. `an exit` → `exit` (出口/deguchi) - articles are part of
-  the gloss's English grammar, not part of knowing the word, and ~182
-  meanings in the dataset start with one.
-- A mid-phrase `word (altword)` parenthetical also accepts the altword
-  substituted in, e.g. `clear (sunny) weather` → `sunny weather` as well
-  as `clear weather` (晴れ/hare) - a *trailing* parenthetical (e.g.
-  `mother (formal)`) is left alone, since the tag alone isn't a valid
-  answer. A parenthetical that's part of the answer also accepts just the
-  parens dropped, e.g. `to take off (clothes)` → `to take off clothes`
-  (脱ぐ/nugu). Spelled-out numbers and digits are interchangeable on both
-  sides of the comparison, e.g. `twenty days` accepts `20 days`
-  (二十日/hatsuka) and `20 years old` accepts `twenty years old`
-  (二十歳/hatachi).
-- If a plain match feels too strict in practice, add a small edit-distance
-  tolerance (typo forgiveness) — stdlib-level, no new dependency. Not
-  needed up front; the `meanings` list (split from multi-gloss source data)
-  already covers most valid synonym cases.
-- Updates `correctStreak`, `totalCorrect`/`totalWrong`, then re-checks pool
-  completion for that entry's level.
-- Implemented in `data/AnswerService.kt` (`isCorrectAnswer` +
-  `AnswerService.submitAnswer`), operating on `EntryDao`/`PoolStateDao`.
-  `submitAnswer` and `giveUp` (see "Screens" → Quiz screen) both funnel
-  into a private `recordResult(entry, correct)` so the streak/counters/
-  pool-completion logic lives in exactly one place.
-- The post-answer feedback also shows the entry's `romaji` in parentheses
-  after the meanings, e.g. `counter for small animals (~hiki)` — except
-  for `KANA` entries, where the answer being checked *is* the romaji
-  already (showing it again would be redundant).
-- **Romaji leniency**: when looking at kanji, the instinct is sometimes to
-  type the reading instead of translating it. If Submit's answer doesn't
-  match a meaning but does match the entry's `romaji` (`isRomajiAnswer`,
-  same normalization as `isCorrectAnswer`), the attempt is *not* scored at
-  all - no streak reset, no `totalWrong` bump. Instead the Quiz screen
-  shows a hint ("That's the romaji reading - try the English meaning")
-  and leaves the text field open for a real attempt, which then goes
-  through the normal correct/incorrect scoring. The hint clears as soon
-  as the user edits the field again. Always false for `KANA` entries
-  (`romaji` is blank there, see above).
+- Two quiz modes (Settings toggle, `data/QuizPreferences.kt`): free text
+  (default) or multiple choice (entry's own first meaning + 2 distractors
+  from `EntryDao.getRandomOtherEntries`, same level, excluding any
+  distractor meaning that collides with the entry's own). No LLM
+  grading — every check is local, instant, deterministic.
+- Two-stage quiz (non-KANA only): stage 1 (romaji reading, checked via
+  `isRomajiAnswer`) gates stage 2 (the meaning). Stage 1 attempts aren't
+  scored (no streak/counter change) — it's a gate, not the question. Only
+  stage 2's result is ever recorded, via `AnswerService.submitAnswer`/
+  `giveUp`. Both stages render on the same screen at once.
+- Free-text matching (`isCorrectAnswer`, case/whitespace-insensitive)
+  against any of `entry.meanings`, with leniency: drop a `(...)`
+  clarification (trailing, or mid-phrase with the alt word substituted
+  in), drop a leading "a"/"an"/"the", and treat spelled-out numbers/digits
+  as interchangeable.
+- Romaji leniency: if a submitted answer matches `entry.romaji` instead of
+  a meaning, it's not scored at all — shows a hint ("try the English
+  meaning") instead, since typing the reading is a common instinct when
+  looking at kanji.
+- Logic lives in `data/AnswerService.kt`; `submitAnswer`/`giveUp` share a
+  private `recordResult` for streak/counter/pool-completion so that logic
+  exists in one place.
 
 ## Romaji → kana conversion
 
-`data/RomajiToKana.kt` (`romajiToKana`) derives the kana reading hint (see
-"Screens" → Quiz screen) from each entry's existing `romaji` field instead
-of requiring new per-entry furigana data - the bundled vocab JSON only
-ever stored a whole-word romaji string, no per-kanji reading alignment,
-so a tap-a-kanji-to-reveal-it feature was ruled out as needing data this
-app doesn't have (see TODO.md for that discussion).
+`data/RomajiToKana.kt` (`romajiToKana`) derives the Quiz screen's kana
+reading hint from `entry.romaji` — there's no per-kanji furigana data, so
+a tap-a-kanji-to-reveal-it feature isn't possible without a new data
+source; this needs none.
 
-- Greedy longest-match mora tokenizer over a lookup table built from the
-  same syllables `kana.json` teaches, plus yoon (contracted sound) combos
-  and a handful of loanword-only combos (fa/fi/fe/fo, di, che, ...) that
-  appear in vocab romaji but not the kana chart itself.
-- Long vowels need no special-casing: this dataset's romaji already
-  spells them out mora-by-mora exactly as the kana does (e.g. "gakkou" is
-  ga-k-ko-u, not a macron'd "gakkō"), so converting one mora at a time
-  reproduces them automatically - verified by round-tripping every
-  `romaji` value in the bundled vocab JSON (~7800 entries) through the
-  function with zero unmapped characters left over.
-- Two special rules beyond plain table lookup: a doubled consonant is
-  sokuon (small っ), and gemination before "chi"/"cha"/"chu"/"cho" is
-  conventionally spelled "tch" rather than doubling, so that's a separate
-  rule. An `n'` (apostrophe) disambiguates a standalone ん from being
-  absorbed into the next mora (e.g. "ken'i" → けんい, not けに).
-- Known simplification: modern Hepburn collapses ぢ/づ into the same
-  romaji as じ/ず, so the rare word actually spelled with ぢ/づ gets the
-  audibly-identical じ/ず hint instead - acceptable since this is a
-  pronunciation aid, not a spelling reproduction.
-- Non-letter characters (spaces, "; " between alternates, "~" prefixes,
-  parens) pass through unchanged, so multi-alternate entries like
-  "koukou; koutougakkou" convert to "こうこう; こうとうがっこう".
+Greedy longest-match mora tokenizer, table seeded from `kana.json`'s
+syllables plus yoon (contracted sound) and loanword-only combos (fa/fi/
+fe/fo, di, che, ...). Long vowels need no special-casing since this
+dataset's romaji already spells them mora-by-mora (e.g. "gakkou", not a
+macron'd "gakkō"). Two extra rules: a doubled consonant is sokuon (っ),
+and gemination before chi/cha/chu/cho is spelled "tch" rather than
+doubling; an `n'` apostrophe disambiguates ん from the next mora. Known
+gap: modern Hepburn collapses ぢ/づ into じ/ず, so those rare words get
+the audibly-identical hint instead of the exact kana — acceptable since
+this is a pronunciation aid, not a spelling reproduction. Validated by
+round-tripping every `romaji` value in the bundled vocab (~7800 entries)
+with zero unmapped characters left over.
 
 ## Vocabulary data source
 
-- **Vocab/kanji (N5–N1)**: [elzup/jlpt-word-list](https://github.com/elzup/jlpt-word-list)
-  (`src/n5.csv`–`src/n1.csv`), MIT licensed (Jamie Sinclair / elzup,
-  2020) — attribution kept in `app/src/main/assets/vocab/ATTRIBUTION.md`.
-  - Correction from initial plan: Bluskyo/JLPT_Vocabulary (the originally
-    picked primary source) turned out to only have kanji + reading, no
-    English meanings at all — useless for this app's answer-checking, so
-    it's not used. elzup's CSVs have `expression,reading,meaning,tags`
-    columns, which is what's actually needed.
-  - Reshaped by `scripts/generate_vocab_assets.py` into the `Entry`
-    schema, same-text rows within a level merged (union of meanings), and
-    any expression appearing in more than one level's file is kept only
-    in the easiest level it appears in (small overlaps exist between
-    level files in the source data).
-  - The `meaning` column isn't a plain comma-separated list: elzup uses
-    `;` between distinct senses and `,` between synonyms within a sense
-    (e.g. `coat; court (e.g., tennis)` is the senses `coat` and
-    `court (e.g., tennis)`), and a plain split-on-`,` corrupts this - it
-    either never splits a `;`-only meaning (leaving an untypeable
-    compound answer) or splits *inside* an `(e.g., ...)` aside, producing
-    broken fragments with unbalanced parens. Found by auditing all
-    generated entries (565 of 7836, ~7%, were affected).
-    `split_meanings()` fixes this properly: mask `(...)` content first
-    (so its `;`/`,` can't be mistaken for a separator), split on `;` then
-    `,`, restore the masked content per part. Leaves a `_self_check()`
-    covering the known tricky cases (asides, a `;` *inside* parens),
-    run at the top of `main()`. ~10 entries still have a stray unmatched
-    `(` because the *source* CSV itself has a typo (missing `)`) -
-    accepted as a known ceiling, not worth special-casing for 10 rows.
-  - Before committing to this fix, considered switching to a JMDict-based
-    source (`AnchorI/jlpt-kanji-dictionary`) for genuinely clean gloss
-    arrays - rejected: it has no per-word JLPT level tag (only kanji do),
-    so elzup's level list would still be needed anyway, plus it's ~57MB,
-    needs kanji+reading cross-referencing with homograph-ambiguity risk,
-    and a second license to attribute, all to solve a problem the parser
-    fix above already solves directly.
-  - `tags` column from the source is discarded. `reading` is kept, but not
-    stored verbatim — `scripts/generate_vocab_assets.py` converts it to
-    Hepburn romaji at generation time via `pykakasi` (not a repo
-    dependency, only needed to regenerate the assets) and stores that as
-    `Entry.romaji`. Precomputing in Python means the app itself needs no
-    kana→romaji conversion logic at runtime.
-- **Kana (hiragana + katakana)**: hand-authored via
-  `scripts/generate_kana_assets.py` (a Python table of char/romaji pairs,
-  not an external dataset). Covers seion + dakuten + handakuten (142
-  entries total); youon (contracted sounds like きゃ) are out of scope for
-  v1 since they're combinations of already-covered characters.
+- **N5–N1**: [elzup/jlpt-word-list](https://github.com/elzup/jlpt-word-list)
+  (MIT, attribution in `app/src/main/assets/vocab/ATTRIBUTION.md`),
+  reshaped by `scripts/generate_vocab_assets.py`. `reading` is converted
+  to Hepburn romaji via `pykakasi` at generation time (not a runtime
+  dependency).
+  - Fixed gotcha: elzup's `meaning` column mixes `;` (distinct senses)
+    and `,` (synonyms within a sense), with `(...)` asides that can
+    contain either — a naive comma-split corrupted ~7% of entries.
+    `split_meanings()` masks paren content before splitting. ~10 entries
+    still broken from a source-CSV typo (accepted, not worth
+    special-casing).
+- **Kana**: hand-authored via `scripts/generate_kana_assets.py` (142
+  entries: seion + dakuten + handakuten; youon out of scope — they're
+  combinations of already-covered characters).
 
 ## Screens
 
-**Home screen** (default screen; also reached via system back from Quiz
-or Settings)
-- Per-level stats: correct / wrong counts, mastered count out of total.
-- Per-level enable/disable toggle.
-- **Settings icon button** (top-right of the header row, `Icons.Default.Settings`)
-  opens the Settings screen.
-- **Practice button**: picks a random active entry the same way a
-  notification would (`pickRandomActiveEntry`, shared with
-  `QuizNotificationWorker` so both pick identically) and opens Quiz for
-  it directly — an on-demand way to practice without waiting for a
-  notification, and a much faster way to test the quiz flow than fighting
-  notification timing or OEM battery restrictions. Shows a message
-  instead if nothing's available (no enabled pool, or everything in the
-  enabled pools already mastered).
-- Implemented in `ui/HomeScreen.kt`, backed by `EntryDao.getStatsByLevel()`
-  and `PoolStateDao.getAll()`/`setEnabled()`. This is `MainActivity`'s
-  actual launch screen now (after seeding completes).
+**Home** (default; also reached via back from Quiz/Settings): per-level
+stats + enable toggle, a settings gear icon, and a Practice button
+(`pickRandomActiveEntry`, shared with the notification path).
 
-**Settings screen** (opened from Home's settings icon)
-- **Multiple choice quiz toggle**: a `Switch`, switching between free-text
-  and multiple-choice quizzing (see "Answering") for both Practice and
-  notification-opened quizzes. Persisted via `QuizPreferences`
-  immediately on toggle. Moved here from Home.
-- **Notifications toggle**: a `Switch`, enabled by default. Off cancels
-  the pending `AlarmManager` alarm immediately (`QuizAlarmReceiver.setEnabled`);
-  on re-arms it. Persisted via `QuizPreferences`; also checked by
-  `QuizAlarmReceiver.ensureScheduled` (called on app start and
-  `BOOT_COMPLETED`) so a reboot doesn't resurrect alarms while disabled.
-- **Kana reading hint toggle**: a `Switch`, off by default. When on, the
-  Quiz screen shows a "Show reading (kana)" button above the entry text
-  (non-KANA entries only, and only before the entry is answered) that
-  reveals the entry's reading in hiragana - for users who don't yet know
-  enough kanji to attempt stage 1 (romaji) at all. Persisted via
-  `QuizPreferences`.
-- Implemented in `ui/SettingsScreen.kt`; system back (`BackHandler`) and
-  an in-screen back arrow both return to Home.
+**Settings** (from Home's gear icon): multiple-choice toggle, notifications
+toggle (default on — off cancels the armed alarm via
+`QuizAlarmReceiver.setEnabled`), kana-hint toggle (default off). Back
+(system or in-screen arrow) returns to Home.
 
-**Quiz screen** (opened via notification tap, with entry id as extra)
-- If the Settings kana hint toggle is on (non-KANA entries, pre-answer
-  only): a "Show reading (kana)" button directly above the entry text;
-  tapping it replaces the button with the reading in small hiragana text
-  (`data/RomajiToKana.kt` → `romajiToKana`, converting the entry's
-  existing `romaji` field - no new per-entry data needed). Revealed state
-  resets per entry (`remember(entryId)`), same pattern as the other quiz
-  state.
-- Word/kana/kanji display, then (non-KANA only) **stage 1**: a "Stage 1:
-  write the reading (romaji)" label, text field, Submit, and a "Give Up"
-  button (same `AnswerService.giveUp` treatment as stage 2's, ending the
-  quiz for this entry as a wrong answer instead of unlocking stage 2),
-  gated as described in "Answering" → Two-stage quiz. Rendered above
-  stage 2 always (both stages are always present in the layout - only
-  their `enabled` state and `Modifier.alpha` change), so there's no
-  jump/resize when stage 2 unlocks. The stage 1 text field is
-  autofocused on entry load (`FocusRequester`, keyed on entry id) so
-  typing can start immediately without tapping the field first.
-- **Stage 2** (the only stage for KANA; the meaning-check stage
-  otherwise), labeled "Stage 2: write the meaning" when stage 1 exists,
-  either the free-text UI or the multiple-choice UI depending on the Home
-  screen's toggle (passed in as `multipleChoice: Boolean`), disabled/
-  greyed until stage 1 passes (always enabled for KANA, which has no
-  stage 1):
-  - **Free text**: text field, Submit button, and a "Give Up" button next
-    to it for when the user doesn't know the answer and doesn't want to
-    type gibberish just to move on — recorded identically to a wrong
-    answer (`AnswerService.giveUp`: streak reset, `totalWrong`
-    incremented, same `AnswerResult` shape), just skipping the string
-    comparison. Unlike Submit it's always enabled (no text required) once
-    stage 2 itself is enabled. Submit checks locally first whether the
-    typed answer is a romaji guess (see "Answering" → Romaji leniency): if
-    so it shows the hint and stays on the entry field instead of scoring
-    anything, otherwise it calls `AnswerService.submitAnswer` as normal -
-    kept even though stage 1 already required the reading, since typing it
-    again out of habit at stage 2 is still plausible.
-  - **Multiple choice**: 3 buttons, one per option from
-    `AnswerService.buildQuizOptions` (loaded once alongside the entry in
-    the same `LaunchedEffect`, independent of stage 1's progress). Tapping
-    one immediately calls `AnswerService.submitAnswer(entryId, optionText)`
-    - no Submit/Give Up step. No romaji-leniency hint in this mode
-    (nothing is typed).
-- Submit/Give Up → feedback (correct/incorrect + correct answer) → "Next" button,
-  which picks another random active entry (`AnswerService.pickNext()`,
-  same selection a notification/the Home Practice button would make) and
-  swaps the Quiz screen straight to it — no detour through Home. Falls
-  back to a "nothing to practice" message (same wording as Home's
-  Practice button) if nothing's left to quiz. There's no separate "back
-  to Home" button on the result screen - the system back button already
-  does that (see below), so a dedicated button would just duplicate it.
-- Implemented in `ui/QuizScreen.kt`: a self-contained composable taking
-  `entryId` + `AnswerService` + `multipleChoice: Boolean` + `onBack` +
-  `onNext: (Long) -> Unit` callbacks. No formal navigation graph — see "Navigation" below, this
-  turned out not to need one. `MainActivity` shows it whenever it has a
-  real entry id (from a notification tap or `onNext`); `onBack` clears
-  that back to `HomeScreen`, `onNext` just swaps in the new entry id
-  (identical wiring to Home's `onPractice`).
-- The Column uses `Modifier.imePadding()` so the keyboard doesn't cover
-  the Submit button when the answer field is focused — paired with
-  `android:windowSoftInputMode="adjustResize"` on `MainActivity` in the
-  manifest, the standard combination for reliable keyboard-avoidance
-  behavior across OEMs (this app has already hit one Samsung-specific
-  surprise, see Part 9 in TODO.md, so pairing both rather than relying on
-  just one).
-- System back button on Quiz is intercepted with `BackHandler(onBack =
-  onBack)` so it returns to Home instead of the default Activity behavior
-  of finishing the app — there's no back stack (see "Navigation"), so an
-  unhandled back press would just exit.
+**Quiz** (from a notification tap or Home's Practice button): entry
+display, an optional kana-hint reveal button above it, stage 1 (if
+non-KANA) + stage 2 as described in "Answering", then feedback + Next.
+`Modifier.imePadding()` + `adjustResize` keeps the keyboard clear of
+Submit. System back returns to Home.
 
 ## Navigation
 
-Home ⇄ Quiz ⇄ Settings is just two bits of state in `MainActivity`:
-`quizEntryId: Long?` (non-null shows `QuizScreen` for that id, takes
-priority) and `showSettings: Boolean` (shows `SettingsScreen` when true
-and no quiz is active). `quizEntryId` is set from `EXTRA_ENTRY_ID` on the
-launch intent (cold start from a notification tap) or `onNewIntent`
-(already-running instance, `launchMode="singleTop"` so repeat taps don't
-stack activities); cleared by Quiz's `onBack`. `showSettings` is set by
-Home's settings icon, cleared by Settings' `onBack`. No Compose
-Navigation / `NavHost` — with 3 screens, no nesting, and no back-stack
-requirements beyond "return to Home", a route graph would be pure
-ceremony. Reconsider only if a real need for more screens or back-stack
-behavior shows up.
+Two bits of state in `MainActivity`: `quizEntryId: Long?` (Quiz screen,
+takes priority) and `showSettings: Boolean`. No Compose Navigation/
+`NavHost` — 3 screens, no back-stack complexity beyond "return to Home",
+a route graph would be ceremony.
 
 ## Notifications
 
-- **Master on/off toggle** on the Settings screen, enabled by default
-  (see "Screens" → Settings screen). Off cancels the pending alarm
-  outright rather than just skipping the post - no notification-shaped
-  work happens at all while disabled.
-- Random interval within active hours: 20–90 minutes, clamped into an
-  8am–10pm window (rolls to next day's 8am if a pick would otherwise land
-  after 10pm). Exposing this as a user setting is a later nice-to-have,
-  not required for v1. Implemented in `notification/NotificationScheduling.kt`
-  (`computeNextDelayMillis`) — pure function, randomness is an injectable
-  parameter so it's fully unit-testable.
-- `POST_NOTIFICATIONS` runtime permission requested on launch (Android
-  13+); if denied, notifications just silently don't show — no further
-  handling.
-- Two notification types, picked with a 1:4 quiz:reveal ratio each time
-  the alarm fires (`Random.nextInt(5) == 0` → quiz, else reveal — no
-  separate schedule, no user setting, just a weighted roll on the shared
-  20–90 min timer):
-  - **Quiz** (original): title "Quiz time", body = entry text, tapping
-    opens the Quiz screen for that entry (`setContentIntent` +
-    `setAutoCancel`).
-  - **Reveal**: title = entry text, body = meanings + romaji via
-    `Entry.meaningsWithRomaji()` (same formatting `QuizScreen` uses for
-    the post-answer "Correct answer: ..." line — KANA gets no romaji
-    suffix since its meaning already *is* the romaji). Not clickable at
-    all (no `contentIntent`, no `setAutoCancel`) — dismiss-only, for
-    passive review without a quiz prompt.
-- `notification/QuizAlarmReceiver` (`BroadcastReceiver` armed via
-  `AlarmManager.setExactAndAllowWhileIdle`/`setAndAllowWhileIdle`, **not**
-  WorkManager): picks a random active entry from the enabled pools, posts
-  one of the two notification types above if an entry was found, then
-  always reschedules the next alarm. **Originally built on
-  WorkManager** (`CoroutineWorker`, "timing doesn't need to be tight for
-  passive practice") but that was wrong in practice: WorkManager's
-  JobScheduler backend gets deferred indefinitely by Doze/App Standby
-  once the app hasn't been opened in a while — on a real device this
-  meant *no* notifications until the app was opened, at which point the
-  overdue one fired immediately. Switched to AlarmManager's
-  `*AndAllowWhileIdle` variants, the platform's own Doze-resistant
-  mechanism for this. Requires the `SCHEDULE_EXACT_ALARM` permission
-  (Android 12+) — `MainActivity` sends the user to
-  `Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM` on launch if not
-  granted; without it, alarms still fire via the inexact
-  `setAndAllowWhileIdle` fallback (worse jitter, still far more reliable
-  than plain JobScheduler deferral). The next-alarm time is persisted in
-  `SharedPreferences` so `ensureScheduled` (called from `MainActivity` on
-  app start and from a `BOOT_COMPLETED` receiver, since `AlarmManager`
-  alarms don't survive reboot) can re-arm the *same* pending time instead
-  of resetting the countdown — mirrors WorkManager's old
-  `REPLACE`-from-worker / `KEEP`-from-app-start split. No active entries
-  in any enabled pool → the DAO query naturally returns null (empty SQL
-  `IN ()` matches nothing) and the receiver just skips posting, still
-  reschedules.
+- Master toggle in Settings (default on); off cancels the armed alarm
+  outright, not just skips the post.
+- Random interval 20–90 min, clamped into an 8am–10pm active-hours window
+  (`notification/NotificationScheduling.kt`, pure + unit-tested).
+- `POST_NOTIFICATIONS` requested on launch; silently no-ops if denied.
+- 1:4 quiz:reveal ratio per fire (`Random.nextInt(5) == 0` → quiz).
+- `notification/QuizAlarmReceiver`: `AlarmManager.setExactAndAllowWhileIdle`/
+  `setAndAllowWhileIdle`, **not** WorkManager — WorkManager's JobScheduler
+  backend gets deferred indefinitely by Doze once the app's been unopened
+  a while (confirmed broken on a real device: no notifications until the
+  app reopened, then the overdue one fired immediately). Needs
+  `SCHEDULE_EXACT_ALARM` (Android 12+; falls back to the inexact variant
+  if not granted — `MainActivity` prompts for it on launch). Next-trigger
+  time persisted in `SharedPreferences` so `ensureScheduled` (app start +
+  `BOOT_COMPLETED`, since alarms don't survive reboot) re-arms the same
+  pending time rather than resetting the countdown.
 
 ## Tech stack
 
-- `targetSdk = 36` (Android 16, matches dev device), `minSdk = 33`
-  (Android 13 — floor of the notification-permission model this app relies
-  on; no reason to go lower for a single-device personal app).
-- Package/applicationId: `io.github.mich8bsp.nihongovocab` (personal
-  project, no owned domain — `io.github.<username>` convention).
-- Repo: https://github.com/mich8bsp/nihongo-vocab (public).
-- Kotlin + Jetpack Compose
-- Room (local DB), schema version 2 (v1 → v2 added `Entry.romaji` via
-  `MIGRATION_1_2`, an `ALTER TABLE ... ADD COLUMN ... DEFAULT ''` - existing
-  installs keep all progress, just with an empty `romaji` on
-  already-seeded entries until re-seeded; `exportSchema` stays off, still
-  not worth a schema-history folder for a single-device personal app)
-- AlarmManager for scheduling (see "Notifications")
-- Word lists (JLPT-tagged vocab + kana charts) bundled as JSON assets,
-  seeded into Room on first launch — see "Vocabulary data source".
-  Seeding (`AssetSeeder`) inserts entries and `PoolState` atomically in
-  one `db.withTransaction { }`, guarded by `entryDao.count() > 0` — this
-  guard is only reliable if seeding truly is all-or-nothing (a process
-  death mid-seed must never leave entries populated but pool_state
-  empty, since that would silently disable re-seeding forever).
-- No backend, no accounts, no sync
+- `targetSdk 36` (Android 16), `minSdk 33` (floor of the notification-
+  permission model this app relies on).
+- Package: `io.github.mich8bsp.nihongovocab`. Repo:
+  https://github.com/mich8bsp/nihongo-vocab (public).
+- Kotlin + Jetpack Compose, Room (schema v2 — `MIGRATION_1_2` added
+  `Entry.romaji`), AlarmManager for scheduling. No backend, accounts, or
+  sync.
 
 ## App icon
 
-Adaptive icon (`mipmap-anydpi-v26/ic_launcher.xml` + `ic_launcher_round.xml`):
-a simple vermillion torii gate (`drawable/ic_launcher_foreground.xml`, plain
-rectangles for kasagi/shimaki/pillars/nuki, `#C8332B`) on a cream background
-(`drawable/ic_launcher_background.xml`, `#FDF6EC`). No legacy PNG mipmaps —
-`minSdk 33` is well above adaptive icons' API 26 floor, so the vector-only
-adaptive icon covers every supported device. Wired via `android:icon` /
-`android:roundIcon` on `<application>` in the manifest.
+Adaptive icon (vector-only, no legacy PNGs needed above API 26):
+vermillion torii gate (`#C8332B`) on a cream background (`#FDF6EC`).
 
 ## Out of scope for v1
 
 - Accounts / multi-device sync
-- Configurable active-hours window (hardcoded default first)
-- ~~Reading-based quizzing (meanings only, per earlier decision)~~ — added
-  post-v1 as stage 1 of the two-stage quiz for non-KANA entries, see
-  "Answering" and "Screens".
-- ~~Multiple choice / distractor selection (free text only, per decision)~~
-  — added post-v1 as a user-toggled second quiz mode alongside free text,
-  see "Answering" and "Screens".
+- Configurable active-hours window (hardcoded default)

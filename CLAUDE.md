@@ -28,6 +28,29 @@ resuming, so:
 
 Never let these two files drift from the real code/design state.
 
+### Keep both files distilled, not a running log
+
+Both files are meant to be read in full at the start of every session —
+that only stays cheap if they stay short. `git log`/commit messages are
+the permanent record of *how* something was verified or debugged; these
+files only need the *current, essential* state:
+
+- `TODO.md`: one line per shipped item (what changed, past tense), no
+  verification narration ("verified live on the emulator: confirmed X,
+  Y, Z...") — that belongs in the commit message. Only keep a longer note
+  for something still genuinely unresolved or non-obvious to a future
+  session.
+- `DESIGN.md`: current behavior and the non-obvious *why* behind it, not
+  the history of how a decision was reached. Drop blow-by-blow accounts
+  of rejected alternatives once resolved — a one-clause reason ("rejected
+  X: no license/too large/etc.") is enough context to not re-litigate it.
+- **Before adding to either file, check whether it's already growing
+  unwieldy** (a good rule of thumb: if a file is pushing past ~150–200
+  lines, or an entry is more than ~5 lines, that's a signal). If so,
+  distill the existing content first — collapse finished multi-paragraph
+  entries into one-liners, fold resolved caveats into the surrounding
+  bullet — before appending more. Don't wait to be asked.
+
 ## Building/testing from the CLI in this environment
 
 The default shell has no `java`/`gradle` on `PATH` and no `ANDROID_HOME`,
