@@ -16,6 +16,7 @@ import androidx.core.content.getSystemService
 import io.github.mich8bsp.nihongovocab.MainActivity
 import io.github.mich8bsp.nihongovocab.data.AppDatabase
 import io.github.mich8bsp.nihongovocab.data.Entry
+import io.github.mich8bsp.nihongovocab.data.QuizPreferences
 import io.github.mich8bsp.nihongovocab.data.meaningsWithRomaji
 import io.github.mich8bsp.nihongovocab.data.pickRandomActiveEntry
 import kotlinx.coroutines.CoroutineScope
@@ -47,10 +48,10 @@ class QuizAlarmReceiver : BroadcastReceiver() {
                         val db = AppDatabase.getInstance(context)
                         val entry = pickRandomActiveEntry(db.entryDao(), db.poolStateDao())
                         if (entry != null) {
-                            if (Random.nextBoolean()) {
-                                showRevealNotification(context, entry)
-                            } else {
+                            if (Random.nextInt(5) == 0) {
                                 showQuizNotification(context, entry)
+                            } else {
+                                showRevealNotification(context, entry)
                             }
                         }
                         scheduleNext(context)
@@ -113,14 +114,28 @@ class QuizAlarmReceiver : BroadcastReceiver() {
         /** Called after a notification fires (or was skipped) - always picks a fresh delay. */
         fun scheduleNext(context: Context) = schedule(context, computeNextDelayMillis())
 
-        /** Called on app start / boot - re-arms without disturbing an already-pending countdown. */
+        /**
+         * Called on app start / boot - re-arms without disturbing an already-pending
+         * countdown. No-ops if notifications are disabled in Settings.
+         */
         fun ensureScheduled(context: Context) {
+            if (!QuizPreferences.isNotificationsEnabled(context)) return
             val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
             val storedTriggerAt = prefs.getLong(KEY_NEXT_TRIGGER_AT, -1L)
             if (storedTriggerAt > System.currentTimeMillis()) {
                 arm(context, storedTriggerAt)
             } else {
                 schedule(context, computeNextDelayMillis())
+            }
+        }
+
+        /** Called from Settings when the notifications toggle changes. */
+        fun setEnabled(context: Context, enabled: Boolean) {
+            QuizPreferences.setNotificationsEnabled(context, enabled)
+            if (enabled) {
+                ensureScheduled(context)
+            } else {
+                context.getSystemService<AlarmManager>()?.cancel(firePendingIntent(context))
             }
         }
 
@@ -132,14 +147,16 @@ class QuizAlarmReceiver : BroadcastReceiver() {
             arm(context, triggerAt)
         }
 
+        private fun firePendingIntent(context: Context): PendingIntent = PendingIntent.getBroadcast(
+            context,
+            0,
+            Intent(context, QuizAlarmReceiver::class.java).setAction(ACTION_FIRE),
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
+        )
+
         private fun arm(context: Context, triggerAtMillis: Long) {
             val alarmManager = context.getSystemService<AlarmManager>() ?: return
-            val pendingIntent = PendingIntent.getBroadcast(
-                context,
-                0,
-                Intent(context, QuizAlarmReceiver::class.java).setAction(ACTION_FIRE),
-                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
-            )
+            val pendingIntent = firePendingIntent(context)
             if (alarmManager.canScheduleExactAlarms()) {
                 alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerAtMillis, pendingIntent)
             } else {

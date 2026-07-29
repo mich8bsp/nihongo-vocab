@@ -37,6 +37,7 @@ import io.github.mich8bsp.nihongovocab.data.Level
 import io.github.mich8bsp.nihongovocab.data.isCorrectAnswer
 import io.github.mich8bsp.nihongovocab.data.isRomajiAnswer
 import io.github.mich8bsp.nihongovocab.data.meaningsWithRomaji
+import io.github.mich8bsp.nihongovocab.data.romajiToKana
 import kotlinx.coroutines.launch
 
 private const val DISABLED_ALPHA = 0.4f
@@ -46,12 +47,14 @@ fun QuizScreen(
     entryId: Long,
     answerService: AnswerService,
     multipleChoice: Boolean,
+    kanaHintEnabled: Boolean,
     onBack: () -> Unit,
     onNext: (Long) -> Unit,
 ) {
     var entry by remember(entryId) { mutableStateOf<Entry?>(null) }
     var options by remember(entryId) { mutableStateOf<List<String>>(emptyList()) }
     var stage1Passed by remember(entryId) { mutableStateOf(false) }
+    var kanaRevealed by remember(entryId) { mutableStateOf(false) }
     var readingText by remember(entryId) { mutableStateOf("") }
     var readingIncorrect by remember(entryId) { mutableStateOf(false) }
     var answerText by remember(entryId) { mutableStateOf("") }
@@ -85,10 +88,21 @@ fun QuizScreen(
                 return@Column
             }
 
+            val currentResult = result
+            val showKanaHint = kanaHintEnabled && currentEntry.level != Level.KANA && currentResult == null
+            if (showKanaHint) {
+                if (kanaRevealed) {
+                    Text(romajiToKana(currentEntry.romaji), style = MaterialTheme.typography.labelSmall)
+                } else {
+                    OutlinedButton(onClick = { kanaRevealed = true }) {
+                        Text("Show reading (kana)")
+                    }
+                }
+                Spacer(Modifier.height(4.dp))
+            }
             Text(currentEntry.text, style = MaterialTheme.typography.displayLarge)
             Spacer(Modifier.height(24.dp))
 
-            val currentResult = result
             if (currentResult == null) {
                 val twoStage = currentEntry.level != Level.KANA
                 if (twoStage) {

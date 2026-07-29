@@ -31,10 +31,14 @@ import io.github.mich8bsp.nihongovocab.data.QuizPreferences
 import io.github.mich8bsp.nihongovocab.notification.QuizAlarmReceiver
 import io.github.mich8bsp.nihongovocab.ui.HomeScreen
 import io.github.mich8bsp.nihongovocab.ui.QuizScreen
+import io.github.mich8bsp.nihongovocab.ui.SettingsScreen
 
 class MainActivity : ComponentActivity() {
     private var quizEntryId by mutableStateOf<Long?>(null)
     private var multipleChoiceMode by mutableStateOf(false)
+    private var notificationsEnabled by mutableStateOf(true)
+    private var kanaHintEnabled by mutableStateOf(false)
+    private var showSettings by mutableStateOf(false)
 
     private val requestNotificationPermission =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { /* no-op either way */ }
@@ -43,6 +47,8 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         quizEntryId = extractEntryId(intent)
         multipleChoiceMode = QuizPreferences.isMultipleChoiceEnabled(applicationContext)
+        notificationsEnabled = QuizPreferences.isNotificationsEnabled(applicationContext)
+        kanaHintEnabled = QuizPreferences.isKanaHintEnabled(applicationContext)
 
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) !=
             PackageManager.PERMISSION_GRANTED
@@ -76,18 +82,33 @@ class MainActivity : ComponentActivity() {
                             entryId = entryId,
                             answerService = answerService,
                             multipleChoice = multipleChoiceMode,
+                            kanaHintEnabled = kanaHintEnabled,
                             onBack = { quizEntryId = null },
                             onNext = { id -> quizEntryId = id },
                         )
-                        else -> HomeScreen(
-                            entryDao = db.entryDao(),
-                            poolStateDao = db.poolStateDao(),
+                        showSettings -> SettingsScreen(
                             multipleChoiceMode = multipleChoiceMode,
                             onMultipleChoiceModeChange = { enabled ->
                                 QuizPreferences.setMultipleChoiceEnabled(applicationContext, enabled)
                                 multipleChoiceMode = enabled
                             },
+                            notificationsEnabled = notificationsEnabled,
+                            onNotificationsEnabledChange = { enabled ->
+                                QuizAlarmReceiver.setEnabled(applicationContext, enabled)
+                                notificationsEnabled = enabled
+                            },
+                            kanaHintEnabled = kanaHintEnabled,
+                            onKanaHintEnabledChange = { enabled ->
+                                QuizPreferences.setKanaHintEnabled(applicationContext, enabled)
+                                kanaHintEnabled = enabled
+                            },
+                            onBack = { showSettings = false },
+                        )
+                        else -> HomeScreen(
+                            entryDao = db.entryDao(),
+                            poolStateDao = db.poolStateDao(),
                             onPractice = { id -> quizEntryId = id },
+                            onOpenSettings = { showSettings = true },
                         )
                     }
                 }

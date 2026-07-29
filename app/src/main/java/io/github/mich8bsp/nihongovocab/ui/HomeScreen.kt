@@ -10,8 +10,12 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
@@ -36,9 +40,8 @@ import kotlinx.coroutines.launch
 fun HomeScreen(
     entryDao: EntryDao,
     poolStateDao: PoolStateDao,
-    multipleChoiceMode: Boolean,
-    onMultipleChoiceModeChange: (Boolean) -> Unit,
     onPractice: (Long) -> Unit,
+    onOpenSettings: () -> Unit,
 ) {
     var statsByLevel by remember { mutableStateOf<Map<Level, LevelStats>>(emptyMap()) }
     var enabledByLevel by remember { mutableStateOf<Map<Level, Boolean>>(emptyMap()) }
@@ -60,7 +63,16 @@ fun HomeScreen(
     }
 
     Column(Modifier.fillMaxSize().padding(24.dp)) {
-        Text("Nihongo Vocab", style = MaterialTheme.typography.headlineMedium)
+        Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+            Text(
+                "Nihongo Vocab",
+                style = MaterialTheme.typography.headlineMedium,
+                modifier = Modifier.weight(1f),
+            )
+            IconButton(onClick = onOpenSettings) {
+                Icon(Icons.Default.Settings, contentDescription = "Settings")
+            }
+        }
         Spacer(Modifier.height(16.dp))
 
         Button(onClick = {
@@ -79,15 +91,6 @@ fun HomeScreen(
             Text(it, style = MaterialTheme.typography.bodySmall)
         }
         Spacer(Modifier.height(16.dp))
-
-        Row(
-            modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Text("Multiple choice quiz", style = MaterialTheme.typography.titleMedium, modifier = Modifier.weight(1f))
-            Switch(checked = multipleChoiceMode, onCheckedChange = onMultipleChoiceModeChange)
-        }
-        Spacer(Modifier.height(8.dp))
 
         LazyColumn {
             items(Level.entries) { level ->

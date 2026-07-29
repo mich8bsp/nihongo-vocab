@@ -70,10 +70,10 @@ Default: KANA and N5 `enabled = true`, N4–N1 `enabled = false`.
 
 - **Two quiz modes, user-toggled**: free text (default) or multiple choice
   (3 options: the entry's own first meaning + 2 distractors). Toggled from
-  a `Switch` on the Home screen, persisted in `SharedPreferences`
+  a `Switch` on the Settings screen, persisted in `SharedPreferences`
   (`data/QuizPreferences.kt`) so it survives app restarts; read once by
   `MainActivity` on launch/`onCreate` and held as in-memory state passed
-  to both `HomeScreen` (to render + change it) and `QuizScreen` (to decide
+  to both `SettingsScreen` (to render + change it) and `QuizScreen` (to decide
   which UI to show) — same pattern as `quizEntryId`. No LLM grading in
   either mode: every check is local, instant, and deterministic (see
   "Vocabulary data source" for why: offline-first, no backend, reproducible
@@ -154,6 +154,38 @@ Default: KANA and N5 `enabled = true`, N4–N1 `enabled = false`.
   as the user edits the field again. Always false for `KANA` entries
   (`romaji` is blank there, see above).
 
+## Romaji → kana conversion
+
+`data/RomajiToKana.kt` (`romajiToKana`) derives the kana reading hint (see
+"Screens" → Quiz screen) from each entry's existing `romaji` field instead
+of requiring new per-entry furigana data - the bundled vocab JSON only
+ever stored a whole-word romaji string, no per-kanji reading alignment,
+so a tap-a-kanji-to-reveal-it feature was ruled out as needing data this
+app doesn't have (see TODO.md for that discussion).
+
+- Greedy longest-match mora tokenizer over a lookup table built from the
+  same syllables `kana.json` teaches, plus yoon (contracted sound) combos
+  and a handful of loanword-only combos (fa/fi/fe/fo, di, che, ...) that
+  appear in vocab romaji but not the kana chart itself.
+- Long vowels need no special-casing: this dataset's romaji already
+  spells them out mora-by-mora exactly as the kana does (e.g. "gakkou" is
+  ga-k-ko-u, not a macron'd "gakkō"), so converting one mora at a time
+  reproduces them automatically - verified by round-tripping every
+  `romaji` value in the bundled vocab JSON (~7800 entries) through the
+  function with zero unmapped characters left over.
+- Two special rules beyond plain table lookup: a doubled consonant is
+  sokuon (small っ), and gemination before "chi"/"cha"/"chu"/"cho" is
+  conventionally spelled "tch" rather than doubling, so that's a separate
+  rule. An `n'` (apostrophe) disambiguates a standalone ん from being
+  absorbed into the next mora (e.g. "ken'i" → けんい, not けに).
+- Known simplification: modern Hepburn collapses ぢ/づ into the same
+  romaji as じ/ず, so the rare word actually spelled with ぢ/づ gets the
+  audibly-identical じ/ず hint instead - acceptable since this is a
+  pronunciation aid, not a spelling reproduction.
+- Non-letter characters (spaces, "; " between alternates, "~" prefixes,
+  parens) pass through unchanged, so multi-alternate entries like
+  "koukou; koutougakkou" convert to "こうこう; こうとうがっこう".
+
 ## Vocabulary data source
 
 - **Vocab/kanji (N5–N1)**: [elzup/jlpt-word-list](https://github.com/elzup/jlpt-word-list)
@@ -205,13 +237,12 @@ Default: KANA and N5 `enabled = true`, N4–N1 `enabled = false`.
 
 ## Screens
 
-**Home screen** (default screen; also reached via system back from Quiz)
+**Home screen** (default screen; also reached via system back from Quiz
+or Settings)
 - Per-level stats: correct / wrong counts, mastered count out of total.
 - Per-level enable/disable toggle.
-- **Multiple choice quiz toggle**: a `Switch` above the per-level list,
-  switching between free-text and multiple-choice quizzing (see
-  "Answering") for both Practice and notification-opened quizzes.
-  Persisted via `QuizPreferences` immediately on toggle.
+- **Settings icon button** (top-right of the header row, `Icons.Default.Settings`)
+  opens the Settings screen.
 - **Practice button**: picks a random active entry the same way a
   notification would (`pickRandomActiveEntry`, shared with
   `QuizNotificationWorker` so both pick identically) and opens Quiz for
@@ -224,7 +255,33 @@ Default: KANA and N5 `enabled = true`, N4–N1 `enabled = false`.
   and `PoolStateDao.getAll()`/`setEnabled()`. This is `MainActivity`'s
   actual launch screen now (after seeding completes).
 
+**Settings screen** (opened from Home's settings icon)
+- **Multiple choice quiz toggle**: a `Switch`, switching between free-text
+  and multiple-choice quizzing (see "Answering") for both Practice and
+  notification-opened quizzes. Persisted via `QuizPreferences`
+  immediately on toggle. Moved here from Home.
+- **Notifications toggle**: a `Switch`, enabled by default. Off cancels
+  the pending `AlarmManager` alarm immediately (`QuizAlarmReceiver.setEnabled`);
+  on re-arms it. Persisted via `QuizPreferences`; also checked by
+  `QuizAlarmReceiver.ensureScheduled` (called on app start and
+  `BOOT_COMPLETED`) so a reboot doesn't resurrect alarms while disabled.
+- **Kana reading hint toggle**: a `Switch`, off by default. When on, the
+  Quiz screen shows a "Show reading (kana)" button above the entry text
+  (non-KANA entries only, and only before the entry is answered) that
+  reveals the entry's reading in hiragana - for users who don't yet know
+  enough kanji to attempt stage 1 (romaji) at all. Persisted via
+  `QuizPreferences`.
+- Implemented in `ui/SettingsScreen.kt`; system back (`BackHandler`) and
+  an in-screen back arrow both return to Home.
+
 **Quiz screen** (opened via notification tap, with entry id as extra)
+- If the Settings kana hint toggle is on (non-KANA entries, pre-answer
+  only): a "Show reading (kana)" button directly above the entry text;
+  tapping it replaces the button with the reading in small hiragana text
+  (`data/RomajiToKana.kt` → `romajiToKana`, converting the entry's
+  existing `romaji` field - no new per-entry data needed). Revealed state
+  resets per entry (`remember(entryId)`), same pattern as the other quiz
+  state.
 - Word/kana/kanji display, then (non-KANA only) **stage 1**: a "Stage 1:
   write the reading (romaji)" label, text field, Submit, and a "Give Up"
   button (same `AnswerService.giveUp` treatment as stage 2's, ending the
@@ -288,18 +345,25 @@ Default: KANA and N5 `enabled = true`, N4–N1 `enabled = false`.
 
 ## Navigation
 
-Home ⇄ Quiz is just a `quizEntryId: Long?` bit of state in `MainActivity`:
-null shows `HomeScreen`, non-null shows `QuizScreen` for that id. Set from
-`EXTRA_ENTRY_ID` on the launch intent (cold start from a notification tap)
-or `onNewIntent` (already-running instance, `launchMode="singleTop"` so
-repeat taps don't stack activities); cleared by Quiz's `onBack`. No
-Compose Navigation / `NavHost` — with exactly 2 screens, one trivial
-transition, and no back-stack requirements, a route graph would be pure
+Home ⇄ Quiz ⇄ Settings is just two bits of state in `MainActivity`:
+`quizEntryId: Long?` (non-null shows `QuizScreen` for that id, takes
+priority) and `showSettings: Boolean` (shows `SettingsScreen` when true
+and no quiz is active). `quizEntryId` is set from `EXTRA_ENTRY_ID` on the
+launch intent (cold start from a notification tap) or `onNewIntent`
+(already-running instance, `launchMode="singleTop"` so repeat taps don't
+stack activities); cleared by Quiz's `onBack`. `showSettings` is set by
+Home's settings icon, cleared by Settings' `onBack`. No Compose
+Navigation / `NavHost` — with 3 screens, no nesting, and no back-stack
+requirements beyond "return to Home", a route graph would be pure
 ceremony. Reconsider only if a real need for more screens or back-stack
 behavior shows up.
 
 ## Notifications
 
+- **Master on/off toggle** on the Settings screen, enabled by default
+  (see "Screens" → Settings screen). Off cancels the pending alarm
+  outright rather than just skipping the post - no notification-shaped
+  work happens at all while disabled.
 - Random interval within active hours: 20–90 minutes, clamped into an
   8am–10pm window (rolls to next day's 8am if a pick would otherwise land
   after 10pm). Exposing this as a user setting is a later nice-to-have,
@@ -309,9 +373,10 @@ behavior shows up.
 - `POST_NOTIFICATIONS` runtime permission requested on launch (Android
   13+); if denied, notifications just silently don't show — no further
   handling.
-- Two notification types, picked with equal probability each time the
-  alarm fires (`Random.nextBoolean()` — no separate schedule, no user
-  setting, just a coin flip on the shared 20–90 min timer):
+- Two notification types, picked with a 1:4 quiz:reveal ratio each time
+  the alarm fires (`Random.nextInt(5) == 0` → quiz, else reveal — no
+  separate schedule, no user setting, just a weighted roll on the shared
+  20–90 min timer):
   - **Quiz** (original): title "Quiz time", body = entry text, tapping
     opens the Quiz screen for that entry (`setContentIntent` +
     `setAutoCancel`).
@@ -362,7 +427,7 @@ behavior shows up.
   installs keep all progress, just with an empty `romaji` on
   already-seeded entries until re-seeded; `exportSchema` stays off, still
   not worth a schema-history folder for a single-device personal app)
-- WorkManager for scheduling
+- AlarmManager for scheduling (see "Notifications")
 - Word lists (JLPT-tagged vocab + kana charts) bundled as JSON assets,
   seeded into Room on first launch — see "Vocabulary data source".
   Seeding (`AssetSeeder`) inserts entries and `PoolState` atomically in

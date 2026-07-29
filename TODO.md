@@ -514,3 +514,64 @@ thousands of real quiz answers, then drove the app for real:
       emulator: keyboard auto-opens with cursor in the reading field on
       first load and again after "Next", and tapping stage 1's Give Up
       immediately shows the incorrect/correct-answer feedback screen.
+- [x] **New Settings screen, reached from a settings icon on Home** (user
+      request). Manual-navigation `showSettings: Boolean` state in
+      `MainActivity`, same pattern as `quizEntryId` - no `NavHost` added.
+      System back and an in-screen back arrow both return to Home
+      (`BackHandler`, same treatment as Quiz). The multiple choice quiz
+      toggle moved from Home to this new screen. Updated DESIGN.md's
+      "Screens"/"Navigation"/"Answering" sections. No new test (pure
+      screen-swap wiring, nothing new in `data/`). `androidx.compose.material:material-icons-core`
+      added as a dependency (needed for `Icons.Default.Settings`/
+      `Icons.AutoMirrored.Filled.ArrowBack`, missing before - first
+      `assembleDebug` after this change failed on it).
+- [x] **Reveal notifications now outnumber quiz notifications 4:1** (user
+      request, was a 50/50 coin flip). `QuizAlarmReceiver` picks quiz via
+      `Random.nextInt(5) == 0`, reveal otherwise. Updated DESIGN.md's
+      "Notifications" section. No new test (single probability constant
+      inside framework-dependent `BroadcastReceiver` code, nothing pure
+      to unit test).
+- [x] **Notifications toggle on the new Settings screen, enabled by
+      default** (user request). Off calls `QuizAlarmReceiver.setEnabled(false)`
+      which cancels the pending `AlarmManager` alarm immediately; on
+      re-arms via `ensureScheduled`. `ensureScheduled` itself also checks
+      the preference (guards the app-start/`BOOT_COMPLETED` re-arm paths
+      so a reboot doesn't resurrect alarms while disabled). Persisted via
+      a new `QuizPreferences.isNotificationsEnabled`/`setNotificationsEnabled`
+      key (default `true`). Updated DESIGN.md's "Notifications" and
+      "Screens" → Settings screen sections. No new test (thin
+      preference+AlarmManager glue, nothing pure to unit test beyond what
+      `NotificationSchedulingTest` already covers).
+      - All three items above verified together live on the `Medium_Phone`
+        emulator: Settings opens from Home's gear icon, both system back
+        and the in-screen arrow return to Home, Multiple choice/
+        Notifications/Kana reading hint toggles all render and persist
+        correctly, and `adb shell dumpsys alarm` confirmed the
+        Notifications toggle actually cancels the armed `AlarmManager`
+        alarm when off and re-arms it when back on (not just a UI switch).
+- [x] **Kana reading hint toggle + Quiz screen reveal button** (user
+      request: quizzes are too hard for someone who doesn't know much
+      kanji yet). Considered tap-a-kanji-to-reveal-its-reading instead,
+      ruled out - the bundled vocab data only has a whole-word `romaji`
+      string, no per-kanji furigana alignment, so that would've needed a
+      new data source. Went with a single "Show reading (kana)" button
+      above the entry text instead (non-KANA entries only, pre-answer
+      only), which needs no new data: `data/RomajiToKana.kt`
+      (`romajiToKana`) derives hiragana from the existing `romaji` field.
+      Off by default, toggle added to Settings, persisted via a new
+      `QuizPreferences.isKanaHintEnabled`/`setKanaHintEnabled` key.
+      Updated DESIGN.md with a new "Romaji → kana conversion" section
+      plus "Screens" → Settings/Quiz screen updates.
+      - `RomajiToKanaTest` covers each branch: plain mora, sokuon (doubled
+        consonant), the "tch" sokuon-before-chi spelling, yoon (contracted
+        sound), long vowels, `n'` apostrophe disambiguation, a
+        loanword-only combo, and separator pass-through.
+      - Correctness beyond the unit tests: prototyped the same table/algo
+        in Python and round-tripped every `romaji` value in the bundled
+        vocab JSON (~7800 entries across n1-n5) through it - zero
+        unmapped characters, and spot-checked a random sample by eye.
+      - `./gradlew test assembleDebug` both pass. Verified live on the
+        `Medium_Phone` emulator: toggle on in Settings, KANA-only entries
+        correctly show no hint button (already kana), a kanji entry
+        (足; 脚) showed "Show reading (kana)" above the word and revealed
+        "あし" on tap.
