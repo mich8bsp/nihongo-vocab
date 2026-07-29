@@ -27,6 +27,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.unit.dp
 import io.github.mich8bsp.nihongovocab.data.AnswerResult
 import io.github.mich8bsp.nihongovocab.data.AnswerService
@@ -57,6 +59,7 @@ fun QuizScreen(
     var nextMessage by remember(entryId) { mutableStateOf<String?>(null) }
     var romajiHint by remember(entryId) { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
+    val readingFocusRequester = remember(entryId) { FocusRequester() }
 
     BackHandler(onBack = onBack)
 
@@ -89,6 +92,7 @@ fun QuizScreen(
             if (currentResult == null) {
                 val twoStage = currentEntry.level != Level.KANA
                 if (twoStage) {
+                    LaunchedEffect(currentEntry.id) { readingFocusRequester.requestFocus() }
                     Column(
                         modifier = Modifier.alpha(if (stage1Passed) DISABLED_ALPHA else 1f),
                         horizontalAlignment = Alignment.CenterHorizontally,
@@ -104,23 +108,36 @@ fun QuizScreen(
                             label = { Text("Reading (romaji)") },
                             singleLine = true,
                             enabled = !stage1Passed,
+                            modifier = Modifier.focusRequester(readingFocusRequester),
                         )
                         if (readingIncorrect) {
                             Spacer(Modifier.height(8.dp))
                             Text("Incorrect - try again", style = MaterialTheme.typography.bodySmall)
                         }
                         Spacer(Modifier.height(8.dp))
-                        Button(
-                            onClick = {
-                                if (isRomajiAnswer(currentEntry, readingText)) {
-                                    stage1Passed = true
-                                } else {
-                                    readingIncorrect = true
-                                }
-                            },
-                            enabled = !stage1Passed && readingText.isNotBlank(),
-                        ) {
-                            Text("Submit")
+                        Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                            Button(
+                                onClick = {
+                                    if (isRomajiAnswer(currentEntry, readingText)) {
+                                        stage1Passed = true
+                                    } else {
+                                        readingIncorrect = true
+                                    }
+                                },
+                                enabled = !stage1Passed && readingText.isNotBlank(),
+                            ) {
+                                Text("Submit")
+                            }
+                            OutlinedButton(
+                                onClick = {
+                                    scope.launch {
+                                        result = answerService.giveUp(entryId)
+                                    }
+                                },
+                                enabled = !stage1Passed,
+                            ) {
+                                Text("Give Up")
+                            }
                         }
                     }
                     Spacer(Modifier.height(24.dp))

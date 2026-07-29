@@ -501,3 +501,16 @@ thousands of real quiz answers, then drove the app for real:
       correct/incorrect feedback + Next, and that KANA-only practice
       (N5 disabled) skips straight to the single-stage flow with no
       stage labels at all, both with multiple choice on and off.
+- [x] **Stage 1 gets a Give Up button, and the Quiz screen autofocuses the
+      stage 1 field on open** (user request). Give Up on stage 1 uses the
+      same `AnswerService.giveUp` call as stage 2's - ends the quiz for
+      that entry as a wrong answer straight away, rather than unlocking
+      stage 2, since not knowing the reading means not knowing the entry.
+      Autofocus via a `FocusRequester` keyed on entry id, requested in a
+      `LaunchedEffect` alongside the stage 1 field - only applies when
+      stage 1 exists (KANA has none, unchanged). Updated DESIGN.md's
+      "Screens" section. No new unit tests (pure `QuizScreen` composition
+      logic, nothing new in `data/`); verified live on the `Medium_Phone`
+      emulator: keyboard auto-opens with cursor in the reading field on
+      first load and again after "Next", and tapping stage 1's Give Up
+      immediately shows the incorrect/correct-answer feedback screen.

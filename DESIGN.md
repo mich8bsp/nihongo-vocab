@@ -226,11 +226,15 @@ Default: KANA and N5 `enabled = true`, N4–N1 `enabled = false`.
 
 **Quiz screen** (opened via notification tap, with entry id as extra)
 - Word/kana/kanji display, then (non-KANA only) **stage 1**: a "Stage 1:
-  write the reading (romaji)" label, text field, and Submit, gated as
-  described in "Answering" → Two-stage quiz. Rendered above stage 2
-  always (both stages are always present in the layout - only their
-  `enabled` state and `Modifier.alpha` change), so there's no jump/resize
-  when stage 2 unlocks.
+  write the reading (romaji)" label, text field, Submit, and a "Give Up"
+  button (same `AnswerService.giveUp` treatment as stage 2's, ending the
+  quiz for this entry as a wrong answer instead of unlocking stage 2),
+  gated as described in "Answering" → Two-stage quiz. Rendered above
+  stage 2 always (both stages are always present in the layout - only
+  their `enabled` state and `Modifier.alpha` change), so there's no
+  jump/resize when stage 2 unlocks. The stage 1 text field is
+  autofocused on entry load (`FocusRequester`, keyed on entry id) so
+  typing can start immediately without tapping the field first.
 - **Stage 2** (the only stage for KANA; the meaning-check stage
   otherwise), labeled "Stage 2: write the meaning" when stage 1 exists,
   either the free-text UI or the multiple-choice UI depending on the Home
