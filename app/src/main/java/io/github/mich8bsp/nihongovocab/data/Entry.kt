@@ -24,3 +24,6 @@ fun Entry.meaningsWithRomaji(): String {
     val romajiSuffix = if (level != Level.KANA && romaji.isNotBlank()) " ($romaji)" else ""
     return meanings.joinToString(", ") + romajiSuffix
 }
+
+/** Whether [text] contains a CJK ideograph - words written entirely in kana have no reading stage. */
+fun Entry.hasKanji(): Boolean = text.any { it.code in 0x4E00..0x9FFF }

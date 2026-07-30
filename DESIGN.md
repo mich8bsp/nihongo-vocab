@@ -9,9 +9,10 @@ Offline, single-user, no backend.
    Quiz notification (tap opens the quiz) or a Reveal notification
    (word+romaji+meaning, dismiss-only, not clickable) — 1:4 quiz:reveal
    ratio.
-2. Non-KANA entries: stage 1 (type the reading in romaji) gates stage 2
-   (the meaning, free text or multiple choice). KANA entries skip straight
-   to stage 2 (their "meaning" already is the romaji).
+2. Entries containing kanji: stage 1 (type the reading in romaji) gates
+   stage 2 (the meaning, free text or multiple choice). KANA entries, and
+   any other entry written entirely in kana (no separate reading to quiz),
+   skip straight to stage 2.
 3. Feedback (correct/incorrect + correct answer) → "Next" (another random
    entry, stays on Quiz) or system back → Home.
 4. Home is also the normal launch screen (not via notification).
@@ -43,8 +44,9 @@ mastered at 3 and drops out of the notification pool), `totalCorrect`/
   from `EntryDao.getRandomOtherEntries`, same level, excluding any
   distractor meaning that collides with the entry's own). No LLM
   grading — every check is local, instant, deterministic.
-- Two-stage quiz (non-KANA only): stage 1 (romaji reading, checked via
-  `isRomajiAnswer`) gates stage 2 (the meaning). Stage 1 attempts aren't
+- Two-stage quiz (entries with kanji only, via `Entry.hasKanji()`): stage 1
+  (romaji reading, checked via `isRomajiAnswer`) gates stage 2 (the
+  meaning). Stage 1 attempts aren't
   scored (no streak/counter change) — it's a gate, not the question. Only
   stage 2's result is ever recorded, via `AnswerService.submitAnswer`/
   `giveUp`. Both stages render on the same screen at once.
@@ -116,10 +118,13 @@ toggle (default on — off cancels the armed alarm via
 (system or in-screen arrow) returns to Home.
 
 **Quiz** (from a notification tap or Home's Practice button): entry
-display, an optional kana-hint reveal button above it, stage 1 (if
-non-KANA) + stage 2 as described in "Answering", then feedback + Next.
-`Modifier.imePadding()` + `adjustResize` keeps the keyboard clear of
-Submit. System back returns to Home.
+display, stage 1 (if it has kanji) + stage 2 as described in "Answering",
+then feedback + Next. No stage labels — the two-stage flow is conveyed by
+layout (stage 2 dims until stage 1 passes) rather than text. The kana-hint
+reveal is a "Hint" button next to stage 1's Submit (only shown when the
+Settings toggle is on and there's a kanji reading to hint); revealed kana
+renders below the entry text. `Modifier.imePadding()` + `adjustResize`
+keeps the keyboard clear of Submit. System back returns to Home.
 
 ## Navigation
 

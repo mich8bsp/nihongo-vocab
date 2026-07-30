@@ -34,6 +34,7 @@ import io.github.mich8bsp.nihongovocab.data.AnswerResult
 import io.github.mich8bsp.nihongovocab.data.AnswerService
 import io.github.mich8bsp.nihongovocab.data.Entry
 import io.github.mich8bsp.nihongovocab.data.Level
+import io.github.mich8bsp.nihongovocab.data.hasKanji
 import io.github.mich8bsp.nihongovocab.data.isCorrectAnswer
 import io.github.mich8bsp.nihongovocab.data.isRomajiAnswer
 import io.github.mich8bsp.nihongovocab.data.meaningsWithRomaji
@@ -70,8 +71,8 @@ fun QuizScreen(
         val loaded = answerService.getEntry(entryId)
         entry = loaded
         if (loaded != null) {
-            // KANA has no separate reading stage - its "meaning" already is the romaji.
-            if (loaded.level == Level.KANA) stage1Passed = true
+            // KANA, and any word with no kanji, has no separate reading stage.
+            if (loaded.level == Level.KANA || !loaded.hasKanji()) stage1Passed = true
             if (multipleChoice) options = answerService.buildQuizOptions(loaded)
         }
     }
@@ -89,30 +90,22 @@ fun QuizScreen(
             }
 
             val currentResult = result
-            val showKanaHint = kanaHintEnabled && currentEntry.level != Level.KANA && currentResult == null
-            if (showKanaHint) {
-                if (kanaRevealed) {
-                    Text(romajiToKana(currentEntry.romaji), style = MaterialTheme.typography.labelSmall)
-                } else {
-                    OutlinedButton(onClick = { kanaRevealed = true }) {
-                        Text("Show reading (kana)")
-                    }
-                }
-                Spacer(Modifier.height(4.dp))
-            }
+            val showKanaHint = kanaHintEnabled && currentEntry.level != Level.KANA && currentEntry.hasKanji() && currentResult == null
             Text(currentEntry.text, style = MaterialTheme.typography.displayLarge)
+            if (showKanaHint && kanaRevealed) {
+                Spacer(Modifier.height(4.dp))
+                Text(romajiToKana(currentEntry.romaji), style = MaterialTheme.typography.labelSmall)
+            }
             Spacer(Modifier.height(24.dp))
 
             if (currentResult == null) {
-                val twoStage = currentEntry.level != Level.KANA
+                val twoStage = currentEntry.level != Level.KANA && currentEntry.hasKanji()
                 if (twoStage) {
                     LaunchedEffect(currentEntry.id) { readingFocusRequester.requestFocus() }
                     Column(
                         modifier = Modifier.alpha(if (stage1Passed) DISABLED_ALPHA else 1f),
                         horizontalAlignment = Alignment.CenterHorizontally,
                     ) {
-                        Text("Stage 1: write the reading (romaji)", style = MaterialTheme.typography.titleSmall)
-                        Spacer(Modifier.height(8.dp))
                         OutlinedTextField(
                             value = readingText,
                             onValueChange = {
@@ -142,6 +135,11 @@ fun QuizScreen(
                             ) {
                                 Text("Submit")
                             }
+                            if (showKanaHint && !kanaRevealed) {
+                                OutlinedButton(onClick = { kanaRevealed = true }) {
+                                    Text("Hint")
+                                }
+                            }
                             OutlinedButton(
                                 onClick = {
                                     scope.launch {
@@ -161,10 +159,6 @@ fun QuizScreen(
                     modifier = Modifier.alpha(if (stage1Passed) 1f else DISABLED_ALPHA),
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
-                    if (twoStage) {
-                        Text("Stage 2: write the meaning", style = MaterialTheme.typography.titleSmall)
-                        Spacer(Modifier.height(8.dp))
-                    }
                     if (multipleChoice) {
                         options.forEach { option ->
                             Button(

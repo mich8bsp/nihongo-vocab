@@ -56,3 +56,7 @@ of how.
 28. Fixed a wrong expectation in `RomajiToKanaTest` (asserted a chōon mark
     `ー` the function was never designed to produce - found while fixing
     item 27, unrelated to it).
+29. Fixed: kana-only non-KANA-level entries (e.g. hand-authored kana words
+    tagged N5) got a pointless stage 1 with nothing to read (`Entry.hasKanji()`).
+    Also dropped the "Stage 1/2" text labels and moved the kana-hint button
+    inline next to Submit.
