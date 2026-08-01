@@ -1,6 +1,7 @@
 package io.github.mich8bsp.nihongovocab.data
 
 import androidx.room.Dao
+import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Update
@@ -18,11 +19,17 @@ interface EntryDao {
     @Insert
     suspend fun insertAll(entries: List<Entry>)
 
+    @Insert
+    suspend fun insert(entry: Entry): Long
+
     @Update
     suspend fun update(entry: Entry)
 
     @Update
     suspend fun updateAll(entries: List<Entry>)
+
+    @Delete
+    suspend fun delete(entry: Entry)
 
     @Query("SELECT COUNT(*) FROM entries")
     suspend fun count(): Int

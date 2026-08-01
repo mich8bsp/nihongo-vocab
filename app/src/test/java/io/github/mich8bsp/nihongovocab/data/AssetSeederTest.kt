@@ -71,4 +71,19 @@ class AssetSeederTest {
 
         assertEquals(emptyList<Entry>(), diffContentUpdates(listOf(existing), listOf(existing, newVocab)))
     }
+
+    @Test
+    fun missingPoolStateLevelsBackfillsLevelsAddedAfterFirstSeed() {
+        val existing = listOf(Level.KANA, Level.N5, Level.N4, Level.N3, Level.N2, Level.N1)
+            .map { PoolState(level = it, enabled = false) }
+
+        assertEquals(listOf(Level.CUSTOM), missingPoolStateLevels(existing))
+    }
+
+    @Test
+    fun missingPoolStateLevelsEmptyWhenAllLevelsPresent() {
+        val existing = Level.entries.map { PoolState(level = it, enabled = false) }
+
+        assertEquals(emptyList<Level>(), missingPoolStateLevels(existing))
+    }
 }

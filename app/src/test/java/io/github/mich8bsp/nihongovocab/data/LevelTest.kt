@@ -22,4 +22,9 @@ class LevelTest {
         assertEquals(Level.N2, Level.N3.next())
         assertEquals(Level.N1, Level.N2.next())
     }
+
+    @Test
+    fun customHasNoNext() {
+        assertNull(Level.CUSTOM.next())
+    }
 }

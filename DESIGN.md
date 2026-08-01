@@ -20,11 +20,14 @@ Offline, single-user, no backend.
 ## Data model
 
 **Entry**: `id`, `text`, `meanings: List<String>`, `romaji` (Hepburn, blank
-for KANA), `level` (KANA/N5-N1), `correctStreak` (0-3, resets on wrong,
-mastered at 3 and drops out of the notification pool), `totalCorrect`/
-`totalWrong` (lifetime, never reset).
+for KANA), `level` (KANA/N5-N1/CUSTOM), `correctStreak` (0-3, resets on
+wrong, mastered at 3 and drops out of the notification pool),
+`totalCorrect`/`totalWrong` (lifetime, never reset).
 
-**PoolState**: `level`, `enabled`. Default: KANA + N5 enabled.
+**PoolState**: `level`, `enabled`. Default: KANA + N5 enabled. `CUSTOM`
+gets a row like any other level - toggled and practiced (including via
+notifications) the same way; only its content comes from the My
+Vocabulary screen instead of bundled assets.
 
 ## Pool enable/disable rules
 
@@ -108,9 +111,25 @@ with zero unmapped characters left over.
 
 ## Screens
 
-**Home** (default; also reached via back from Quiz/Settings): per-level
-stats + enable toggle, a settings gear icon, and a Practice button
-(`pickRandomActiveEntry`, shared with the notification path).
+**Home** (default; also reached via back from Quiz/Settings/My Vocabulary):
+per-level stats + enable toggle for every `Level` (KANA, N5-N1, and
+`CUSTOM` as "My Vocabulary") in one list, a settings gear icon, and a
+single Practice button (`pickRandomActiveEntry`, shared with the
+notification path, draws from whichever pools are enabled - JLPT and/or
+custom). The `CUSTOM` row additionally has an Edit button opening My
+Vocabulary. Settings (quiz mode, notifications, kana hint) are global and
+apply to `CUSTOM` identically to JLPT levels - no special-casing needed.
+
+**My Vocabulary** (from Home's Edit button, on the `CUSTOM` row): a list
+of the user's own `CUSTOM`-level entries, "Add word" pinned above it.
+Each row is collapsed by default showing only its romaji (tap to
+expand/collapse); expanded, it shows word/romaji/meaning as full-width
+labeled `TextField`s plus a Delete button. Every field writes to Room on
+each change (no save button, no per-row draft state - simplest thing that
+works for a personal table this small); a newly-added row starts expanded
+so it's immediately editable. Reuses the existing `Entry`/`EntryDao`
+machinery entirely - no new quiz or answer-checking logic, since
+`Entry.hasKanji()`/`AnswerService` already work for any level.
 
 **Settings** (from Home's gear icon): multiple-choice toggle, notifications
 toggle (default on — off cancels the armed alarm via
@@ -128,10 +147,10 @@ keeps the keyboard clear of Submit. System back returns to Home.
 
 ## Navigation
 
-Two bits of state in `MainActivity`: `quizEntryId: Long?` (Quiz screen,
-takes priority) and `showSettings: Boolean`. No Compose Navigation/
-`NavHost` — 3 screens, no back-stack complexity beyond "return to Home",
-a route graph would be ceremony.
+Three bits of state in `MainActivity`: `quizEntryId: Long?` (Quiz screen,
+takes priority), `showSettings: Boolean`, `showMyVocabulary: Boolean`. No
+Compose Navigation/`NavHost` — 4 screens, no back-stack complexity beyond
+"return to Home", a route graph would be ceremony.
 
 ## Notifications
 

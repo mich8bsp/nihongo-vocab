@@ -51,7 +51,21 @@ class AssetSeeder(private val context: Context, private val db: AppDatabase) {
         if (updates.isNotEmpty()) {
             db.withTransaction { db.entryDao().updateAll(updates) }
         }
+
+        // A level added after this install's first seed (e.g. CUSTOM) has no
+        // pool_state row yet - the toggle above only inserts rows once, on an
+        // empty DB. Without this, its Switch silently no-ops (an UPDATE
+        // matching zero rows).
+        val missingLevels = missingPoolStateLevels(db.poolStateDao().getAll())
+        if (missingLevels.isNotEmpty()) {
+            db.poolStateDao().insertAll(missingLevels.map { PoolState(level = it, enabled = false) })
+        }
     }
+}
+
+internal fun missingPoolStateLevels(existing: List<PoolState>): List<Level> {
+    val existingLevels = existing.map { it.level }.toSet()
+    return Level.entries.filterNot { it in existingLevels }
 }
 
 /**

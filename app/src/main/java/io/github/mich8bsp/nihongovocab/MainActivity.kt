@@ -30,6 +30,7 @@ import io.github.mich8bsp.nihongovocab.data.AssetSeeder
 import io.github.mich8bsp.nihongovocab.data.QuizPreferences
 import io.github.mich8bsp.nihongovocab.notification.QuizAlarmReceiver
 import io.github.mich8bsp.nihongovocab.ui.HomeScreen
+import io.github.mich8bsp.nihongovocab.ui.MyVocabularyScreen
 import io.github.mich8bsp.nihongovocab.ui.QuizScreen
 import io.github.mich8bsp.nihongovocab.ui.SettingsScreen
 
@@ -39,6 +40,7 @@ class MainActivity : ComponentActivity() {
     private var notificationsEnabled by mutableStateOf(true)
     private var kanaHintEnabled by mutableStateOf(false)
     private var showSettings by mutableStateOf(false)
+    private var showMyVocabulary by mutableStateOf(false)
 
     private val requestNotificationPermission =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { /* no-op either way */ }
@@ -104,11 +106,16 @@ class MainActivity : ComponentActivity() {
                             },
                             onBack = { showSettings = false },
                         )
+                        showMyVocabulary -> MyVocabularyScreen(
+                            entryDao = db.entryDao(),
+                            onBack = { showMyVocabulary = false },
+                        )
                         else -> HomeScreen(
                             entryDao = db.entryDao(),
                             poolStateDao = db.poolStateDao(),
                             onPractice = { id -> quizEntryId = id },
                             onOpenSettings = { showSettings = true },
+                            onOpenMyVocabulary = { showMyVocabulary = true },
                         )
                     }
                 }

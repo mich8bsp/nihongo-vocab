@@ -60,3 +60,10 @@ of how.
     tagged N5) got a pointless stage 1 with nothing to read (`Entry.hasKanji()`).
     Also dropped the "Stage 1/2" text labels and moved the kana-hint button
     inline next to Submit.
+30. Added a new `Level.CUSTOM` pool ("My Vocabulary") listed alongside
+    KANA/N5-N1 on Home with the same toggle/stats/Practice treatment
+    (incl. notifications); its row has an Edit button to a new My
+    Vocabulary screen with an editable word/romaji/meaning table
+    (add/edit/delete rows). Also backfills a `pool_state` row for any
+    `Level` (e.g. this new `CUSTOM`) missing one on an already-seeded
+    install - same class of fix as item 27, but for `PoolState`.

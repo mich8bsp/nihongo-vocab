@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
@@ -17,6 +18,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -36,12 +38,15 @@ import io.github.mich8bsp.nihongovocab.data.PoolStateDao
 import io.github.mich8bsp.nihongovocab.data.pickRandomActiveEntry
 import kotlinx.coroutines.launch
 
+private fun Level.displayName() = if (this == Level.CUSTOM) "My Vocabulary" else name
+
 @Composable
 fun HomeScreen(
     entryDao: EntryDao,
     poolStateDao: PoolStateDao,
     onPractice: (Long) -> Unit,
     onOpenSettings: () -> Unit,
+    onOpenMyVocabulary: () -> Unit,
 ) {
     var statsByLevel by remember { mutableStateOf<Map<Level, LevelStats>>(emptyMap()) }
     var enabledByLevel by remember { mutableStateOf<Map<Level, Boolean>>(emptyMap()) }
@@ -100,7 +105,7 @@ fun HomeScreen(
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     Column(Modifier.weight(1f)) {
-                        Text(level.name, style = MaterialTheme.typography.titleMedium)
+                        Text(level.displayName(), style = MaterialTheme.typography.titleMedium)
                         if (stats != null) {
                             Text(
                                 "${stats.masteredCount}/${stats.totalCount} mastered · " +
@@ -108,6 +113,12 @@ fun HomeScreen(
                                 style = MaterialTheme.typography.bodyMedium,
                             )
                         }
+                    }
+                    if (level == Level.CUSTOM) {
+                        OutlinedButton(onClick = onOpenMyVocabulary) {
+                            Text("Edit")
+                        }
+                        Spacer(Modifier.width(8.dp))
                     }
                     Switch(
                         checked = enabledByLevel[level] ?: false,

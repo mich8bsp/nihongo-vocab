@@ -13,8 +13,18 @@ private class FakeEntryDao(initial: List<Entry>) : EntryDao {
         for (e in entries) this.entries[e.id] = e
     }
 
+    override suspend fun insert(entry: Entry): Long {
+        val id = (entries.keys.maxOrNull() ?: 0) + 1
+        entries[id] = entry.copy(id = id)
+        return id
+    }
+
     override suspend fun update(entry: Entry) {
         entries[entry.id] = entry
+    }
+
+    override suspend fun delete(entry: Entry) {
+        entries.remove(entry.id)
     }
 
     override suspend fun updateAll(entries: List<Entry>) {
