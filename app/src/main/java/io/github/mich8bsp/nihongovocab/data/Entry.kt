@@ -13,6 +13,7 @@ data class Entry(
     val correctStreak: Int = 0,
     val totalCorrect: Int = 0,
     val totalWrong: Int = 0,
+    val comment: String = "",
 )
 
 /**

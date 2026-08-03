@@ -72,3 +72,5 @@ of how.
     already set).
 32. Added a search box next to "Add word" on the My Vocabulary screen,
     filtering the list by romaji or meaning (case-insensitive substring).
+33. Added a free-text `Entry.comment` field (DB v3, `MIGRATION_2_3`) with
+    a Comment box on the My Vocabulary edit form, for user notes.

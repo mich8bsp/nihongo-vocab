@@ -140,6 +140,12 @@ fun MyVocabularyScreen(entryDao: EntryDao, onBack: () -> Unit) {
                             modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp),
                             singleLine = true,
                         )
+                        OutlinedTextField(
+                            value = entry.comment,
+                            onValueChange = { edit(index, entry.copy(comment = it)) },
+                            label = { Text("Comment") },
+                            modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp),
+                        )
                         TextButton(
                             onClick = {
                                 entries = entries.filterNot { it.id == entry.id }
