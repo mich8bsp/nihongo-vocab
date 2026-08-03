@@ -70,3 +70,5 @@ of how.
 31. Fixed: My Vocabulary fields could be hidden behind the IME while
     editing (`imePadding()` on the `LazyColumn`, `adjustResize` was
     already set).
+32. Added a search box next to "Add word" on the My Vocabulary screen,
+    filtering the list by romaji or meaning (case-insensitive substring).

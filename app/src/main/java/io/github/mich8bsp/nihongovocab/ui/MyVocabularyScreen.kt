@@ -16,6 +16,7 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -44,6 +45,7 @@ fun MyVocabularyScreen(entryDao: EntryDao, onBack: () -> Unit) {
 
     var entries by remember { mutableStateOf<List<Entry>>(emptyList()) }
     var expandedIds by remember { mutableStateOf<Set<Long>>(emptySet()) }
+    var query by remember { mutableStateOf("") }
     val scope = rememberCoroutineScope()
 
     LaunchedEffect(Unit) {
@@ -63,19 +65,35 @@ fun MyVocabularyScreen(entryDao: EntryDao, onBack: () -> Unit) {
             Text("My Vocabulary", style = MaterialTheme.typography.headlineMedium, modifier = Modifier.weight(1f))
         }
 
-        TextButton(onClick = {
-            scope.launch {
-                val id = entryDao.insert(Entry(text = "", meanings = listOf(""), romaji = "", level = Level.CUSTOM))
-                entries = entries + Entry(id = id, text = "", meanings = listOf(""), romaji = "", level = Level.CUSTOM)
-                expandedIds = expandedIds + id
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            TextButton(onClick = {
+                scope.launch {
+                    val id = entryDao.insert(Entry(text = "", meanings = listOf(""), romaji = "", level = Level.CUSTOM))
+                    entries = entries + Entry(id = id, text = "", meanings = listOf(""), romaji = "", level = Level.CUSTOM)
+                    expandedIds = expandedIds + id
+                }
+            }) {
+                Icon(Icons.Default.Add, contentDescription = null)
+                Text("Add word")
             }
-        }) {
-            Icon(Icons.Default.Add, contentDescription = null)
-            Text("Add word")
+            OutlinedTextField(
+                value = query,
+                onValueChange = { query = it },
+                placeholder = { Text("Search") },
+                leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
+                singleLine = true,
+                modifier = Modifier.weight(1f),
+            )
+        }
+
+        val filteredEntries = entries.filter { entry ->
+            query.isBlank() ||
+                entry.romaji.contains(query, ignoreCase = true) ||
+                entry.meanings.any { it.contains(query, ignoreCase = true) }
         }
 
         LazyColumn(Modifier.weight(1f).padding(top = 8.dp).imePadding()) {
-            items(entries, key = { it.id }) { entry ->
+            items(filteredEntries, key = { it.id }) { entry ->
                 val index = entries.indexOf(entry)
                 val expanded = entry.id in expandedIds
 
