@@ -67,3 +67,6 @@ of how.
     (add/edit/delete rows). Also backfills a `pool_state` row for any
     `Level` (e.g. this new `CUSTOM`) missing one on an already-seeded
     install - same class of fix as item 27, but for `PoolState`.
+31. Fixed: My Vocabulary fields could be hidden behind the IME while
+    editing (`imePadding()` on the `LazyColumn`, `adjustResize` was
+    already set).
