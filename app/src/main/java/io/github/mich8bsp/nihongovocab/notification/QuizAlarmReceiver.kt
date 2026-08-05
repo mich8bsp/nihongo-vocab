@@ -17,6 +17,7 @@ import io.github.mich8bsp.nihongovocab.MainActivity
 import io.github.mich8bsp.nihongovocab.data.AppDatabase
 import io.github.mich8bsp.nihongovocab.data.Entry
 import io.github.mich8bsp.nihongovocab.data.QuizPreferences
+import io.github.mich8bsp.nihongovocab.data.displayText
 import io.github.mich8bsp.nihongovocab.data.meaningsWithRomaji
 import io.github.mich8bsp.nihongovocab.data.pickRandomActiveEntry
 import kotlinx.coroutines.CoroutineScope
@@ -77,7 +78,7 @@ class QuizAlarmReceiver : BroadcastReceiver() {
         )
         val notification = NotificationCompat.Builder(context, CHANNEL_ID)
             .setContentTitle("Quiz time")
-            .setContentText(entry.text)
+            .setContentText(entry.displayText())
             .setSmallIcon(android.R.drawable.ic_dialog_info)
             .setContentIntent(pendingIntent)
             .setAutoCancel(true)
@@ -92,7 +93,7 @@ class QuizAlarmReceiver : BroadcastReceiver() {
      */
     private fun showRevealNotification(context: Context, entry: Entry) {
         val notification = NotificationCompat.Builder(context, CHANNEL_ID)
-            .setContentTitle(entry.text)
+            .setContentTitle(entry.displayText())
             .setContentText(entry.meaningsWithRomaji())
             .setSmallIcon(android.R.drawable.ic_dialog_info)
             .build()

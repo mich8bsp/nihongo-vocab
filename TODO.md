@@ -74,3 +74,9 @@ of how.
     filtering the list by romaji or meaning (case-insensitive substring).
 33. Added a free-text `Entry.comment` field (DB v3, `MIGRATION_2_3`) with
     a Comment box on the My Vocabulary edit form, for user notes.
+34. Fixed: My Vocabulary entries with a blank `text` (romaji+meaning only)
+    showed an empty word in the Quiz screen and notifications
+    (`Entry.displayText()` fallback).
+35. Added reverse quiz mode (Settings toggle) — English meaning prompt,
+    free-text or multiple-choice Japanese answer (`reverse` param on
+    `AnswerService.submitAnswer`/`buildQuizOptions`, `isCorrectJapaneseAnswer`).

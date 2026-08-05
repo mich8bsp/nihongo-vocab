@@ -35,4 +35,28 @@ class EntryTest {
         val entry = Entry(text = "ありがとう", meanings = listOf("thank you"), romaji = "arigatou", level = Level.N5)
         assertFalse(entry.hasKanji())
     }
+
+    @Test
+    fun `display text falls back to romaji when text is blank`() {
+        val entry = Entry(text = "", meanings = listOf("dog"), romaji = "inu", level = Level.CUSTOM)
+        assertEquals("inu", entry.displayText())
+    }
+
+    @Test
+    fun `display text uses text when present`() {
+        val entry = Entry(text = "犬", meanings = listOf("dog"), romaji = "inu", level = Level.CUSTOM)
+        assertEquals("犬", entry.displayText())
+    }
+
+    @Test
+    fun `text with romaji falls back to romaji alone when text is blank`() {
+        val entry = Entry(text = "", meanings = listOf("dog"), romaji = "inu", level = Level.CUSTOM)
+        assertEquals("inu", entry.textWithRomaji())
+    }
+
+    @Test
+    fun `text with romaji appends romaji in parens when text is present`() {
+        val entry = Entry(text = "犬", meanings = listOf("dog"), romaji = "inu", level = Level.N5)
+        assertEquals("犬 (inu)", entry.textWithRomaji())
+    }
 }

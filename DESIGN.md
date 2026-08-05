@@ -47,6 +47,20 @@ Vocabulary screen instead of bundled assets.
   from `EntryDao.getRandomOtherEntries`, same level, excluding any
   distractor meaning that collides with the entry's own). No LLM
   grading — every check is local, instant, deterministic.
+- Reverse quiz (Settings toggle, independent of the above): prompt shows
+  the English meaning, answer is the Japanese side — free text (checked
+  via `isCorrectJapaneseAnswer`, accepts either the exact word/kana or its
+  romaji reading, since typing kanji needs a JP IME) or multiple choice
+  (`AnswerService.buildQuizOptions(entry, reverse = true)`, options are
+  Japanese text instead of meanings). No two-stage reading gate or kana
+  hint in this direction — nothing kanji to read yet. A KANA entry has no
+  romaji (its meaning already is the romaji), so free-text reverse
+  quizzing on KANA needs a JP IME; multiple choice works regardless.
+- A My Vocabulary entry can have `text` blank if the user only filled in
+  romaji + meaning (no kanji/kana typed in). `Entry.displayText()` (text,
+  falling back to romaji) covers this everywhere text would otherwise
+  render empty — Quiz screen, notifications, reverse-quiz feedback
+  (`Entry.textWithRomaji()`).
 - Two-stage quiz (entries with kanji only, via `Entry.hasKanji()`): stage 1
   (romaji reading, checked via `isRomajiAnswer`) gates stage 2 (the
   meaning). Stage 1 attempts aren't

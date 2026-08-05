@@ -84,7 +84,8 @@ class AnswerServiceTest {
         streak: Int = 0,
         meanings: List<String> = listOf("blue"),
         romaji: String = "",
-    ) = Entry(id = id, text = "x", meanings = meanings, romaji = romaji, level = level, correctStreak = streak)
+        text: String = "x",
+    ) = Entry(id = id, text = text, meanings = meanings, romaji = romaji, level = level, correctStreak = streak)
 
     @Test
     fun correctAnswerIncrementsStreakAndTotalCorrect() = runTest {
@@ -254,6 +255,35 @@ class AnswerServiceTest {
     }
 
     @Test
+    fun japaneseAnswerAcceptsExactTextOrRomajiCaseInsensitiveTrimmed() {
+        val e = entry(1, Level.N5, text = "犬", romaji = "inu")
+        assertTrue(isCorrectJapaneseAnswer(e, "犬"))
+        assertTrue(isCorrectJapaneseAnswer(e, "  INU  "))
+        assertFalse(isCorrectJapaneseAnswer(e, "dog"))
+        assertFalse(isCorrectJapaneseAnswer(e, ""))
+    }
+
+    @Test
+    fun japaneseAnswerFallsBackToRomajiWhenTextIsBlank() {
+        // My Vocabulary entry saved with only a romaji reading, no word typed in
+        val e = entry(1, Level.CUSTOM, text = "", romaji = "inu")
+        assertTrue(isCorrectJapaneseAnswer(e, "inu"))
+        assertFalse(isCorrectJapaneseAnswer(e, "dog"))
+    }
+
+    @Test
+    fun reverseSubmitAnswerScoresAgainstJapaneseTextNotMeaning() = runTest {
+        val entryDao = FakeEntryDao(listOf(entry(1, Level.N5, text = "犬", romaji = "inu", meanings = listOf("dog"))))
+        val service = AnswerService(entryDao, FakePoolStateDao(mapOf(Level.N5 to true)))
+
+        val correct = service.submitAnswer(1, "inu", reverse = true)
+        assertTrue(correct.correct)
+
+        val wrong = service.submitAnswer(1, "dog", reverse = true)
+        assertFalse(wrong.correct)
+    }
+
+    @Test
     fun quizOptionsIncludeTheCorrectMeaningAndTwoDistractors() = runTest {
         val target = entry(1, Level.N5, meanings = listOf("blue"))
         val entryDao = FakeEntryDao(
@@ -289,5 +319,24 @@ class AnswerServiceTest {
 
         assertFalse("Azure" in options)
         assertEquals(setOf("blue", "red"), options.toSet())
+    }
+
+    @Test
+    fun reverseQuizOptionsUseJapaneseTextInsteadOfMeaning() = runTest {
+        val target = entry(1, Level.N5, text = "犬", romaji = "inu", meanings = listOf("dog"))
+        val entryDao = FakeEntryDao(
+            listOf(
+                target,
+                entry(2, Level.N5, text = "猫", romaji = "neko", meanings = listOf("cat")),
+                entry(3, Level.N5, text = "鳥", romaji = "tori", meanings = listOf("bird")),
+            ),
+        )
+        val service = AnswerService(entryDao, FakePoolStateDao(mapOf(Level.N5 to true)))
+
+        val options = service.buildQuizOptions(target, reverse = true)
+
+        assertEquals(3, options.size)
+        assertTrue("犬" in options)
+        assertTrue(options.all { it in setOf("犬", "猫", "鳥") })
     }
 }

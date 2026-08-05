@@ -26,6 +26,8 @@ fun SettingsScreen(
     onNotificationsEnabledChange: (Boolean) -> Unit,
     kanaHintEnabled: Boolean,
     onKanaHintEnabledChange: (Boolean) -> Unit,
+    reverseQuizEnabled: Boolean,
+    onReverseQuizEnabledChange: (Boolean) -> Unit,
     onBack: () -> Unit,
 ) {
     BackHandler(onBack = onBack)
@@ -64,6 +66,18 @@ fun SettingsScreen(
                 modifier = Modifier.weight(1f),
             )
             Switch(checked = kanaHintEnabled, onCheckedChange = onKanaHintEnabledChange)
+        }
+
+        Row(
+            modifier = Modifier.fillMaxWidth().padding(vertical = 16.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Text(
+                "Reverse quiz (English → Japanese)",
+                style = MaterialTheme.typography.titleMedium,
+                modifier = Modifier.weight(1f),
+            )
+            Switch(checked = reverseQuizEnabled, onCheckedChange = onReverseQuizEnabledChange)
         }
     }
 }

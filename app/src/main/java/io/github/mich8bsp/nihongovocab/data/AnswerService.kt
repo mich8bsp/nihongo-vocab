@@ -83,6 +83,18 @@ private fun digitizeNumberWords(text: String): String =
 fun isRomajiAnswer(entry: Entry, answer: String): Boolean =
     entry.romaji.isNotBlank() && entry.romaji.trim().lowercase() == answer.trim().lowercase()
 
+/**
+ * Reverse-quiz check: true if [answer] matches this entry's Japanese side,
+ * either the word/kana itself or its romaji reading - typing kanji without
+ * a JP IME often isn't practical, so the reading is accepted too.
+ */
+fun isCorrectJapaneseAnswer(entry: Entry, answer: String): Boolean {
+    val normalized = answer.trim()
+    if (normalized.isEmpty()) return false
+    return normalized.equals(entry.displayText().trim(), ignoreCase = true) ||
+        (entry.romaji.isNotBlank() && normalized.equals(entry.romaji.trim(), ignoreCase = true))
+}
+
 /** Same selection notifications use - shared so "Practise" behaves identically to a real notification tap. */
 suspend fun pickRandomActiveEntry(entryDao: EntryDao, poolStateDao: PoolStateDao): Entry? {
     val enabledLevels = poolStateDao.getEnabledLevels()
@@ -100,24 +112,30 @@ class AnswerService(
 
     /**
      * 3 shuffled answer options for multiple-choice mode: [entry]'s own first
-     * meaning plus 2 distractors from other same-level entries' first meanings.
-     * Distractors that happen to equal one of [entry]'s own meanings are
-     * dropped (over-fetches a few extra candidates to allow for this) so an
-     * option is never ambiguously "also correct".
+     * meaning (or, in [reverse] mode, its Japanese word) plus 2 distractors
+     * from other same-level entries. Distractors that happen to equal one of
+     * [entry]'s own options are dropped (over-fetches a few extra candidates
+     * to allow for this) so an option is never ambiguously "also correct".
      */
-    suspend fun buildQuizOptions(entry: Entry): List<String> {
-        val ownMeanings = entry.meanings.map { it.trim().lowercase() }.toSet()
+    suspend fun buildQuizOptions(entry: Entry, reverse: Boolean = false): List<String> {
+        val correctAnswer = if (reverse) entry.displayText() else entry.meanings.first()
+        val ownAnswers = if (reverse) {
+            setOf(correctAnswer.trim().lowercase())
+        } else {
+            entry.meanings.map { it.trim().lowercase() }.toSet()
+        }
         val distractors = entryDao.getRandomOtherEntries(entry.level, entry.id, limit = 6)
-            .map { it.meanings.first() }
-            .filter { it.trim().lowercase() !in ownMeanings }
+            .map { if (reverse) it.displayText() else it.meanings.first() }
+            .filter { it.trim().lowercase() !in ownAnswers }
             .distinct()
             .take(2)
-        return (listOf(entry.meanings.first()) + distractors).shuffled()
+        return (listOf(correctAnswer) + distractors).shuffled()
     }
 
-    suspend fun submitAnswer(entryId: Long, answer: String): AnswerResult {
+    suspend fun submitAnswer(entryId: Long, answer: String, reverse: Boolean = false): AnswerResult {
         val entry = entryDao.getById(entryId) ?: error("Entry $entryId not found")
-        return recordResult(entry, correct = isCorrectAnswer(entry, answer))
+        val correct = if (reverse) isCorrectJapaneseAnswer(entry, answer) else isCorrectAnswer(entry, answer)
+        return recordResult(entry, correct = correct)
     }
 
     /** User gave up instead of typing - always recorded as wrong, same as an incorrect answer. */

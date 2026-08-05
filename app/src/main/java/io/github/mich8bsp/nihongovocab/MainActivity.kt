@@ -39,6 +39,7 @@ class MainActivity : ComponentActivity() {
     private var multipleChoiceMode by mutableStateOf(false)
     private var notificationsEnabled by mutableStateOf(true)
     private var kanaHintEnabled by mutableStateOf(false)
+    private var reverseQuizMode by mutableStateOf(false)
     private var showSettings by mutableStateOf(false)
     private var showMyVocabulary by mutableStateOf(false)
 
@@ -51,6 +52,7 @@ class MainActivity : ComponentActivity() {
         multipleChoiceMode = QuizPreferences.isMultipleChoiceEnabled(applicationContext)
         notificationsEnabled = QuizPreferences.isNotificationsEnabled(applicationContext)
         kanaHintEnabled = QuizPreferences.isKanaHintEnabled(applicationContext)
+        reverseQuizMode = QuizPreferences.isReverseQuizEnabled(applicationContext)
 
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) !=
             PackageManager.PERMISSION_GRANTED
@@ -85,6 +87,7 @@ class MainActivity : ComponentActivity() {
                             answerService = answerService,
                             multipleChoice = multipleChoiceMode,
                             kanaHintEnabled = kanaHintEnabled,
+                            reverseQuiz = reverseQuizMode,
                             onBack = { quizEntryId = null },
                             onNext = { id -> quizEntryId = id },
                         )
@@ -103,6 +106,11 @@ class MainActivity : ComponentActivity() {
                             onKanaHintEnabledChange = { enabled ->
                                 QuizPreferences.setKanaHintEnabled(applicationContext, enabled)
                                 kanaHintEnabled = enabled
+                            },
+                            reverseQuizEnabled = reverseQuizMode,
+                            onReverseQuizEnabledChange = { enabled ->
+                                QuizPreferences.setReverseQuizEnabled(applicationContext, enabled)
+                                reverseQuizMode = enabled
                             },
                             onBack = { showSettings = false },
                         )

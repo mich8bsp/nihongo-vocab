@@ -26,5 +26,19 @@ fun Entry.meaningsWithRomaji(): String {
     return meanings.joinToString(", ") + romajiSuffix
 }
 
+/**
+ * [text], falling back to [romaji] when blank - a My Vocabulary entry can
+ * be saved with only a romaji reading and meaning (no kanji/kana typed
+ * in), which would otherwise display as empty.
+ */
+fun Entry.displayText(): String = text.ifBlank { romaji }
+
+/** [displayText] with a "(romaji)" suffix, mirroring [meaningsWithRomaji] for reverse-quiz feedback. */
+fun Entry.textWithRomaji(): String {
+    if (text.isBlank()) return romaji
+    val romajiSuffix = if (level != Level.KANA && romaji.isNotBlank()) " ($romaji)" else ""
+    return text + romajiSuffix
+}
+
 /** Whether [text] contains a CJK ideograph - words written entirely in kana have no reading stage. */
 fun Entry.hasKanji(): Boolean = text.any { it.code in 0x4E00..0x9FFF }

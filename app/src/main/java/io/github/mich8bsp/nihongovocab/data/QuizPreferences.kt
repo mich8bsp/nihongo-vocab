@@ -6,6 +6,7 @@ private const val PREFS_NAME = "quiz_settings"
 private const val KEY_MULTIPLE_CHOICE = "multiple_choice_mode"
 private const val KEY_NOTIFICATIONS_ENABLED = "notifications_enabled"
 private const val KEY_KANA_HINT = "kana_hint_enabled"
+private const val KEY_REVERSE_QUIZ = "reverse_quiz_enabled"
 
 /** Persisted quiz-mode/notification toggles, set from SettingsScreen. */
 object QuizPreferences {
@@ -33,6 +34,15 @@ object QuizPreferences {
     fun setKanaHintEnabled(context: Context, enabled: Boolean) {
         context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE).edit()
             .putBoolean(KEY_KANA_HINT, enabled)
+            .apply()
+    }
+
+    fun isReverseQuizEnabled(context: Context): Boolean =
+        context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE).getBoolean(KEY_REVERSE_QUIZ, false)
+
+    fun setReverseQuizEnabled(context: Context, enabled: Boolean) {
+        context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE).edit()
+            .putBoolean(KEY_REVERSE_QUIZ, enabled)
             .apply()
     }
 }

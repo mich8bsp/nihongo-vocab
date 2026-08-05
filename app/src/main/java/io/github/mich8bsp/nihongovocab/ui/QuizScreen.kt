@@ -34,11 +34,13 @@ import io.github.mich8bsp.nihongovocab.data.AnswerResult
 import io.github.mich8bsp.nihongovocab.data.AnswerService
 import io.github.mich8bsp.nihongovocab.data.Entry
 import io.github.mich8bsp.nihongovocab.data.Level
+import io.github.mich8bsp.nihongovocab.data.displayText
 import io.github.mich8bsp.nihongovocab.data.hasKanji
 import io.github.mich8bsp.nihongovocab.data.isCorrectAnswer
 import io.github.mich8bsp.nihongovocab.data.isRomajiAnswer
 import io.github.mich8bsp.nihongovocab.data.meaningsWithRomaji
 import io.github.mich8bsp.nihongovocab.data.romajiToKana
+import io.github.mich8bsp.nihongovocab.data.textWithRomaji
 import kotlinx.coroutines.launch
 
 private const val DISABLED_ALPHA = 0.4f
@@ -49,6 +51,7 @@ fun QuizScreen(
     answerService: AnswerService,
     multipleChoice: Boolean,
     kanaHintEnabled: Boolean,
+    reverseQuiz: Boolean,
     onBack: () -> Unit,
     onNext: (Long) -> Unit,
 ) {
@@ -71,9 +74,9 @@ fun QuizScreen(
         val loaded = answerService.getEntry(entryId)
         entry = loaded
         if (loaded != null) {
-            // KANA, and any word with no kanji, has no separate reading stage.
-            if (loaded.level == Level.KANA || !loaded.hasKanji()) stage1Passed = true
-            if (multipleChoice) options = answerService.buildQuizOptions(loaded)
+            // KANA, any word with no kanji, and reverse quizzes (no reading gate) skip stage 1.
+            if (reverseQuiz || loaded.level == Level.KANA || !loaded.hasKanji()) stage1Passed = true
+            if (multipleChoice) options = answerService.buildQuizOptions(loaded, reverse = reverseQuiz)
         }
     }
 
@@ -90,8 +93,12 @@ fun QuizScreen(
             }
 
             val currentResult = result
-            val showKanaHint = kanaHintEnabled && currentEntry.level != Level.KANA && currentEntry.hasKanji() && currentResult == null
-            Text(currentEntry.text, style = MaterialTheme.typography.displayLarge)
+            val showKanaHint = !reverseQuiz && kanaHintEnabled && currentEntry.level != Level.KANA &&
+                currentEntry.hasKanji() && currentResult == null
+            Text(
+                if (reverseQuiz) currentEntry.meanings.joinToString(", ") else currentEntry.displayText(),
+                style = MaterialTheme.typography.displayLarge,
+            )
             if (showKanaHint && kanaRevealed) {
                 Spacer(Modifier.height(4.dp))
                 Text(romajiToKana(currentEntry.romaji), style = MaterialTheme.typography.labelSmall)
@@ -99,7 +106,7 @@ fun QuizScreen(
             Spacer(Modifier.height(24.dp))
 
             if (currentResult == null) {
-                val twoStage = currentEntry.level != Level.KANA && currentEntry.hasKanji()
+                val twoStage = !reverseQuiz && currentEntry.level != Level.KANA && currentEntry.hasKanji()
                 if (twoStage) {
                     LaunchedEffect(currentEntry.id) { readingFocusRequester.requestFocus() }
                     Column(
@@ -164,7 +171,7 @@ fun QuizScreen(
                             Button(
                                 onClick = {
                                     scope.launch {
-                                        result = answerService.submitAnswer(entryId, option)
+                                        result = answerService.submitAnswer(entryId, option, reverse = reverseQuiz)
                                     }
                                 },
                                 enabled = stage1Passed,
@@ -180,7 +187,7 @@ fun QuizScreen(
                                 answerText = it
                                 romajiHint = false
                             },
-                            label = { Text("Your answer") },
+                            label = { Text(if (reverseQuiz) "Japanese word or romaji" else "Your answer") },
                             singleLine = true,
                             enabled = stage1Passed,
                         )
@@ -195,13 +202,14 @@ fun QuizScreen(
                         Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                             Button(
                                 onClick = {
-                                    if (!isCorrectAnswer(currentEntry, answerText) &&
+                                    if (!reverseQuiz &&
+                                        !isCorrectAnswer(currentEntry, answerText) &&
                                         isRomajiAnswer(currentEntry, answerText)
                                     ) {
                                         romajiHint = true
                                     } else {
                                         scope.launch {
-                                            result = answerService.submitAnswer(entryId, answerText)
+                                            result = answerService.submitAnswer(entryId, answerText, reverse = reverseQuiz)
                                         }
                                     }
                                 },
@@ -225,7 +233,7 @@ fun QuizScreen(
             } else {
                 Text(if (currentResult.correct) "Correct!" else "Incorrect")
                 Spacer(Modifier.height(8.dp))
-                Text("Correct answer: ${currentEntry.meaningsWithRomaji()}")
+                Text("Correct answer: ${if (reverseQuiz) currentEntry.textWithRomaji() else currentEntry.meaningsWithRomaji()}")
                 Spacer(Modifier.height(16.dp))
                 Button(onClick = {
                     scope.launch {
