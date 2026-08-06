@@ -86,11 +86,13 @@ fun MyVocabularyScreen(entryDao: EntryDao, onBack: () -> Unit) {
             )
         }
 
-        val filteredEntries = entries.filter { entry ->
-            query.isBlank() ||
-                entry.romaji.contains(query, ignoreCase = true) ||
-                entry.meanings.any { it.contains(query, ignoreCase = true) }
-        }
+        val filteredEntries = entries
+            .filter { entry ->
+                query.isBlank() ||
+                    entry.romaji.contains(query, ignoreCase = true) ||
+                    entry.meanings.any { it.contains(query, ignoreCase = true) }
+            }
+            .sortedWith(compareBy<Entry> { it.romaji.lowercase() }.thenBy { it.id })
 
         LazyColumn(Modifier.weight(1f).padding(top = 8.dp).imePadding()) {
             items(filteredEntries, key = { it.id }) { entry ->
