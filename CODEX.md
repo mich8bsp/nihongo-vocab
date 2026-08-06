@@ -1,6 +1,6 @@
-# CLAUDE.md
+# CODEX.md
 
-Guidance for Claude Code when working in this repository.
+Guidance for Codex when working in this repository.
 
 ## Project
 

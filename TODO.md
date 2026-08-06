@@ -80,3 +80,5 @@ of how.
 35. Added reverse quiz mode (Settings toggle) — English meaning prompt,
     free-text or multiple-choice Japanese answer (`reverse` param on
     `AnswerService.submitAnswer`/`buildQuizOptions`, `isCorrectJapaneseAnswer`).
+36. Changed: My Vocabulary entries are displayed alphabetically by romaji,
+    including filtered search results and edits made in place.

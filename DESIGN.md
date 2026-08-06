@@ -135,7 +135,8 @@ Vocabulary. Settings (quiz mode, notifications, kana hint) are global and
 apply to `CUSTOM` identically to JLPT levels - no special-casing needed.
 
 **My Vocabulary** (from Home's Edit button, on the `CUSTOM` row): a list
-of the user's own `CUSTOM`-level entries, "Add word" pinned above it.
+of the user's own `CUSTOM`-level entries sorted alphabetically by romaji,
+with "Add word" pinned above it.
 Each row is collapsed by default showing only its romaji (tap to
 expand/collapse); expanded, it shows word/romaji/meaning as full-width
 labeled `TextField`s plus a Delete button. Every field writes to Room on
