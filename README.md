@@ -6,4 +6,4 @@ level.
 
 - [DESIGN.md](DESIGN.md) — full design
 - [TODO.md](TODO.md) — implementation plan and progress
-- [CLAUDE.md](CLAUDE.md) — guidance for AI-assisted sessions on this repo
+- [CODEX.md](CODEX.md) — guidance for AI-assisted sessions on this repo
